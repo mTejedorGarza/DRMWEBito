@@ -168,7 +168,7 @@ using Spartane.Web.Areas.WebApiConsumer.Spartan_User;
 using Spartane.Web.Areas.WebApiConsumer.Spartan_Format_Related;
 using Spartane.Core.Domain.Spartan_Format;
 using iTextSharp.text.pdf;
-
+using System.Web.WebPages;
 
 namespace Spartane.Web.Areas.Frontal.Controllers
 {
@@ -4184,7 +4184,204 @@ namespace Spartane.Web.Areas.Frontal.Controllers
         #endregion "Controller Methods"
 
         #region "Custom methods"
-		
+
+
+        /*CODMANINI-ADD*/
+        [HttpPost]
+        public string MultiUpload(string id, string fileName)
+        {
+            var chunkNumber = id;
+            var chunks = Request.InputStream;
+            string path = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["cup"].ToString());
+            string newpath = Path.Combine(path, fileName + chunkNumber);
+            using (FileStream fs = System.IO.File.Create(newpath))
+            {
+                byte[] bytes = new byte[1048576];
+                int bytesRead;
+                while ((bytesRead = Request.InputStream.Read(bytes, 0, bytes.Length)) > 0)
+                {
+                    fs.Write(bytes, 0, bytesRead);
+                }
+            }
+            return "done";
+        }
+
+        [HttpPost]
+        public string UploadComplete(string fileName, string complete)
+        {
+            string tempPath = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["cup"].ToString());
+            string videoPath = Server.MapPath(System.Configuration.ConfigurationManager.AppSettings["codigoUP"].ToString());
+            string newPath = Path.Combine(tempPath, fileName);
+            if (complete == "1")
+            {
+                string[] filePaths = Directory.GetFiles(tempPath).Where(p => p.Contains(fileName)).OrderBy(p => Int32.Parse(p.Replace(fileName, "$").Split('$')[1])).ToArray();
+                foreach (string filePath in filePaths)
+                {
+                    MergeFiles(newPath, filePath);
+                }
+            }
+            System.IO.File.Move(Path.Combine(tempPath, fileName), Path.Combine(videoPath, fileName));
+
+            var dtContent = GetDataTableFromExcel(Path.Combine(videoPath, fileName));
+
+            System.IO.File.Delete(Path.Combine(videoPath, fileName));
+
+            string Numero_de_Empleado_Titular = string.Empty;
+            Random rnd = new Random();
+            string sMismoTitular = string.Empty;
+            int iSigTitular = 0;
+            int iVerificador = 0;
+
+            Detalle_Registro_Beneficiarios_Titulares_EmpresaPagingModel Detalle_Registro_Beneficiarios_Empresas = new Detalle_Registro_Beneficiarios_Titulares_EmpresaPagingModel();
+
+            Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas = new List<Detalle_Registro_Beneficiarios_Titulares_Empresa>();
+
+            foreach (System.Data.DataRow dr in dtContent.Rows)
+            {
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas.Add(new Detalle_Registro_Beneficiarios_Titulares_Empresa());
+
+                Numero_de_Empleado_Titular = dr["Numero_de_Empleado_Titular"].ToString();
+
+                if (Numero_de_Empleado_Titular == null || Numero_de_Empleado_Titular.ToString().IsEmpty())
+                    break;
+
+
+                if (!Numero_de_Empleado_Titular.Equals(sMismoTitular))
+                {
+                    iSigTitular = 1;
+                    sMismoTitular = Numero_de_Empleado_Titular;
+                }
+                else
+                    iSigTitular++;
+
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Numero_de_Empleado_Titular = Numero_de_Empleado_Titular;
+                //Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Numero_de_Empleado = Numero_de_Empleado_Titular + "-" +
+                //((char)rnd.Next('A', 'Z')).ToString() +
+                //((char)rnd.Next('A', 'Z')).ToString() +
+                //((char)rnd.Next('A', 'Z')).ToString() + String.Format("{0, 0:D2}", iSigTitular);
+
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Usuario = 0;
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Nombres = dr["Nombre"].ToString();
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Apellido_Paterno = dr["Apellido_Paterno"].ToString();
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Apellido_Materno = dr["Apellido_Materno"].ToString();
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Nombre_Completo = dr["Nombre"].ToString() + " " + dr["Apellido_Paterno"].ToString() + " " + dr["Apellido_Materno"].ToString();
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Email = dr["Email"].ToString();
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Activo = true;
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Suscripcion = 0;                
+                Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas[iVerificador].Estatus = 1;
+                iVerificador++;
+            }
+            Detalle_Registro_Beneficiarios_Empresas.RowCount = iVerificador;
+            TempData["EmpresaBeneficiariosResultExcel"] = Detalle_Registro_Beneficiarios_Empresas;
+
+            return "success";
+        }
+
+        [HttpGet]
+        public ActionResult ObtenTableExcelProcess()
+        {
+
+            Detalle_Registro_Beneficiarios_Titulares_EmpresaPagingModel Detalle_Registro_Beneficiarios_Empresas = (Detalle_Registro_Beneficiarios_Titulares_EmpresaPagingModel)TempData["EmpresaBeneficiariosResultExcel"];
+
+            var jsonResult = Json(new
+            {
+                data = Detalle_Registro_Beneficiarios_Empresas.Detalle_Registro_Beneficiarios_Titulares_Empresas.Select(m => new Detalle_Registro_Beneficiarios_Titulares_EmpresaGridModel
+                {
+                    Folio = m.Folio                         
+                        ,
+                    Numero_de_Empleado_Titular = m.Numero_de_Empleado_Titular
+                    ,
+                    Usuario = m.Usuario
+                        ,
+                    UsuarioName = ""
+            ,
+                    Nombres = m.Nombres
+            ,
+                    Apellido_Paterno = m.Apellido_Paterno
+            ,
+                    Apellido_Materno = m.Apellido_Materno
+            ,
+                    Nombre_Completo = m.Nombre_Completo
+            ,
+                    Email = m.Email
+            ,
+                    Activo = m.Activo
+                        ,
+                    Suscripcion = m.Suscripcion
+                        ,
+                    SuscripcionNombre_del_Plan = ""            
+                        ,
+                    Estatus = m.Estatus
+                        ,
+                    EstatusDescripcion = ""
+
+                }).ToList(),
+                recordsTotal = Detalle_Registro_Beneficiarios_Empresas.RowCount,
+                recordsFiltered = Detalle_Registro_Beneficiarios_Empresas.RowCount,
+            }, JsonRequestBehavior.AllowGet);
+
+            jsonResult.MaxJsonLength = int.MaxValue;
+
+            return jsonResult;
+        }
+
+        private static System.Data.DataTable GetDataTableFromExcel(string path, bool hasHeader = true)
+        {
+            using (var pck = new OfficeOpenXml.ExcelPackage())
+            {
+                using (var stream = System.IO.File.OpenRead(path))
+                {
+                    pck.Load(stream);
+                }
+                var ws = pck.Workbook.Worksheets.First();
+                System.Data.DataTable tbl = new System.Data.DataTable();
+                foreach (var firstRowCell in ws.Cells[1, 1, 1, ws.Dimension.End.Column])
+                {
+                    tbl.Columns.Add(hasHeader ? firstRowCell.Text : string.Format("Column {0}", firstRowCell.Start.Column));
+                }
+                var startRow = hasHeader ? 2 : 1;
+                for (int rowNum = startRow; rowNum <= ws.Dimension.End.Row; rowNum++)
+                {
+                    var wsRow = ws.Cells[rowNum, 1, rowNum, ws.Dimension.End.Column];
+                    System.Data.DataRow row = tbl.Rows.Add();
+                    foreach (var cell in wsRow)
+                    {
+                        row[cell.Start.Column - 1] = cell.Text;
+                    }
+                }
+                return tbl;
+            }
+        }
+
+        private static void MergeFiles(string file1, string file2)
+        {
+            FileStream fs1 = null;
+            FileStream fs2 = null;
+            try
+            {
+                fs1 = System.IO.File.Open(file1, FileMode.Append);
+                fs2 = System.IO.File.Open(file2, FileMode.Open);
+                byte[] fs2Content = new byte[fs2.Length];
+                fs2.Read(fs2Content, 0, (int)fs2.Length);
+                fs1.Write(fs2Content, 0, (int)fs2.Length);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                if (fs1 != null) fs1.Close();
+                if (fs2 != null) fs2.Close();
+                System.IO.File.Delete(file2);
+            }
+        }
+
+        /*CODMANFIN-ADD*/
+
+
+
+
 		[HttpGet]
         public FileStreamResult PrintFormats(int idFormat, string RecordId)
         {
