@@ -1,0 +1,766 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Codigos_de_DescuentoAdvanceSearchModel
+@{
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varTipos_de_Vendedor_Tipo_de_Vendedor = null;
+    if (ViewBag.Tipos_de_Vendedors_Tipo_de_Vendedor != null)
+    { varTipos_de_Vendedor_Tipo_de_Vendedor = (List<SelectListItem>)ViewBag.Tipos_de_Vendedors_Tipo_de_Vendedor; }
+    List<SelectListItem> varSpartan_User_Vendedor = null;
+    if (ViewBag.Spartan_Users_Vendedor != null)
+    { varSpartan_User_Vendedor = (List<SelectListItem>)ViewBag.Spartan_Users_Vendedor; }
+    List<SelectListItem> varTipos_de_Descuento_Tipo_de_Descuento = null;
+    if (ViewBag.Tipos_de_Descuentos_Tipo_de_Descuento != null)
+    { varTipos_de_Descuento_Tipo_de_Descuento = (List<SelectListItem>)ViewBag.Tipos_de_Descuentos_Tipo_de_Descuento; }
+    List<SelectListItem> varEstatus_de_Codigos_de_Descuento_Estatus = null;
+    if (ViewBag.Estatus_de_Codigos_de_Descuentos_Estatus != null)
+    { varEstatus_de_Codigos_de_Descuento_Estatus = (List<SelectListItem>)ViewBag.Estatus_de_Codigos_de_Descuentos_Estatus; }
+    List<SelectListItem> varSpartan_User_Usuario_que_autoriza = null;
+    if (ViewBag.Spartan_Users_Usuario_que_autoriza != null)
+    { varSpartan_User_Usuario_que_autoriza = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_autoriza; }
+    List<SelectListItem> varResultado_de_Autorizacion_Resultado = null;
+    if (ViewBag.Resultado_de_Autorizacions_Resultado != null)
+    { varResultado_de_Autorizacion_Resultado = (List<SelectListItem>)ViewBag.Resultado_de_Autorizacions_Resultado; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "Codigos_de_Descuento", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Fecha_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_Registro" name="FromFecha_de_Registro" type="text" value="@Model.FromFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_Registro" name="ToFecha_de_Registro" type="text" value="@Model.ToFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Hora_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_Registro" name="FromHora_de_Registro" type="text" value="@Model.FromHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_Registro" name="ToHora_de_Registro" type="text" value="@Model.ToHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Usuario_que_Registra</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_RegistraFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_RegistraFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_Registra, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_Registra" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_Registra!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_RegistraMultiple, varSpartan_User_Usuario_que_Registra,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_Registra"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Tipo_de_Vendedor</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Tipo_de_VendedorFilter, filters, new { @class = "form-control", @id = "ddlTipo_de_VendedorFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceTipo_de_Vendedor, new { @class = "form-control", @type = "text", @id = "txtAdvanceTipo_de_Vendedor" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varTipos_de_Vendedor_Tipo_de_Vendedor!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceTipo_de_VendedorMultiple, varTipos_de_Vendedor_Tipo_de_Vendedor,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceTipo_de_Vendedor"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Vendedor</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.VendedorFilter, filters, new { @class = "form-control", @id = "ddlVendedorFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceVendedor, new { @class = "form-control", @type = "text", @id = "txtAdvanceVendedor" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Vendedor!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceVendedorMultiple, varSpartan_User_Vendedor,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceVendedor"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Tipo_de_Descuento</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Tipo_de_DescuentoFilter, filters, new { @class = "form-control", @id = "ddlTipo_de_DescuentoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceTipo_de_Descuento, new { @class = "form-control", @type = "text", @id = "txtAdvanceTipo_de_Descuento" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varTipos_de_Descuento_Tipo_de_Descuento!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceTipo_de_DescuentoMultiple, varTipos_de_Descuento_Tipo_de_Descuento,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceTipo_de_Descuento"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Descuento</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromDescuento, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceFromDescuento" })
+                    @Html.ValidationMessageFor(m => m.FromDescuento)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToDescuento, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceToDescuento", @data_min = "txtAdvanceFromDescuento" })
+                    @Html.ValidationMessageFor(m => m.ToDescuento)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Texto_promocional</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Texto_promocionalFilter, filters, new { @class = "form-control", @id = "ddlTexto_promocionalFilter" })
+                    @Html.TextBoxFor(m => m.Texto_promocional, new { @class = "form-control", @type = "text", @id = "txtTexto_promocional" })
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Fecha_inicio_vigencia</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_inicio_vigencia" name="FromFecha_inicio_vigencia" type="text" value="@Model.FromFecha_inicio_vigencia" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_inicio_vigencia" name="ToFecha_inicio_vigencia" type="text" value="@Model.ToFecha_inicio_vigencia" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Fecha_fin_vigencia</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_fin_vigencia" name="FromFecha_fin_vigencia" type="text" value="@Model.FromFecha_fin_vigencia" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_fin_vigencia" name="ToFecha_fin_vigencia" type="text" value="@Model.ToFecha_fin_vigencia" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Cantidad_maxima_de_referenciados</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromCantidad_maxima_de_referenciados, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromCantidad_maxima_de_referenciados" })
+                    @Html.ValidationMessageFor(m => m.FromCantidad_maxima_de_referenciados)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToCantidad_maxima_de_referenciados, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToCantidad_maxima_de_referenciados", @data_min = "txtAdvanceFromCantidad_maxima_de_referenciados" })
+                    @Html.ValidationMessageFor(m => m.ToCantidad_maxima_de_referenciados)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Codigo_de_descuento</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Codigo_de_descuentoFilter, filters, new { @class = "form-control", @id = "ddlCodigo_de_descuentoFilter" })
+                    @Html.TextBoxFor(m => m.Codigo_de_descuento, new { @class = "form-control", @type = "text", @id = "txtCodigo_de_descuento" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Estatus</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EstatusFilter, filters, new { @class = "form-control", @id = "ddlEstatusFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEstatus, new { @class = "form-control", @type = "text", @id = "txtAdvanceEstatus" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varEstatus_de_Codigos_de_Descuento_Estatus!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEstatusMultiple, varEstatus_de_Codigos_de_Descuento_Estatus,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEstatus"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Fecha_de_autorizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_autorizacion" name="FromFecha_de_autorizacion" type="text" value="@Model.FromFecha_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_autorizacion" name="ToFecha_de_autorizacion" type="text" value="@Model.ToFecha_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Codigos_de_DescuentoResources.Hora_de_autorizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_autorizacion" name="FromHora_de_autorizacion" type="text" value="@Model.FromHora_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_autorizacion" name="ToHora_de_autorizacion" type="text" value="@Model.ToHora_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Usuario_que_autoriza</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_autorizaFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_autorizaFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_autoriza, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_autoriza" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_autoriza!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_autorizaMultiple, varSpartan_User_Usuario_que_autoriza,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_autoriza"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Observaciones</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.ObservacionesFilter, filters, new { @class = "form-control", @id = "ddlObservacionesFilter" })
+                    @Html.TextBoxFor(m => m.Observaciones, new { @class = "form-control", @type = "text", @id = "txtObservaciones" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Codigos_de_DescuentoResources.Resultado</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.ResultadoFilter, filters, new { @class = "form-control", @id = "ddlResultadoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceResultado, new { @class = "form-control", @type = "text", @id = "txtAdvanceResultado" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varResultado_de_Autorizacion_Resultado!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceResultadoMultiple, varResultado_de_Autorizacion_Resultado,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceResultado"
+                        });
+                    }
+                </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/Codigos_de_Descuento/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.Codigos_de_DescuentoFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        if ($("#txtAdvanceFromFecha_de_Registro").val() != "" || $("#txtAdvanceToFecha_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoFecha_de_RegistroFrom = $("#txtAdvanceFromFecha_de_Registro").val();
+            advanceSearch.Codigos_de_DescuentoFecha_de_RegistroTo = $("#txtAdvanceToFecha_de_Registro").val();
+        }
+        if ($("#txtAdvanceHora_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoHora_de_Registro = $("#txtAdvanceHora_de_Registro").val();
+            advanceSearch.Codigos_de_DescuentoHora_de_RegistroSearchType = $("#ddlAdvanceHora_de_RegistroFilter").val();
+        }
+        advanceSearch.Usuario_que_RegistraSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_Registra').val().length > 0 || $("#txtAdvanceUsuario_que_Registra").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.Usuario_que_RegistraName = $("#txtAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraNameSearchType = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_RegistraToSearch = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 2;
+            }
+        }
+        advanceSearch.Tipo_de_VendedorSearchType = 0;
+        if ($('#ddlAdvanceTipo_de_Vendedor').val().length > 0 || $("#txtAdvanceTipo_de_Vendedor").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.Tipo_de_VendedorName = $("#txtAdvanceTipo_de_Vendedor").val();
+                advanceSearch.Tipo_de_VendedorNameSearchType = $("#ddlAdvanceTipo_de_Vendedor").val();
+                advanceSearch.Tipo_de_VendedorSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Tipo_de_VendedorToSearch = $("#ddlAdvanceTipo_de_Vendedor").val();
+                advanceSearch.Tipo_de_VendedorSearchType = 2;
+            }
+        }
+        advanceSearch.VendedorSearchType = 0;
+        if ($('#ddlAdvanceVendedor').val().length > 0 || $("#txtAdvanceVendedor").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.VendedorName = $("#txtAdvanceVendedor").val();
+                advanceSearch.VendedorNameSearchType = $("#ddlAdvanceVendedor").val();
+                advanceSearch.VendedorSearchType = 1;
+            }
+            else {
+
+                advanceSearch.VendedorToSearch = $("#ddlAdvanceVendedor").val();
+                advanceSearch.VendedorSearchType = 2;
+            }
+        }
+        advanceSearch.Tipo_de_DescuentoSearchType = 0;
+        if ($('#ddlAdvanceTipo_de_Descuento').val().length > 0 || $("#txtAdvanceTipo_de_Descuento").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.Tipo_de_DescuentoName = $("#txtAdvanceTipo_de_Descuento").val();
+                advanceSearch.Tipo_de_DescuentoNameSearchType = $("#ddlAdvanceTipo_de_Descuento").val();
+                advanceSearch.Tipo_de_DescuentoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Tipo_de_DescuentoToSearch = $("#ddlAdvanceTipo_de_Descuento").val();
+                advanceSearch.Tipo_de_DescuentoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromDescuento").val() != "" || $("#txtAdvanceToDescuento").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoDescuentoFrom = $("#txtAdvanceFromDescuento").val();
+            advanceSearch.Codigos_de_DescuentoDescuentoTo = $("#txtAdvanceToDescuento").val();
+        }
+        if ($("#txtAdvanceTexto_promocional").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoTexto_promocional = $("#txtAdvanceTexto_promocional").val();
+            advanceSearch.Codigos_de_DescuentoTexto_promocionalSearchType = $("#ddlAdvanceTexto_promocionalFilter").val();
+        }
+        if ($("#txtAdvanceFromFecha_inicio_vigencia").val() != "" || $("#txtAdvanceToFecha_inicio_vigencia").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoFecha_inicio_vigenciaFrom = $("#txtAdvanceFromFecha_inicio_vigencia").val();
+            advanceSearch.Codigos_de_DescuentoFecha_inicio_vigenciaTo = $("#txtAdvanceToFecha_inicio_vigencia").val();
+        }
+        if ($("#txtAdvanceFromFecha_fin_vigencia").val() != "" || $("#txtAdvanceToFecha_fin_vigencia").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoFecha_fin_vigenciaFrom = $("#txtAdvanceFromFecha_fin_vigencia").val();
+            advanceSearch.Codigos_de_DescuentoFecha_fin_vigenciaTo = $("#txtAdvanceToFecha_fin_vigencia").val();
+        }
+        if ($("#txtAdvanceFromCantidad_maxima_de_referenciados").val() != "" || $("#txtAdvanceToCantidad_maxima_de_referenciados").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoCantidad_maxima_de_referenciadosFrom = $("#txtAdvanceFromCantidad_maxima_de_referenciados").val();
+            advanceSearch.Codigos_de_DescuentoCantidad_maxima_de_referenciadosTo = $("#txtAdvanceToCantidad_maxima_de_referenciados").val();
+        }
+        if ($("#txtAdvanceCodigo_de_descuento").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoCodigo_de_descuento = $("#txtAdvanceCodigo_de_descuento").val();
+            advanceSearch.Codigos_de_DescuentoCodigo_de_descuentoSearchType = $("#ddlAdvanceCodigo_de_descuentoFilter").val();
+        }
+        advanceSearch.EstatusSearchType = 0;
+        if ($('#ddlAdvanceEstatus').val().length > 0 || $("#txtAdvanceEstatus").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.EstatusName = $("#txtAdvanceEstatus").val();
+                advanceSearch.EstatusNameSearchType = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 1;
+            }
+            else {
+
+                advanceSearch.EstatusToSearch = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_de_autorizacion").val() != "" || $("#txtAdvanceToFecha_de_autorizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoFecha_de_autorizacionFrom = $("#txtAdvanceFromFecha_de_autorizacion").val();
+            advanceSearch.Codigos_de_DescuentoFecha_de_autorizacionTo = $("#txtAdvanceToFecha_de_autorizacion").val();
+        }
+        if ($("#txtAdvanceHora_de_autorizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoHora_de_autorizacion = $("#txtAdvanceHora_de_autorizacion").val();
+            advanceSearch.Codigos_de_DescuentoHora_de_autorizacionSearchType = $("#ddlAdvanceHora_de_autorizacionFilter").val();
+        }
+        advanceSearch.Usuario_que_autorizaSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_autoriza').val().length > 0 || $("#txtAdvanceUsuario_que_autoriza").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.Usuario_que_autorizaName = $("#txtAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaNameSearchType = $("#ddlAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_autorizaToSearch = $("#ddlAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceObservaciones").val() != "") {
+            hasParameter = true;
+            advanceSearch.Codigos_de_DescuentoObservaciones = $("#txtAdvanceObservaciones").val();
+            advanceSearch.Codigos_de_DescuentoObservacionesSearchType = $("#ddlAdvanceObservacionesFilter").val();
+        }
+        advanceSearch.ResultadoSearchType = 0;
+        if ($('#ddlAdvanceResultado').val().length > 0 || $("#txtAdvanceResultado").val() == "") {
+
+
+            if (isCodigos_de_DescuentoTextSearch) {
+                advanceSearch.ResultadoName = $("#txtAdvanceResultado").val();
+                advanceSearch.ResultadoNameSearchType = $("#ddlAdvanceResultado").val();
+                advanceSearch.ResultadoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.ResultadoToSearch = $("#ddlAdvanceResultado").val();
+                advanceSearch.ResultadoSearchType = 2;
+            }
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblCodigos_de_Descuento').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isCodigos_de_DescuentoTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceUsuario_que_Registra").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceUsuario_que_Registra").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_Registra").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceUsuario_que_Registra").val('');
+        });
+        $("#txtAdvanceTipo_de_Vendedor").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceTipo_de_Vendedor").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceTipo_de_Vendedor").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceTipo_de_Vendedor").val('');
+        });
+        $("#txtAdvanceVendedor").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceVendedor").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceVendedor").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceVendedor").val('');
+        });
+        $("#txtAdvanceTipo_de_Descuento").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceTipo_de_Descuento").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceTipo_de_Descuento").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceTipo_de_Descuento").val('');
+        });
+        $("#txtAdvanceEstatus").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceEstatus").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEstatus").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceEstatus").val('');
+        });
+        $("#txtAdvanceUsuario_que_autoriza").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceUsuario_que_autoriza").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_autoriza").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceUsuario_que_autoriza").val('');
+        });
+        $("#txtAdvanceResultado").keypress(function () {
+            isCodigos_de_DescuentoTextSearch = true;
+            $("#ddlAdvanceResultado").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceResultado").change(function () {
+            isCodigos_de_DescuentoTextSearch = false;
+            $("#txtAdvanceResultado").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

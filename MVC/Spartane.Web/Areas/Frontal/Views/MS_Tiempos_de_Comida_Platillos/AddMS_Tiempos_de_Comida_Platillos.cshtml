@@ -1,0 +1,447 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.MS_Tiempos_de_Comida_PlatillosModel
+@{
+
+
+    List<SelectListItem> varTiempos_de_Comida_Tiempo_de_Comida = null;
+    if (ViewBag.Tiempos_de_Comidas_Tiempo_de_Comida != null)
+    { varTiempos_de_Comida_Tiempo_de_Comida = (List<SelectListItem>)ViewBag.Tiempos_de_Comidas_Tiempo_de_Comida; }
+
+
+    Permission permission = ViewBag.Permission;
+}
+<div class="modal-dialog" style="width:95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Add MS Tiempos de Comida Platillos
+                <button data-dismiss="modal" class="close" type="button" onclick="@(ViewBag.functionMode == 0 ? "MS_Tiempos_de_Comida_PlatillosRemoveAddRow("+ ViewBag.currentRowIndex +")" : "")"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            </h4>
+        </div>
+        <div class="modal-body scroll_content">
+            <div class="form-horizontal MS_Tiempos_de_Comida_PlatillosPop_@ViewBag.currentRowIndex">
+				<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" id="lblAttributeType">Value</label>
+									<div class="col-sm-7">
+										<input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+									</div>
+									<div class="col-sm-2">
+										<a class="btn btn-primary" onclick="SaveValue()">Submit</a>
+									</div>
+									<input type="hidden" id="hdnAttributType" />
+									<input type="hidden" id="hdnAttributElement" />
+									<input type="hidden" id="hdnAttributNumber" />
+									<input type="hidden" id="hdnElementType" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row wrapper border-bottom white-bg page-heading">
+
+					<div class="row">
+						<div class="col-lg-10">
+							<h2>
+								MS Tiempos de Comida Platillos
+								<button onclick="MS_Tiempos_de_Comida_PlatillosGetBusinessRule('', 'Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MS_Tiempos_de_Comida_PlatillosBusinessRule-form">
+									<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+										<i class="fa fa-cogs fa-spin"></i>
+									</a>
+								</button>
+							</h2>
+							<ol class="breadcrumb">
+								<li>
+									<a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+								</li>
+								<li class="">
+									<label>@Resources.MS_Tiempos_de_Comida_PlatillosResources.MS_Tiempos_de_Comida_Platillos</label>
+								</li>
+								<li class="active">
+									<strong>@Resources.Resources.Create</strong>
+								</li>
+							</ol>
+						</div>
+						<div class="col-lg-2">
+
+							@{
+								if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+								{
+									<h2>&nbsp;</h2>
+									<button onclick="MS_Tiempos_de_Comida_PlatillosDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+										<i class="fa fa-cogs fa-spin"></i>
+									</button>
+
+									<div aria-hidden="true" class="modal fade in MS_Tiempos_de_Comida_PlatillosPropertyBusinessModal" id="MS_Tiempos_de_Comida_PlatillosPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">
+														Property & Business Rules
+														<button class="close" type="button" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">Properties</a>
+														</div>
+														<div class="clearfix col-sm-12">&nbsp;</div>
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#MS_Tiempos_de_Comida_PlatillosBusinessRule-form" onclick="MS_Tiempos_de_Comida_PlatillosGetBusinessRule()">Business Rule</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									 <div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Tiempos_de_Comida_PlatillosPropertyModal" id="MS_Tiempos_de_Comida_PlatillosPropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+									<div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Tiempos_de_Comida_PlatillosBusinessRuleModal" id="MS_Tiempos_de_Comida_PlatillosBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+                                    <div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Tiempos_de_Comida_PlatillosAddBusinessRuleModal" id="MS_Tiempos_de_Comida_PlatillosAddBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                                    </div>
+
+				
+								}
+							}
+						</div>
+					</div>
+
+				<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							@using (Html.BeginForm("Post", "MS_Tiempos_de_Comida_Platillos", FormMethod.Post, new { id = "CreateMS_Tiempos_de_Comida_Platillos", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+							{
+								<span id="popupNotification"></span>
+								<div class="container-fluid MS_Tiempos_de_Comida_PlatillosCreateForm" id="viewmodeledit">
+							<div class="tabs-container">
+											<ul class="nav nav-tabs">
+				@@groupers@@
+											</ul>
+										<div class="tab-content">
+				<div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.MS_Tiempos_de_Comida_PlatillosResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="260896" data-field-name="@Resources.MS_Tiempos_de_Comida_PlatillosResources.Folio">
+                                    <label class="form-control" for="MS_Tiempos_de_Comida_PlatillosFolio" id="MS_Tiempos_de_Comida_PlatillosFolio">@Model.Folio</label>
+                                </div>
+                            </div>
+<div class="form-group" id="divTiempo_de_Comida">
+	<label class="col-sm-2 control-label">@Resources.MS_Tiempos_de_Comida_PlatillosResources.Tiempo_de_Comida</label>
+	<div class="col-sm-8" data-field-id="Tiempo_de_Comida" data-attribute="260898" data-field-name="@Resources.MS_Tiempos_de_Comida_PlatillosResources.Tiempo_de_Comida">
+		<select class="form-control" data-val="true" data-val-number="The field Tiempo de Comida must be a number." data-val-required="The Tiempo de Comida field is required." id="MS_Tiempos_de_Comida_PlatillosTiempo_de_Comida" name="MS_Tiempos_de_Comida_PlatillosTiempo_de_Comida">
+			<option value=""></option>
+			@if (varTiempos_de_Comida_Tiempo_de_Comida != null){ 
+				foreach (var itemTiempo_de_Comida in varTiempos_de_Comida_Tiempo_de_Comida)
+				{
+					if (itemTiempo_de_Comida.Value == Convert.ToString(Model.Tiempo_de_Comida))
+					{
+						<option value="@itemTiempo_de_Comida.Value" selected>@itemTiempo_de_Comida.Text</option>
+					}
+					else
+					{
+						<option value="@itemTiempo_de_Comida.Value">@itemTiempo_de_Comida.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+
+								</div>	
+							</div>
+									<br />
+											<div class="form-actions fluid">
+												<input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+												<input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+												@if (!ViewBag.Consult)
+												{
+													<div id="dvSaveJob" style="display:inline-block"></div>
+
+													<button type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton">
+														<i class="fa fa-cogs fa-spin"></i>
+													</button>
+													<a title="@Resources.Resources.Configure" id="MS_Tiempos_de_Comida_PlatillosConfigureSave" name="MS_Tiempos_de_Comida_PlatillosConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success">@Resources.Resources.Configure</a>
+												}
+
+												<input type="hidden" id="hdnMS_Tiempos_de_Comida_PlatillosConfigureType" />
+												<input type="hidden" id="hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId" />
+												<input type="hidden" id="hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName" />
+												<input type="hidden" id="hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute" />
+
+												<input data-dismiss="modal" type="button" value="@Resources.Resources.Cancelar" class="btn btn-danger noConsult" data-bind="click: cancel" tabindex="16" />
+
+												<button onclick="MS_Tiempos_de_Comida_PlatillosGetBusinessRule('', 'Al Cancelar', '3')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MS_Tiempos_de_Comida_PlatillosBusinessRule-form">
+													<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+														<i class="fa fa-cogs fa-spin"></i>
+													</a>
+												</button>
+											</div>
+										</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+					<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+				</div>
+			</div>
+		</div>
+</div>
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/MS_Tiempos_de_Comida_Platillos.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/MS_Tiempos_de_Comida_PlatillosGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/MS_Tiempos_de_Comida_PlatillosCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/PlatillosCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        
+
+
+
+        $(document).ready(function () {
+			var currentIndex = @ViewBag.currentRowIndex
+
+            var MS_Tiempos_de_Comida_PlatillosRowElement = "MS_Tiempos_de_Comida_PlatillosPop_" + currentIndex.toString();
+            var abc = "if(dynamicFieldValidation('" + MS_Tiempos_de_Comida_PlatillosRowElement + "')){ MS_Tiempos_de_Comida_PlatillosInsertRowFromPopup(" + currentIndex + "); }";
+            var insertRowHTML = '<a class="btn btn-primary m-b" onclick="' + abc + '">Save</a>';
+            $('#dvSaveJob').html(insertRowHTML);
+			
+
+
+            initiateUIControls();
+            EjecutarValidacionesAlComienzo();
+			$('a').tooltip();
+        });
+
+
+
+        function initiateUIControls() {
+            $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+
+        }
+		
+		function SendMS_Tiempos_de_Comida_PlatillosData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateMS_Tiempos_de_Comida_Platillos").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateMS_Tiempos_de_Comida_Platillos")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+
+            var isNew = $('#hdnIsNew').val();
+           
+            if (checkClientValidate('MS_Tiempos_de_Comida_PlatillosCreateForm')) {
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/Post?IsNew=")' + isNew,
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+                    success: function (result) {
+                        if (result < 0) {
+                            showNotification("@Resources.Resources.ErrorSave", "error");
+                        } else {
+
+                            showNotification("@Resources.Resources.SaveSuccess", "success");
+                            callBack(result);
+                        }
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            return false;
+        };
+		
+        function GetPropertyBag() {
+            $.get('@Url.Action("MS_Tiempos_de_Comida_PlatillosPropertyBag", "MS_Tiempos_de_Comida_Platillos")', function (data) {
+                $(".PropertyModal").html(data);
+            });
+        }
+        function MS_Tiempos_de_Comida_PlatillosGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(FieldId);
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(FieldName);
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("BusinessRule", "BussinessRule")', { FieldId: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(), ObjectId: '44733', Attribute: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(), Screen: 'MS_Tiempos_de_Comida_Platillos' }, function (data) {
+                $(".MS_Tiempos_de_Comida_PlatillosBusinessRuleModal").html(data);
+            });
+        }
+        function MS_Tiempos_de_Comida_PlatillosGetAddBusinessRule(RuleId, FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null) {
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(FieldId);
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(FieldName);
+				$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("AddBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(), ObjectId: '44733', Attribute: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(), Screen: 'MS_Tiempos_de_Comida_Platillos' }, function (data) {
+                $(".MS_Tiempos_de_Comida_PlatillosAddBusinessRuleModal").html(data);
+                $(".datatable").DataTable();
+            });
+        }
+		function RemoveBusinessRule(RuleId) {
+			$.get('@Url.Action("RemoveBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(), ObjectId: '44733', Attribute: $('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(), Screen: 'MS_Tiempos_de_Comida_Platillos' }, function (data) {
+				$(".MS_Tiempos_de_Comida_PlatillosBusinessRuleModal").html(data);
+			});
+		}
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function BackToGrid() {
+        location.href = "@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnMS_Tiempos_de_Comida_PlatillosConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnMS_Tiempos_de_Comida_PlatillosConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnMS_Tiempos_de_Comida_PlatillosConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/MS_Tiempos_de_Comida_Platillos/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+                        var mainElementAttributes = '<div class="col-sm-2">';
+                        mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "Required" : "Not Required") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "Visible" : "In Visible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "Disabled" : "Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '</div>';
+                        $('#MS_Tiempos_de_Comida_Platillos' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+                        $('#MS_Tiempos_de_Comida_Platillos' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                    }
+					if (childElementObject != null) {
+						for (var i = 0; i < childElementObject.length; i++) {
+							$('.' + childElementObject[i].inputId + 'Header').show();
+							$('.' + childElementObject[i].inputId).parent().show();
+							$('.' + childElementObject[i].inputId + 'Header').append(returnAttributeHTML(i));
+						}
+					}
+                    $('#MS_Tiempos_de_Comida_PlatillosConfigureSave').text('Save Settings');
+                    $('#hdnMS_Tiempos_de_Comida_PlatillosConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateMS_Tiempos_de_Comida_Platillos').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldId').val(fieldId);
+			$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleFieldName').val(fieldName);
+			$('#hdnMS_Tiempos_de_Comida_PlatillosBusinessRuleAttribute').val(attribute);
+		});
+		//Initialize HTML Editors
+		
+    </script>

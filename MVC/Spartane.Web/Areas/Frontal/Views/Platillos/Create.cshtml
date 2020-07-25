@@ -1,0 +1,1880 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.PlatillosModel
+@{
+    Spartane_File attachedFileImagen = (Spartane_File)ViewBag.ImagenSpartane_File;
+
+/*
+    string Fecha_de_Registro = "";
+    if (Model.Fecha_de_Registro == "")
+    { Model.Fecha_de_Registro = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+
+*/
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varTipo_de_comida_platillos_Tipo_de_comida = null;
+    if (ViewBag.Tipo_de_comida_platilloss_Tipo_de_comida != null)
+    { varTipo_de_comida_platillos_Tipo_de_comida = (List<SelectListItem>)ViewBag.Tipo_de_comida_platilloss_Tipo_de_comida; }
+
+    Permission permissionMS_Calorias = ViewBag.PermissionMS_Calorias;
+    Permission permissionMS_Dificultad_Platillos = ViewBag.PermissionMS_Dificultad_Platillos;
+    Permission permissionMS_Padecimientos = ViewBag.PermissionMS_Padecimientos;
+    Permission permissionMS_Tiempos_de_Comida_Platillos = ViewBag.PermissionMS_Tiempos_de_Comida_Platillos;
+    Permission permissionMS_Caracteristicas_Platillo = ViewBag.PermissionMS_Caracteristicas_Platillo;
+    Permission permissionMR_Detalle_Platillo = ViewBag.PermissionMR_Detalle_Platillo;
+
+    Permission permission = ViewBag.Permission;
+	/*CODMANINI-ADD*/
+	permission.Configure = false;	
+	/*CODMANFIN-ADD*/
+	
+	if (ViewBag.IsPartial || ViewBag.viewInEframe)
+   { 
+       Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+   }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.PlatillosResources.Platillos
+                <button onclick="PlatillosGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#PlatillosBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                @if (Session["PhaseName"] != null)
+                {
+                    <strong>@Session["PhaseName"].ToString()</strong>
+                }
+                else
+                {
+                    <strong>@Resources.PlatillosResources.Platillos</strong>
+                }
+                
+            </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+            @{
+                if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+                {
+                    <h2>&nbsp;</h2>
+                    <button onclick="PlatillosDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </button>
+
+                    <div aria-hidden="true" class="modal fade in PlatillosPropertyBusinessModal" id="PlatillosPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">
+                                          @Resources.Resources.titleBussinesRules
+                                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">@Resources.Resources.Close</span></button>
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">@Resources.Resources.Property</a>
+                                        </div>
+                                        <div class="clearfix col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#PlatillosBusinessRule-form" onclick="PlatillosGetBusinessRule()">Business Rule</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div aria-hidden="true" data-backdrop="static" class="modal fade in PropertyModal" id="PropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+					<div aria-hidden="true" data-backdrop="static" class="modal fade in PlatillosBusinessRuleModal" id="PlatillosBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+
+
+                }
+            }
+                    <div aria-hidden="true" class="modal fade in AddMS_CaloriasModal" id="AddMS_Calorias-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+                    <div aria-hidden="true" class="modal fade in AddMS_Dificultad_PlatillosModal" id="AddMS_Dificultad_Platillos-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+                    <div aria-hidden="true" class="modal fade in AddMS_PadecimientosModal" id="AddMS_Padecimientos-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+                    <div aria-hidden="true" class="modal fade in AddMS_Tiempos_de_Comida_PlatillosModal" id="AddMS_Tiempos_de_Comida_Platillos-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+                    <div aria-hidden="true" class="modal fade in AddMS_Caracteristicas_PlatilloModal" id="AddMS_Caracteristicas_Platillo-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+                    <div aria-hidden="true" class="modal fade in AddMR_Detalle_PlatilloModal" id="AddMR_Detalle_Platillo-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+
+        </div>
+    </div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @using (Html.BeginForm("Post", "Platillos", FormMethod.Post, new { id = "CreatePlatillos", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+            {
+                                <input type="hidden" id="hdnIsNew" name="hdnIsNew" value="@ViewBag.IsNew.ToString()" />
+                <span id="popupNotification"></span>
+                <div class="container-fluid PlatillosCreateForm" id="viewmodeledit">
+				 <div class="alert alert-warning" id="controlsRequerid" style="display:none">
+                        <a href="#" class="close" onclick="$('#controlsRequerid').hide();">&times;</a>
+                        <span id="textRequired"></span>
+                 </div>
+			<div class="tabs-container">
+                        	<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#tabDatos_Generales"> @Resources.PlatillosResources.TabDatos_Generales</a></li>
+
+                        	</ul>
+	                	<div class="tab-content">
+                            <div id="tabDatos_Generales" class="tab-pane active">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="254823" data-field-name="@Resources.PlatillosResources.Folio">
+                                    <label class="form-control" for="Folio" id="lblFolio">
+                                    @if (Model.Folio== 0)
+                                        {
+                                            <text>@Resources.Resources.ClaveDefault</text>
+                                        }
+                                        else
+                                        { 
+                                            <text>@Model.Folio</text>
+                                        }
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divFecha_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Fecha_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Registro" data-attribute="254824" data-field-name="@Resources.PlatillosResources.Fecha_de_Registro">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_de_Registro"  name="Fecha_de_Registro" type="text" value="@Model.Fecha_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Hora_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_Registro" data-attribute="254838" data-field-name="@Resources.PlatillosResources.Hora_de_Registro">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Hora_de_Registro"  name="Hora_de_Registro" type="text" data-autoclose="true" value="@Model.Hora_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_Registra">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Usuario_que_Registra</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_Registra" data-attribute="254839" data-field-name="@Resources.PlatillosResources.Usuario_que_Registra">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Usuario que Registra must be a number." data-val-required="The Usuario que Registra field is required." id="Usuario_que_Registra" name="Usuario_que_Registra">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_Registra != null){ 
+                                            foreach (var itemUsuario_que_Registra in varSpartan_User_Usuario_que_Registra)
+                                            {
+                                                if (itemUsuario_que_Registra.Value == Convert.ToString(Model.Usuario_que_Registra))
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value" selected>@itemUsuario_que_Registra.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value">@itemUsuario_que_Registra.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_Registra" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 254839).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_Registra');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divNombre_de_Platillo">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Nombre_de_Platillo</label>
+                                <div class="col-sm-8" data-field-id="Nombre_de_Platillo" data-attribute="254840" data-field-name="@Resources.PlatillosResources.Nombre_de_Platillo">
+                                    <textarea id="Nombre_de_Platillo" name="Nombre_de_Platillo" class="form-control Datos_Generales" rows="4" cols="50">@Model.Nombre_de_Platillo</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Nombre_de_Platillo" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            @if (attachedFileImagen != null && attachedFileImagen.File_Id > 0)
+                            {
+                                <div class="form-group" id="divAttachmentImagen">
+                                    <label class="col-sm-2 control-label">@Resources.Resources.PreviouslyAttachedFile</label>
+                                    <div class="col-sm-8 Datos_Generales" data-field-id="Imagen" data-attribute="254841" data-field-name="@Resources.PlatillosResources.Imagen">
+                                        <a href="@Url.Content("~/Frontal/Platillos/GetFile")?id=@attachedFileImagen.File_Id" target="_blank">@attachedFileImagen.Description</a>
+										@*CODMANINI-UPD*@
+                                        <span title="Remover imagen" onmouseover="this.style.cursor='pointer';" onclick="RemoveAttachmentMainImagen('@attachedFileImagen.File_Id')"><i class="fas fa-unlink"></i></span>										                                        
+										@*CODMANFIN-UPD*@
+                                    </div>
+                                    <input id="hdnRemoveImagen" name="RemoveImagen" value="0" type="hidden" />
+                                    <input class="form-control col-md-12 Datos_Generales" id="hdnAttachedImagen" type="hidden" name="Imagen" value="@Model.Imagen">
+                                </div>
+                            }
+                            <div class="form-group" id="divImagen">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Imagen</label>
+                                <div class="col-sm-8" data-field-id="Imagen" data-attribute="254841" data-field-name="@Resources.PlatillosResources.Imagen">
+                                    <input type="file" name="ImagenFile" id="ImagenFile" class="form-control" />
+                                </div>
+                            </div>
+                        <div class="form-group" id="divCalorias">
+	                     <label class="col-sm-2 control-label">@Resources.PlatillosResources.Calorias</label>
+	                     <div class="col-sm-8" data-field-id="Calorias" data-attribute="254844" data-field-name="@Resources.PlatillosResources.Calorias">
+		                  <select id="ddlCaloriasMult" name="ddlCaloriasMult" class="form-control chosen-select" multiple="multiple">
+		                  </select>
+	                     </div>
+                        </div>
+                        <div class="form-group" id="divDificultad">
+	                     <label class="col-sm-2 control-label">@Resources.PlatillosResources.Dificultad</label>
+	                     <div class="col-sm-8" data-field-id="Dificultad" data-attribute="254845" data-field-name="@Resources.PlatillosResources.Dificultad">
+		                  <select id="ddlDificultadMult" name="ddlDificultadMult" class="form-control chosen-select" multiple="multiple">
+		                  </select>
+	                     </div>
+                        </div>
+                        <div class="form-group" id="divCategoria_del_Platillo">
+	                     <label class="col-sm-2 control-label">@Resources.PlatillosResources.Categoria_del_Platillo</label>
+	                     <div class="col-sm-8" data-field-id="Categoria_del_Platillo" data-attribute="254846" data-field-name="@Resources.PlatillosResources.Categoria_del_Platillo">
+		                  <select id="ddlCategoria_del_PlatilloMult" name="ddlCategoria_del_PlatilloMult" class="form-control chosen-select" multiple="multiple">
+		                  </select>
+	                     </div>
+                        </div>
+                        <div class="form-group" id="divTiempo_de_comida">
+	                     <label class="col-sm-2 control-label">@Resources.PlatillosResources.Tiempo_de_comida</label>
+	                     <div class="col-sm-8" data-field-id="Tiempo_de_comida" data-attribute="254847" data-field-name="@Resources.PlatillosResources.Tiempo_de_comida">
+		                  <select id="ddlTiempo_de_comidaMult" name="ddlTiempo_de_comidaMult" class="form-control chosen-select" multiple="multiple">
+		                  </select>
+	                     </div>
+                        </div>
+                            <div class="form-group" id="divTipo_de_comida">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Tipo_de_comida</label>
+                                <div class="col-sm-8" data-field-id="Tipo_de_comida" data-attribute="259624" data-field-name="@Resources.PlatillosResources.Tipo_de_comida">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Tipo de comida must be a number." data-val-required="The Tipo de comida field is required." id="Tipo_de_comida" name="Tipo_de_comida">
+                                        <option value=""></option>
+                                        @if (varTipo_de_comida_platillos_Tipo_de_comida != null){ 
+                                            foreach (var itemTipo_de_comida in varTipo_de_comida_platillos_Tipo_de_comida)
+                                            {
+                                                if (itemTipo_de_comida.Value == Convert.ToString(Model.Tipo_de_comida))
+                                                {
+                                                    <option value="@itemTipo_de_comida.Value" selected>@itemTipo_de_comida.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemTipo_de_comida.Value">@itemTipo_de_comida.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Tipo_de_comida" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 259624).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Tipo_de_comida_platillos', 'Tipo_de_comida');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                        <div class="form-group" id="divCaracteristicas">
+	                     <label class="col-sm-2 control-label">@Resources.PlatillosResources.Caracteristicas</label>
+	                     <div class="col-sm-8" data-field-id="Caracteristicas" data-attribute="259625" data-field-name="@Resources.PlatillosResources.Caracteristicas">
+		                  <select id="ddlCaracteristicasMult" name="ddlCaracteristicasMult" class="form-control chosen-select" multiple="multiple">
+		                  </select>
+	                     </div>
+                        </div>
+                            <div class="form-group" id="divCalificacion">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Calificacion</label>
+                                <div class="col-sm-8" data-field-id="Calificacion" data-attribute="254856" data-field-name="@Resources.PlatillosResources.Calificacion">
+                                    <input class="form-control Datos_Generales" id="Calificacion" name="Calificacion" type="text" value="@Model.Calificacion">
+                                    @*<span class="field-validation-valid" data-valmsg-for="Calificacion" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            <div id="divIngredientes_del_Platillo">
+                            <div class="ibox-title">
+                                <h5>@Resources.PlatillosResources.Ingredientes_del_Platillo</h5>
+                                <div class="ibox-tools">
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="">
+									@*CODMANINI-UPD*@
+									@if (permissionMR_Detalle_Platillo.New && !ViewBag.Consult)
+                                    {
+                                        <a onclick="MR_Detalle_PlatillofnClickAddRow();" href="javascript:void(0);" title="@Resources.Resources.AddNewRow" class="MR_Detalle_PlatilloAddRow btn btn-primary">
+                                            Agregar Nueva Fila
+                                        </a>
+                                    }
+                                    <button onclick="PlatillosGetBusinessRule('', 'Al Guardar o al Eliminar una Row', '260854')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#PlatillosBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToCreateGrid">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>
+									@if (false)
+                                    {
+                                        <a onclick="MR_Detalle_PlatillofnOpenAddRowPopUp();" data-toggle="modal" title="@Resources.Resources.AddNewRow" data-target="#AddMR_Detalle_Platillo-form" data-backdrop="static" data-keyboard="false" class="btn_mrpopup btn btn-primary">
+                                            <i class="glyphicon glyphicon-new-window"></i>
+                                        </a>
+                                    }  
+									@*CODMANINI-UPD*@
+                                </div>
+
+                                <br />
+
+                                <div style='overflow-x: auto;'>
+                                    <table class="table table-striped table-bordered table-hover childValidateTable" id="MR_Detalle_PlatilloGrid">
+                                        <thead>
+                                            <tr>
+                                                <th class="ActionHeader"><span>@Resources.Resources.Actions</span></th>
+
+
+                                                <th class="IngredienteHeader"><span>
+<button type="button" data-attribute="260848" data-field-id="MR_Detalle_PlatilloIngrediente" data-field-name="@Resources.MR_Detalle_PlatilloResources.Ingrediente" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Ingrediente">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Ingrediente</span></th>
+                                                <th class="CantidadHeader"><span>
+<button type="button" data-attribute="260849" data-field-id="MR_Detalle_PlatilloCantidad" data-field-name="@Resources.MR_Detalle_PlatilloResources.Cantidad" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Cantidad">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Cantidad</span></th>
+                                                <th class="Cantidad_en_FraccionHeader"><span>
+<button type="button" data-attribute="260850" data-field-id="MR_Detalle_PlatilloCantidad_en_Fraccion" data-field-name="@Resources.MR_Detalle_PlatilloResources.Cantidad_en_Fraccion" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Cantidad_en_Fraccion">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Cantidad_en_Fraccion</span></th>
+                                                <th class="UnidadHeader"><span>
+<button type="button" data-attribute="260851" data-field-id="MR_Detalle_PlatilloUnidad" data-field-name="@Resources.MR_Detalle_PlatilloResources.Unidad" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Unidad">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Unidad</span></th>
+                                                <th class="Cantidad_a_mostrarHeader"><span>
+<button type="button" data-attribute="260978" data-field-id="MR_Detalle_PlatilloCantidad_a_mostrar" data-field-name="@Resources.MR_Detalle_PlatilloResources.Cantidad_a_mostrar" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Cantidad_a_mostrar">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Cantidad_a_mostrar</span></th>
+                                                <th class="Ingrediente_a_mostrarHeader"><span>
+<button type="button" data-attribute="260979" data-field-id="MR_Detalle_PlatilloIngrediente_a_mostrar" data-field-name="@Resources.MR_Detalle_PlatilloResources.Ingrediente_a_mostrar" data-toggle="modal" data-target="#PlatillosBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_Detalle_PlatilloResources.Ingrediente_a_mostrar">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_Detalle_PlatilloResources.Ingrediente_a_mostrar</span></th>
+
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="form-group" id="divModo_de_Preparacion">
+                                <label class="col-sm-2 control-label">@Resources.PlatillosResources.Modo_de_Preparacion</label>
+                                <div class="col-sm-8" data-field-id="Modo_de_Preparacion" data-attribute="257485" data-field-name="@Resources.PlatillosResources.Modo_de_Preparacion">
+                                    <textarea id="Modo_de_Preparacion" name="Modo_de_Preparacion" class="form-control Datos_Generales" rows="4" cols="50">@Model.Modo_de_Preparacion</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Modo_de_Preparacion" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            </div>
+                                </div>
+
+				</div>	
+                    <br />
+                            <div class="form-actions fluid">
+                                <input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+                                <input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+                                <input type="hidden" value="@ViewBag.Operation" name="Operation" id="Operation" />
+                                @if (!ViewBag.Consult)
+                                {
+                                    <input type="button" value="@Resources.Resources.Guardar" id="PlatillosGuardar" class="btn btn-w-m btn-primary btn_save" onclick="return checkClientValidate('PlatillosCreateForm');"  />
+									<button onclick="PlatillosGetBusinessRule('', 'Al Guardar o al Cerrar la Pantalla', '2')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#PlatillosBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleBeforeSave">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>                                    
+
+                                    <input type="button" value="@Resources.Resources.GuardarNuevo" id="PlatillosGuardarYNuevo" onclick="return checkClientValidate('PlatillosCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandnew"  />
+                                    <input type="button" value="@Resources.Resources.GuardarCopia" id="PlatillosGuardarYCopia" onclick="return checkClientValidate('PlatillosCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandcopy"  />
+                                    if (permission.Configure)
+                                    {
+                                        <a title="@Resources.Resources.Configure" id="ConfigureSave" name="ConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success btn-configure">@Resources.Resources.Configure</a>
+                                    }
+                                }
+
+                                <input type="hidden" id="hdnConfigureType" />
+								<input type="hidden" id="hdnPlatillosBusinessRuleFieldId" />
+                                <input type="hidden" id="hdnPlatillosBusinessRuleFieldName" />
+                                <input type="hidden" id="hdnPlatillosBusinessRuleAttribute" />
+
+                                <input type="button" value="@Resources.Resources.Cancelar" id="PlatillosCancelar" name="PlatillosCancelar" class="btn btn-danger noConsult btn_cancelar" data-bind="click: cancel" tabindex="16" />
+
+                                <button onclick="PlatillosGetBusinessRule('', 'Al Cancelar', '4')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#PlatillosBusinessRule-form">
+                                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                                        <i class="fa fa-cogs fa-spin"></i>
+                                    </a>
+                                </button>
+                            </div>
+						</div>
+					</div>
+                }
+        </div>
+    </div>
+</div>
+<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        /*i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }*/
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Platillos.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/PlatillosGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/PlatillosCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+<script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
+@section Scripts {
+
+
+    <script type="text/javascript">
+        
+        function RemoveAttachmentMainImagen () {
+            $("#hdnRemoveImagen").val("1");
+            $("#divAttachmentImagen").hide();
+        }
+
+
+	function GetTraduction(text) {
+         switch (text.toLowerCase()) {
+            case 'edit':
+                return "@Resources.Resources.Edit";          
+            case 'delete':
+                return "@Resources.Resources.Delete";               
+            case 'required':
+                return "@Resources.Resources.Required";              
+            case 'notrequired':
+                return "@Resources.Resources.NotRequired";           
+            case 'enabled':
+                return "@Resources.Resources.Enabled";         
+            case 'disabled':
+                return "@Resources.Resources.Disabled";           
+            case 'visible':
+                return "@Resources.Resources.Visible";            
+            case 'botvisible':
+                return "@Resources.Resources.InVisible";
+            case 'messagednoinvisible':
+                return "@Resources.Resources.messagedNoInVisible";
+            case 'messagednoreadonly':
+                return "@Resources.Resources.messagedNoReadOnly";
+            case 'defaultvalue':
+                return "@Resources.Resources.DefaultValue";
+            case 'helptext':
+                return "@Resources.Resources.HelpText";                     
+            default:
+                return "";
+        }
+    }
+	
+	    var viewInEframe =  ('@ViewBag.viewInEframe' == 'True');
+	    var isPartial = ('@ViewBag.IsPartial' == 'True');
+        var isMR = ('@ViewBag.isMR' == 'True');
+        var nameMR = '@ViewBag.nameMR';
+		var nameAttribute = '@ViewBag.nameAttribute';
+		var Tab_Datos_Generales = true;
+
+
+        $(document).ready(function () {
+            $('#ObjectId').val('43967');
+		               GetCalorias_MS_CaloriasItem();
+
+            GetDificultad_MS_Dificultad_PlatillosItem();
+
+            GetCategoria_del_Platillo_MS_PadecimientosItem();
+
+            GetTiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItem();
+
+            GetCaracteristicas_MS_Caracteristicas_PlatilloItem();
+
+              
+            GetMR_Detalle_Platillo_IngredientesItem();
+
+
+            GetMR_Detalle_Platillo_Unidades_de_MedidaItem();
+
+
+           
+              showMR_Detalle_PlatilloGrid(null);
+
+		   
+			
+             @if(ViewBag.IsNew)
+            { 
+                <text>$('input:checkbox').prop('checked', false);</text>
+            }
+			else
+            {
+                <text>
+				if (Tab_Datos_Generales)
+					Fill_Datos_Generales();
+
+
+                </text>
+             }
+             EjecutarValidacionesAlComienzo();
+                         $('#Fecha_de_Registro').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_Registro').clockpicker();
+
+
+            initiateUIControls();
+			$('a').tooltip();
+			$('.loading').css('display', 'none');
+			
+			 if (viewInEframe) {             
+                $('#PlatillosGuardarYNuevo').hide();
+                $('#PlatillosGuardarYCopia').hide();
+                $('#PlatillosCancelar').hide(); 
+                $('#ConfigureSave').hide();
+                $('#PlatillosGuardar').val('Actualizar Seccion ' + '@Resources.PlatillosResources.Platillos' )
+            }
+
+			
+			
+
+        });
+
+var MS_CaloriasDataDataTable;
+var MS_CaloriasTable;
+var Calorias_MS_CaloriasItems;
+        function GetCalorias_MS_CaloriasItem() {
+            Calorias_MS_CaloriasItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetCalorias_MS_CaloriasAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Calorias_MS_CaloriasItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+var MS_CaloriasData = [];
+function getMS_CaloriasData() {
+	$.ajax({
+		url: "@Url.Content("~/Frontal/Platillos/GetMS_Calorias")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+		type: 'GET',
+		dataType: "json",
+		async: false,
+		success: function (result) {
+			MS_CaloriasDataDataTable = result.data;
+			$("#ddlCaloriasMult").val(result.data);
+			$("#ddlCaloriasMult").trigger('chosen:updated');
+		},
+		error: function (result) {
+			showNotification("@Resources.Resources.ErrorContactingServer", "error");
+		}
+	});
+}
+
+function FillCalorias() {
+try {
+	for (var i = 0; i < Calorias_MS_CaloriasItems.length ; i++) {
+ 
+		var d = Calorias_MS_CaloriasItems[i]
+                $("#ddlCaloriasMult").append(new Option(
+		d.Cantidad, d.Clave
+));
+	}
+	$(".chosen-select").chosen({ width: "100%", no_results_text: "Oops, nothing found!" });
+	$('#ddlCaloriasMult').children("selected").each(function () {
+		$(this).prop("selected", false);
+	});
+
+	if (MS_CaloriasDataDataTable != undefined)
+	{
+		if (MS_CaloriasDataDataTable.length > 0)
+		{
+			var array = [];
+			for (var j = 0; j < MS_CaloriasDataDataTable.length; j++)
+			{
+                               
+				array.push(MS_CaloriasDataDataTable[j].Calorias);
+
+
+			}
+			$('#ddlCaloriasMult').val(array);
+		}  
+	}
+	$('#ddlCaloriasMult').trigger('chosen:updated');
+}
+catch (err) {
+	alert(err.message);
+}
+}
+function SendMS_Calorias(callBack, FolioId) {
+            MS_CaloriasData = GetMS_CaloriasFromDataTable();
+
+            if (MS_CaloriasData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMS_Calorias?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMS_Calorias(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function ShowMessagePendingRowMS_Calorias()
+        {
+            alert('@string.Format(Resources.Resources.PendingRow, "Calorías")')
+        }
+
+$(function () {
+FillCalorias();
+});
+var MS_Dificultad_PlatillosDataDataTable;
+var MS_Dificultad_PlatillosTable;
+var Dificultad_MS_Dificultad_PlatillosItems;
+        function GetDificultad_MS_Dificultad_PlatillosItem() {
+            Dificultad_MS_Dificultad_PlatillosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetDificultad_MS_Dificultad_PlatillosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Dificultad_MS_Dificultad_PlatillosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+var MS_Dificultad_PlatillosData = [];
+function getMS_Dificultad_PlatillosData() {
+	$.ajax({
+		url: "@Url.Content("~/Frontal/Platillos/GetMS_Dificultad_Platillos")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+		type: 'GET',
+		dataType: "json",
+		async: false,
+		success: function (result) {
+			MS_Dificultad_PlatillosDataDataTable = result.data;
+			$("#ddlDificultadMult").val(result.data);
+			$("#ddlDificultadMult").trigger('chosen:updated');
+		},
+		error: function (result) {
+			showNotification("@Resources.Resources.ErrorContactingServer", "error");
+		}
+	});
+}
+
+function FillDificultad() {
+try {
+	for (var i = 0; i < Dificultad_MS_Dificultad_PlatillosItems.length ; i++) {
+ 
+		var d = Dificultad_MS_Dificultad_PlatillosItems[i]
+                $("#ddlDificultadMult").append(new Option(
+		d.Categoria, d.Clave
+));
+	}
+	$(".chosen-select").chosen({ width: "100%", no_results_text: "Oops, nothing found!" });
+	$('#ddlDificultadMult').children("selected").each(function () {
+		$(this).prop("selected", false);
+	});
+
+	if (MS_Dificultad_PlatillosDataDataTable != undefined)
+	{
+		if (MS_Dificultad_PlatillosDataDataTable.length > 0)
+		{
+			var array = [];
+			for (var j = 0; j < MS_Dificultad_PlatillosDataDataTable.length; j++)
+			{
+                               
+				array.push(MS_Dificultad_PlatillosDataDataTable[j].Dificultad);
+
+
+			}
+			$('#ddlDificultadMult').val(array);
+		}  
+	}
+	$('#ddlDificultadMult').trigger('chosen:updated');
+}
+catch (err) {
+	alert(err.message);
+}
+}
+function SendMS_Dificultad_Platillos(callBack, FolioId) {
+            MS_Dificultad_PlatillosData = GetMS_Dificultad_PlatillosFromDataTable();
+
+            if (MS_Dificultad_PlatillosData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMS_Dificultad_Platillos?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMS_Dificultad_Platillos(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function ShowMessagePendingRowMS_Dificultad_Platillos()
+        {
+            alert('@string.Format(Resources.Resources.PendingRow, "Dificultad")')
+        }
+
+$(function () {
+FillDificultad();
+});
+var MS_PadecimientosDataDataTable;
+var MS_PadecimientosTable;
+var Categoria_del_Platillo_MS_PadecimientosItems;
+        function GetCategoria_del_Platillo_MS_PadecimientosItem() {
+            Categoria_del_Platillo_MS_PadecimientosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetCategoria_del_Platillo_MS_PadecimientosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Categoria_del_Platillo_MS_PadecimientosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+var MS_PadecimientosData = [];
+function getMS_PadecimientosData() {
+	$.ajax({
+		url: "@Url.Content("~/Frontal/Platillos/GetMS_Padecimientos")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+		type: 'GET',
+		dataType: "json",
+		async: false,
+		success: function (result) {
+			MS_PadecimientosDataDataTable = result.data;
+			$("#ddlCategoria_del_PlatilloMult").val(result.data);
+			$("#ddlCategoria_del_PlatilloMult").trigger('chosen:updated');
+		},
+		error: function (result) {
+			showNotification("@Resources.Resources.ErrorContactingServer", "error");
+		}
+	});
+}
+
+function FillCategoria_del_Platillo() {
+try {
+	for (var i = 0; i < Categoria_del_Platillo_MS_PadecimientosItems.length ; i++) {
+ 
+		var d = Categoria_del_Platillo_MS_PadecimientosItems[i]
+                $("#ddlCategoria_del_PlatilloMult").append(new Option(
+		d.Categoria, d.Clave
+));
+	}
+	$(".chosen-select").chosen({ width: "100%", no_results_text: "Oops, nothing found!" });
+	$('#ddlCategoria_del_PlatilloMult').children("selected").each(function () {
+		$(this).prop("selected", false);
+	});
+
+	if (MS_PadecimientosDataDataTable != undefined)
+	{
+		if (MS_PadecimientosDataDataTable.length > 0)
+		{
+			var array = [];
+			for (var j = 0; j < MS_PadecimientosDataDataTable.length; j++)
+			{
+                               
+				array.push(MS_PadecimientosDataDataTable[j].Categoria);
+
+
+			}
+			$('#ddlCategoria_del_PlatilloMult').val(array);
+		}  
+	}
+	$('#ddlCategoria_del_PlatilloMult').trigger('chosen:updated');
+}
+catch (err) {
+	alert(err.message);
+}
+}
+function SendMS_Padecimientos(callBack, FolioId) {
+            MS_PadecimientosData = GetMS_PadecimientosFromDataTable();
+
+            if (MS_PadecimientosData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMS_Padecimientos?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMS_Padecimientos(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function ShowMessagePendingRowMS_Padecimientos()
+        {
+            alert('@string.Format(Resources.Resources.PendingRow, "Categoría del Platillo")')
+        }
+
+$(function () {
+FillCategoria_del_Platillo();
+});
+var MS_Tiempos_de_Comida_PlatillosDataDataTable;
+var MS_Tiempos_de_Comida_PlatillosTable;
+var Tiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItems;
+        function GetTiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItem() {
+            Tiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetTiempo_de_comida_MS_Tiempos_de_Comida_PlatillosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Tiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+var MS_Tiempos_de_Comida_PlatillosData = [];
+function getMS_Tiempos_de_Comida_PlatillosData() {
+	$.ajax({
+		url: "@Url.Content("~/Frontal/Platillos/GetMS_Tiempos_de_Comida_Platillos")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+		type: 'GET',
+		dataType: "json",
+		async: false,
+		success: function (result) {
+			MS_Tiempos_de_Comida_PlatillosDataDataTable = result.data;
+			$("#ddlTiempo_de_comidaMult").val(result.data);
+			$("#ddlTiempo_de_comidaMult").trigger('chosen:updated');
+		},
+		error: function (result) {
+			showNotification("@Resources.Resources.ErrorContactingServer", "error");
+		}
+	});
+}
+
+function FillTiempo_de_comida() {
+try {
+	for (var i = 0; i < Tiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItems.length ; i++) {
+ 
+		var d = Tiempo_de_comida_MS_Tiempos_de_Comida_PlatillosItems[i]
+                $("#ddlTiempo_de_comidaMult").append(new Option(
+		d.Comida, d.Clave
+));
+	}
+	$(".chosen-select").chosen({ width: "100%", no_results_text: "Oops, nothing found!" });
+	$('#ddlTiempo_de_comidaMult').children("selected").each(function () {
+		$(this).prop("selected", false);
+	});
+
+	if (MS_Tiempos_de_Comida_PlatillosDataDataTable != undefined)
+	{
+		if (MS_Tiempos_de_Comida_PlatillosDataDataTable.length > 0)
+		{
+			var array = [];
+			for (var j = 0; j < MS_Tiempos_de_Comida_PlatillosDataDataTable.length; j++)
+			{
+                               
+				array.push(MS_Tiempos_de_Comida_PlatillosDataDataTable[j].Tiempo_de_Comida);
+
+
+			}
+			$('#ddlTiempo_de_comidaMult').val(array);
+		}  
+	}
+	$('#ddlTiempo_de_comidaMult').trigger('chosen:updated');
+}
+catch (err) {
+	alert(err.message);
+}
+}
+function SendMS_Tiempos_de_Comida_Platillos(callBack, FolioId) {
+            MS_Tiempos_de_Comida_PlatillosData = GetMS_Tiempos_de_Comida_PlatillosFromDataTable();
+
+            if (MS_Tiempos_de_Comida_PlatillosData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMS_Tiempos_de_Comida_Platillos?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMS_Tiempos_de_Comida_Platillos(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function ShowMessagePendingRowMS_Tiempos_de_Comida_Platillos()
+        {
+            alert('@string.Format(Resources.Resources.PendingRow, "Tiempo de comida")')
+        }
+
+$(function () {
+FillTiempo_de_comida();
+});
+var MS_Caracteristicas_PlatilloDataDataTable;
+var MS_Caracteristicas_PlatilloTable;
+var Caracteristicas_MS_Caracteristicas_PlatilloItems;
+        function GetCaracteristicas_MS_Caracteristicas_PlatilloItem() {
+            Caracteristicas_MS_Caracteristicas_PlatilloItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetCaracteristicas_MS_Caracteristicas_PlatilloAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Caracteristicas_MS_Caracteristicas_PlatilloItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+var MS_Caracteristicas_PlatilloData = [];
+function getMS_Caracteristicas_PlatilloData() {
+	$.ajax({
+		url: "@Url.Content("~/Frontal/Platillos/GetMS_Caracteristicas_Platillo")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+		type: 'GET',
+		dataType: "json",
+		async: false,
+		success: function (result) {
+			MS_Caracteristicas_PlatilloDataDataTable = result.data;
+			$("#ddlCaracteristicasMult").val(result.data);
+			$("#ddlCaracteristicasMult").trigger('chosen:updated');
+		},
+		error: function (result) {
+			showNotification("@Resources.Resources.ErrorContactingServer", "error");
+		}
+	});
+}
+
+function FillCaracteristicas() {
+try {
+	for (var i = 0; i < Caracteristicas_MS_Caracteristicas_PlatilloItems.length ; i++) {
+ 
+		var d = Caracteristicas_MS_Caracteristicas_PlatilloItems[i]
+                $("#ddlCaracteristicasMult").append(new Option(
+		d.Caracteristicas, d.Folio
+));
+	}
+	$(".chosen-select").chosen({ width: "100%", no_results_text: "Oops, nothing found!" });
+	$('#ddlCaracteristicasMult').children("selected").each(function () {
+		$(this).prop("selected", false);
+	});
+
+	if (MS_Caracteristicas_PlatilloDataDataTable != undefined)
+	{
+		if (MS_Caracteristicas_PlatilloDataDataTable.length > 0)
+		{
+			var array = [];
+			for (var j = 0; j < MS_Caracteristicas_PlatilloDataDataTable.length; j++)
+			{
+                               
+				array.push(MS_Caracteristicas_PlatilloDataDataTable[j].Caracteristicas);
+
+
+			}
+			$('#ddlCaracteristicasMult').val(array);
+		}  
+	}
+	$('#ddlCaracteristicasMult').trigger('chosen:updated');
+}
+catch (err) {
+	alert(err.message);
+}
+}
+function SendMS_Caracteristicas_Platillo(callBack, FolioId) {
+            MS_Caracteristicas_PlatilloData = GetMS_Caracteristicas_PlatilloFromDataTable();
+
+            if (MS_Caracteristicas_PlatilloData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMS_Caracteristicas_Platillo?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMS_Caracteristicas_Platillo(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function ShowMessagePendingRowMS_Caracteristicas_Platillo()
+        {
+            alert('@string.Format(Resources.Resources.PendingRow, "Características")')
+        }
+
+$(function () {
+FillCaracteristicas();
+});
+        var MR_Detalle_PlatilloinsertRowCurrentIndex = -1;
+        var MR_Detalle_PlatilloDataDataTable;
+        function getMR_Detalle_PlatilloData() {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Platillos/GetMR_Detalle_Platillo")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                    MR_Detalle_PlatilloDataDataTable = result.data;
+                    showMR_Detalle_PlatilloGrid(result.data);
+                    $('#MR_Detalle_PlatilloGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#MR_Detalle_PlatilloGrid .gridDatePicker').attr("readonly", "");
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+        function MR_Detalle_PlatilloGetUpdateRowControls(data, nameOfTable, rowIndex) {
+
+            var columnData = [];
+            var counter = 0;
+            var inputData = "<input type='text' class='fullWidth form-control' />";
+
+           columnData[counter++] = $($(GetMR_Detalle_Platillo_IngredientesDropDown()).val(data.Ingrediente)).addClass('Ingrediente inputNumber').attr('id', nameOfTable + 'Ingrediente' + rowIndex).attr('data-field', 'Ingrediente').after($.parseHTML(addNew('MR_Detalle_Platillo', 'Ingredientes','Ingrediente', 260848)));
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Cantidad)).addClass('Cantidad').attr('id', nameOfTable + 'Cantidad' + rowIndex).attr('data-field', 'Cantidad');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Cantidad_en_Fraccion)).addClass('Cantidad_en_Fraccion').attr('id', nameOfTable + 'Cantidad_en_Fraccion' + rowIndex).attr('data-field', 'Cantidad_en_Fraccion');
+           columnData[counter++] = $($(GetMR_Detalle_Platillo_Unidades_de_MedidaDropDown()).val(data.Unidad)).addClass('Unidad inputNumber').attr('id', nameOfTable + 'Unidad' + rowIndex).attr('data-field', 'Unidad').after($.parseHTML(addNew('MR_Detalle_Platillo', 'Unidades_de_Medida','Unidad', 260851)));
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Cantidad_a_mostrar)).addClass('Cantidad_a_mostrar').attr('id', nameOfTable + 'Cantidad_a_mostrar' + rowIndex).attr('data-field', 'Cantidad_a_mostrar');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Ingrediente_a_mostrar)).addClass('Ingrediente_a_mostrar').attr('id', nameOfTable + 'Ingrediente_a_mostrar' + rowIndex).attr('data-field', 'Ingrediente_a_mostrar');
+
+            return columnData;
+        }
+
+
+
+        function GetFileInfo(fileData, fileUploadData) {
+
+            var $div = $("<div>");
+            if (fileUploadData != null && fileUploadData.files.length > 0) {
+
+                $div.append("<label>" + fileUploadData.files[0].name + "</label>");
+                //<i class="fa fa-times-circle" id='removeFileAttachment'>
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+
+            } else if (fileUploadData != null) {
+                return $.parseHTML(GetFileUploader());
+            } else {
+                $div.append("<label>" + fileData.FileName + "</label>");
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+            }
+        }
+
+        var removedMR_Detalle_PlatilloData = [];
+        function MR_Detalle_PlatilloDeleteRow(rowIndex, row) {
+            var rowIndexTable = MR_Detalle_PlatilloTable.fnGetPosition($(row).parent().parent()[0]);
+            var permission = {            
+                 Delete: '@permissionMR_Detalle_Platillo.Delete' == 'True'
+            };
+            if (!permission.Delete || isConsultMode)
+                return;            
+            if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+              if (EjecutarValidacionesAlEliminarMRMR_Detalle_Platillo('MR_Detalle_Platillo_', '_' + rowIndex)) {
+                var prevData = MR_Detalle_PlatilloTable.fnGetData(rowIndexTable );
+                removedMR_Detalle_PlatilloData.push(prevData);
+                MR_Detalle_PlatilloTable.fnDeleteRow(rowIndexTable );
+				showMR_Detalle_PlatilloGrid(MR_Detalle_PlatilloTable.fnGetData());
+              }
+            }
+			initiateUIControls();
+        }
+
+        function MR_Detalle_PlatillorowCreationGrid(row, data, index) {
+            var permission =  {            
+                 Edit: '@permissionMR_Detalle_Platillo.Edit' == 'True',
+                 Delete: '@permissionMR_Detalle_Platillo.Delete' == 'True'
+            };
+            setMR_Detalle_PlatilloValidation();
+            var MR_Detalle_PlatilloRowElement = "MR_Detalle_Platillo_" + index.toString();
+            $(row).addClass(MR_Detalle_PlatilloRowElement);
+            var nameOfTable='MR_Detalle_Platillo_';
+            var rowIndex = '_' + index;
+            MR_Detalle_PlatilloinsertRowCurrentIndex = index;
+
+            row.innerHTML = "";
+
+            if (data.IsInsertRow) {
+
+                if (row.childNodes.length != 0) {
+                    for (var i = 0; i < row.childNodes.length; i++) {
+                        row.childNodes[i].remove();
+                    }
+                }
+                var controls = GetInsertMR_Detalle_PlatilloRowControls(index);
+                var actionColInsert = $('<td>');
+
+                var abc = "if(dynamicFieldValidation('" + MR_Detalle_PlatilloRowElement + "')){ MR_Detalle_PlatilloInsertRow(" + index + "); }";
+                var insertRowHTML = '<a  data-toggle="tooltip" title="Confirmar Registro" onclick="' + abc + '">';
+                $('<i class="fa fa-check">').appendTo($(insertRowHTML).appendTo(actionColInsert));
+				$('<i class="fa fa-times">').appendTo($("<a data-toggle='tooltip' title='Cancelar Registro' onclick='MR_Detalle_PlatilloCancelRow(" + index + ")'>").appendTo(actionColInsert));
+                actionColInsert.appendTo(row);
+
+                for (i = 0; i < controls.length; i++) {
+					var idHeader = $(controls[i]).data('field') + 'Header';
+					if($(controls[i]).length > 1){
+						idHeader = $($(controls[i])[1]).data('field') + 'Header';
+					}					
+
+					var classe = ($('#MR_Detalle_PlatilloGrid .' + idHeader).hasClass('dt-right') ? "dt-right" : "") + $('#MR_Detalle_PlatilloGrid .' + idHeader ).css('display') == 'none' ? " hide" : "";
+				   
+					if ($(controls[i]).next().length > 0) {
+					    var div = $(controls[i]).next();
+					    $('<td class="' + classe + '">').append($(controls[i])).append(div).appendTo(row);
+					}else
+					    $(controls[i]).appendTo($('<td class="' + classe + '">').appendTo(row));
+					
+                }
+                $('#MR_Detalle_PlatilloGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('#MR_Detalle_PlatilloGrid .gridDatePicker').attr("readonly", "");
+                return;
+            }
+
+            var actionCol = $('<td>');
+			var edit = "<a title='@Resources.Resources.Edit' class='edit-MR' onclick='MR_Detalle_PlatilloEditRow(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                edit = "";
+            var editPopUp = "<a title='@Resources.Resources.Edit' class='edit-popup-MR' data-toggle='modal' data-target='#AddMR_Detalle_Platillo-form' onclick='MR_Detalle_PlatilloEditRowPopup(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                editPopUp = "";
+            var eliminar = "<a title='@Resources.Resources.Delete' class='eliminar-MR' onclick='MR_Detalle_PlatilloDeleteRow(" + index + ", this)'>";
+            if (!permission.Delete || isConsultMode)
+                eliminar = "";
+            $('<i class="fa fa-pencil">').appendTo($(edit).appendTo(actionCol));
+            //$('<i class="fa fa-edit">').appendTo($(editPopUp).appendTo(actionCol));
+            $('<i class="fa fa-trash-o">').appendTo($(eliminar).appendTo(actionCol));
+			if ($('.Action' + 'Header').css('display') != 'none')
+				actionCol.appendTo(row);
+
+            if ($('.Ingrediente' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Ingrediente'+rowIndex+'">').text(GetMR_Detalle_Platillo_IngredientesName(data.Ingrediente)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Ingrediente'+rowIndex+'">').text(GetMR_Detalle_Platillo_IngredientesName(data.Ingrediente)).appendTo(row);
+            if ($('.Cantidad' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Cantidad'+rowIndex+'">').text(data.Cantidad).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Cantidad'+rowIndex+'">').text(data.Cantidad).appendTo(row);
+            if ($('.Cantidad_en_Fraccion' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Cantidad_en_Fraccion'+rowIndex+'">').text(data.Cantidad_en_Fraccion).appendTo(row);
+            else 
+                 $('<td style="display:none" class="dt-right"  id="'+nameOfTable+'Cantidad_en_Fraccion'+rowIndex+'">').text(data.Cantidad_en_Fraccion).appendTo(row);
+            if ($('.Unidad' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Unidad'+rowIndex+'">').text(GetMR_Detalle_Platillo_Unidades_de_MedidaName(data.Unidad)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Unidad'+rowIndex+'">').text(GetMR_Detalle_Platillo_Unidades_de_MedidaName(data.Unidad)).appendTo(row);
+            if ($('.Cantidad_a_mostrar' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Cantidad_a_mostrar'+rowIndex+'">').text(data.Cantidad_a_mostrar).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Cantidad_a_mostrar'+rowIndex+'">').text(data.Cantidad_a_mostrar).appendTo(row);
+            if ($('.Ingrediente_a_mostrar' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Ingrediente_a_mostrar'+rowIndex+'">').text(data.Ingrediente_a_mostrar).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Ingrediente_a_mostrar'+rowIndex+'">').text(data.Ingrediente_a_mostrar).appendTo(row);
+
+        }
+
+        var MR_Detalle_PlatilloTable;
+        function showMR_Detalle_PlatilloGrid(dataSet) {
+            //removedMR_Detalle_PlatilloData = [];
+            MR_Detalle_PlatilloTable = $('#MR_Detalle_PlatilloGrid').dataTable({
+                dom: '<"html5buttons"B>lTgitp',
+                buttons: [
+                ],
+                "createdRow": MR_Detalle_PlatillorowCreationGrid,
+                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "All"]],
+                data: dataSet,
+                "columns": [
+                    { "data": null, 'visible': true, "orderable": false },
+
+                    { "data": "Ingrediente", "orderable": false },
+                    { "data": "Cantidad", "orderable": false },
+                    { "data": "Cantidad_en_Fraccion","className": "dt-right", "orderable": false },
+                    { "data": "Unidad", "orderable": false },
+                    { "data": "Cantidad_a_mostrar", "orderable": false },
+                    { "data": "Ingrediente_a_mostrar", "orderable": false },
+
+                ],
+                "order": [[0, "asc"]],
+                "language": {
+                    "lengthMenu": "@Resources.Resources.Display" + " _MENU_ " + "@Resources.Resources.RecordsPerPage",
+                    "zeroRecords": "@Resources.Resources.NothingFound",
+                    "info": "@Resources.Resources.ShowingPages" + " _PAGE_ " + "@Resources.Resources.of" + " _PAGES_",
+                    "infoEmpty": "@Resources.Resources.NoRecords",
+                    "infoFiltered": "(" + "@Resources.Resources.FilteredFrom" + " _MAX_ " + "@Resources.Resources.TotalRecords" + ")",
+                    "sSearch": "@Resources.Resources.Search",
+                    "paginate": {
+                        "previous": "@Resources.Resources.Previous",
+                        "next": "@Resources.Resources.Next"
+                    }
+                },
+				"bDestroy": true,
+                "fnDrawCallback": function (settings) {
+                    setMR_Detalle_PlatilloValidation();
+                }
+            }).on('init.dt', function (e, data) {
+                $('a').tooltip();
+            }).on('draw.dt', function () {
+                $('#MR_Detalle_PlatilloGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('.gridDatePicker').inputmask("99-99-9999", { "placeholder": "dd-mm-yyyy" });
+            });
+        }
+
+
+    var MR_Detalle_Platillo_IngredientesItems;
+        function GetMR_Detalle_Platillo_IngredientesItem() {
+            MR_Detalle_Platillo_IngredientesItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetMR_Detalle_Platillo_IngredientesAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    MR_Detalle_Platillo_IngredientesItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+
+    var MR_Detalle_Platillo_Unidades_de_MedidaItems;
+        function GetMR_Detalle_Platillo_Unidades_de_MedidaItem() {
+            MR_Detalle_Platillo_Unidades_de_MedidaItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Platillos/GetMR_Detalle_Platillo_Unidades_de_MedidaAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    MR_Detalle_Platillo_Unidades_de_MedidaItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+
+
+        var MR_Detalle_PlatilloData = [];
+        var MR_Detalle_PlatillodeletedItem = [];
+        var MR_Detalle_PlatilloDataMain = [];
+        var MR_Detalle_PlatilloDataMainPages = [];
+        var MR_Detalle_PlatillonewItemCount = 0;
+        var MR_Detalle_PlatillomaxItemIndex = 0;
+        var MR_Detalle_PlatilloDataMainInitialized = false;
+
+        function SendMR_Detalle_Platillo(callBack, FolioId) {
+            MR_Detalle_PlatilloData = GetMR_Detalle_PlatilloFromDataTable();
+
+            if (MR_Detalle_PlatilloData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Platillos/PostMR_Detalle_Platillo?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMR_Detalle_Platillo(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function GetAddMR_Detalle_PlatilloPopup(currentRowIndex, mode, id) {
+
+            $.ajax({
+                url: "@Url.Action("AddMR_Detalle_Platillo", "MR_Detalle_Platillo")",
+                type: "GET",
+                async: false,
+                data: { rowIndex: currentRowIndex, functionMode: mode, id: id },
+                success: function (data) {
+                    $(".AddMR_Detalle_PlatilloModal").html(data);
+                },
+                error: function () {
+
+                }
+            });
+
+            @*$.get('@Url.Action("AddMR_Detalle_Platillo", "MR_Detalle_Platillo")', { rowIndex: currentRowIndex }, function (data) {
+                $(".AddMR_Detalle_PlatilloModal").html(data);
+            });*@
+        }
+
+        function ShowMessagePendingRowMR_Detalle_Platillo()
+        {
+            //alert('@Html.Raw(string.Format(Resources.Resources.PendingRow, "Ingredientes del Platillo"))')
+	    showNotification('@Html.Raw(string.Format(Resources.Resources.PendingRow, "Ingredientes del Platillo"))', "warning");
+        }
+
+
+        function initiateUIControls() {
+             $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+            $('.inputMoney').inputmask("currency", { greedy: false, prefix: "", rightAlign: false });
+			$('td.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+			$('td input.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+    </script>
+
+<script type="text/javascript">
+
+
+   function GetCatalogPopup(catalog, nameAttribute, isMR, nameMR) {
+        if (!isMR)
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, nameAttribute = "AttributoNombre" })";
+        else
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, isMR = true, nameMR = "Multirenglon",nameAttribute= "AttributoNombre" })";
+
+        url = url.replace("Catalog", catalog).replace("Multirenglon", nameMR).replace("AttributoNombre", nameAttribute);
+
+        window.open(htmlDecode(url), '_blank', 'left=200,top=100,width=850,height=550,toolbar=0,resizable=0');
+    }
+
+    function RefreshCatalog(catalog, control) {
+
+	 if ($('#' + control).hasClass('AutoComplete'))   {
+		   if ($('#' + control).attr("data-isfilter") == "true") {
+				eval(GetReglaFilter(control, $('#ObjectId').val()));
+				return;
+			}
+		}
+			
+			var url = '@Url.Content("~/Frontal/Platillos/GetCatalogAll")';
+			url = url.replace(/Catalog/g, catalog);
+
+			$.ajax({
+				url: url,
+				async: true,
+				success:function(result)
+				{
+					addItemsToSelect($('#' + control), result);
+				},
+				error: function (result)
+				{
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				}
+			});
+		
+    }
+
+
+        function SendPlatillosData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreatePlatillos").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreatePlatillos")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+			var id = $("#ReferenceFolio").val();
+            var isNew = $('#hdnIsNew').val();
+           
+			if (Tab_Datos_Generales && !checkClientValidate('PlatillosCreateForm', 'Datos_Generales')) {
+				return false;
+			}						
+
+
+			
+			if (isNew == "True")
+            {
+                id = CreateID();
+            }
+			
+			
+			if (Tab_Datos_Generales)
+				Save_Datos_Generales(id);
+
+
+			showNotification("@Resources.Resources.SaveSuccess", "success");
+			callBack(id);
+            return true;
+        };
+		function CreateID()
+		{
+			var newId = 0;
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Platillos/CreateID")',
+				type: 'GET',
+				async: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "error");
+					} else {
+						newId = result;
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+			return newId;
+		}
+		
+		function OpenRules()
+		{
+			$.get('@Url.Action("Index", "Business_Rule_Creation")', {}, function (data) {
+				$(".PlatillosBusinessRuleModal").html(data);
+			});
+		}
+                function PlatillosGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+			        $('#FieldId').val(FieldId);
+				$('#FieldName').val(FieldName);
+				$('#Attribute').val(Attribute);
+			}
+			$('#ObjectId').val('43967');
+			$('#Screen').val('Platillos');
+			OpenRules();
+               }
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function PlatillosBackToGrid() {
+        		if (isPartial)
+			window.close('', '_parent', '');
+        else
+			location.href = "@Url.Content("~/Frontal/Platillos/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Platillos/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Platillos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Platillos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Platillos/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+							var mainElementAttributes = '<div class="col-sm-2">';
+							mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "@Resources.Resources.Required" : "@Resources.Resources.NotRequired") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "@Resources.Resources.Visible" : "@Resources.Resources.InVisible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "@Resources.Resources.Disabled" : "@Resources.Resources.Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+							mainElementAttributes += '</div>';
+							$('#' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+							$('#' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                  }
+					 if (childElementObject != null) {
+                        for (var j = 0; j < childElementObject.length; j++) {
+                            var table = childElementObject[j].table.trim();
+                            var grid = '#' + table + 'Grid';
+                            $(grid).find("thead").find("tr").find("th").each(function () {
+                                for (var i = 0; i < childElementObject[j].elements.length; i++) {
+                                    if ($(this).hasClass(childElementObject[j].elements[i].inputId + 'Header')) {
+                                        $(this).show();
+                                        $(this).parent().show();
+                                        $(this).append(returnAttributeHTML(childElementObject[j].elements[i], table, i));
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                     $('#ConfigureSave').text('@Html.Raw(Resources.Resources.Save  +" "+ Resources.Resources.Settings)');
+                    $('#hdnConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreatePlatillos').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#FieldId').val(fieldId);
+			$('#FieldName').val(fieldName);
+			$('#Attribute').val(attribute);
+                        PlatillosGetBusinessRule();
+		});
+		//Initialize HTML Editors            
+  var filebrowserBrowseUrl = '../../ckfinder/ckfinder.html';
+  var filebrowserImageBrowseUrl = '../../ckfinder/ckfinder.html?type=Images';
+  var filebrowserUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Files';
+  var filebrowserImageUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Images';
+		
+		
+		function Fill_Datos_Generales()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Platillos/Get_Datos_Generales")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_Registro').val(result.data.Fecha_de_Registro);
+                    $('#Hora_de_Registro').val(result.data.Hora_de_Registro);
+                    $('#Usuario_que_Registra').val(result.data.Usuario_que_Registra);
+                    $('#Nombre_de_Platillo').val(result.data.Nombre_de_Platillo);
+                    $('#Imagen').val(result.data.Imagen);
+                    getMS_CaloriasData();
+                    getMS_Dificultad_PlatillosData();
+                    getMS_PadecimientosData();
+                    getMS_Tiempos_de_Comida_PlatillosData();
+                    $('#Tipo_de_comida').val(result.data.Tipo_de_comida);
+                    getMS_Caracteristicas_PlatilloData();
+                    $('#Calificacion').val(result.data.Calificacion);
+                    MR_Detalle_PlatilloDataDataTable = result.Ingredientes_del_Platillo;
+                    showMR_Detalle_PlatilloGrid(result.Ingredientes_del_Platillo);
+                    $('#MR_Detalle_PlatilloGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#MR_Detalle_PlatilloGrid .gridDatePicker').attr("readonly", "");
+                    $('#Modo_de_Preparacion').val(result.data.Modo_de_Preparacion);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Datos_Generales(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_Registro', $('#Fecha_de_Registro').val());
+                data.append('Hora_de_Registro', $('#Hora_de_Registro').val());
+                data.append('Usuario_que_Registra', $('#Usuario_que_Registra').val());
+                data.append('Nombre_de_Platillo', $('#Nombre_de_Platillo').val());
+                data.append('Imagen', $('#hdnAttachedImagen').val());
+                data.append('ImagenFile', $('#ImagenFile')[0].files[0]);
+                data.append('ImagenRemoveAttachment', $('#hdnRemoveImagen').val());
+                data.append('Tipo_de_comida', $('#Tipo_de_comida').val());
+                data.append('Calificacion', $('#Calificacion').val());
+                data.append('Modo_de_Preparacion', $('#Modo_de_Preparacion').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Platillos/Post_Datos_Generales")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Datos_Generales");
+					} else {
+						newId = result;
+                    					    SendMS_Calorias(null, newId);
+					    SendMS_Dificultad_Platillos(null, newId);
+					    SendMS_Padecimientos(null, newId);
+					    SendMS_Tiempos_de_Comida_Platillos(null, newId);
+					    SendMS_Caracteristicas_Platillo(null, newId);
+					    SendMR_Detalle_Platillo(null, newId);
+
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Datos_Generales");
+				},
+				cache: false
+			});
+		}
+
+
+    </script>
+}
+    <input type="hidden" id="FieldId" name="FieldId" value="" />
+    <input type="hidden" id="FieldName" name="FieldName" value="" />
+    <input type="hidden" id="ObjectId" name="ObjectId" value="" />
+    <input type="hidden" id="Attribute" name="Attribute" value="" />
+    <input type="hidden" id="Screen" name="Screen" value="" />
+     <input type="hidden" id="Platillos_cmbLabelSelect" name="Platillos_cmbLabelSelect" value="@Resources.Resources.CmbSelect" />
+

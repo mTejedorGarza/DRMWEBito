@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Rango_Consumo_Bebidas" value="Rango Consumo Bebidas"></resource>
+  <resource culture="es-es" name="Clave" value="Clave"></resource>
+  <resource culture="es-es" name="Es_agua" value="¿Es agua?"></resource>
+  <resource culture="es-es" name="Cantidad" value="Cantidad"></resource>
+  <resource culture="es-es" name="Unidad_de_Medida" value="Unidad de Medida"></resource>
+  <resource culture="es-es" name="Descripcion" value="Descripción"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

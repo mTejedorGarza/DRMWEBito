@@ -1,0 +1,501 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Detalle_Secuencia_de_EjerciciosModel
+@{
+
+
+    List<SelectListItem> varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio = null;
+    if (ViewBag.Secuencia_de_Ejercicios_en_Rutinass_Orden_del_Ejercicio != null)
+    { varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio = (List<SelectListItem>)ViewBag.Secuencia_de_Ejercicios_en_Rutinass_Orden_del_Ejercicio; }
+    List<SelectListItem> varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio = null;
+    if (ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Ejercicio != null)
+    { varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio = (List<SelectListItem>)ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Ejercicio; }
+    List<SelectListItem> varTipo_de_Enfoque_del_Ejercicio_Enfoque = null;
+    if (ViewBag.Tipo_de_Enfoque_del_Ejercicios_Enfoque != null)
+    { varTipo_de_Enfoque_del_Ejercicio_Enfoque = (List<SelectListItem>)ViewBag.Tipo_de_Enfoque_del_Ejercicios_Enfoque; }
+
+
+    Permission permission = ViewBag.Permission;
+}
+<div class="modal-dialog" style="width:95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Add Detalle Secuencia de Ejercicios
+                <button data-dismiss="modal" class="close" type="button" onclick="@(ViewBag.functionMode == 0 ? "Detalle_Secuencia_de_EjerciciosRemoveAddRow("+ ViewBag.currentRowIndex +")" : "")"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            </h4>
+        </div>
+        <div class="modal-body scroll_content">
+            <div class="form-horizontal Detalle_Secuencia_de_EjerciciosPop_@ViewBag.currentRowIndex">
+				<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" id="lblAttributeType">Value</label>
+									<div class="col-sm-7">
+										<input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+									</div>
+									<div class="col-sm-2">
+										<a class="btn btn-primary" onclick="SaveValue()">Submit</a>
+									</div>
+									<input type="hidden" id="hdnAttributType" />
+									<input type="hidden" id="hdnAttributElement" />
+									<input type="hidden" id="hdnAttributNumber" />
+									<input type="hidden" id="hdnElementType" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row wrapper border-bottom white-bg page-heading">
+
+					<div class="row">
+						<div class="col-lg-10">
+							<h2>
+								Detalle Secuencia de Ejercicios
+								<button onclick="Detalle_Secuencia_de_EjerciciosGetBusinessRule('', 'Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Detalle_Secuencia_de_EjerciciosBusinessRule-form">
+									<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+										<i class="fa fa-cogs fa-spin"></i>
+									</a>
+								</button>
+							</h2>
+							<ol class="breadcrumb">
+								<li>
+									<a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+								</li>
+								<li class="">
+									<label>@Resources.Detalle_Secuencia_de_EjerciciosResources.Detalle_Secuencia_de_Ejercicios</label>
+								</li>
+								<li class="active">
+									<strong>@Resources.Resources.Create</strong>
+								</li>
+							</ol>
+						</div>
+						<div class="col-lg-2">
+
+							@{
+								if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+								{
+									<h2>&nbsp;</h2>
+									<button onclick="Detalle_Secuencia_de_EjerciciosDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+										<i class="fa fa-cogs fa-spin"></i>
+									</button>
+
+									<div aria-hidden="true" class="modal fade in Detalle_Secuencia_de_EjerciciosPropertyBusinessModal" id="Detalle_Secuencia_de_EjerciciosPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">
+														Property & Business Rules
+														<button class="close" type="button" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">Properties</a>
+														</div>
+														<div class="clearfix col-sm-12">&nbsp;</div>
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#Detalle_Secuencia_de_EjerciciosBusinessRule-form" onclick="Detalle_Secuencia_de_EjerciciosGetBusinessRule()">Business Rule</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									 <div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Secuencia_de_EjerciciosPropertyModal" id="Detalle_Secuencia_de_EjerciciosPropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+									<div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Secuencia_de_EjerciciosBusinessRuleModal" id="Detalle_Secuencia_de_EjerciciosBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+                                    <div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Secuencia_de_EjerciciosAddBusinessRuleModal" id="Detalle_Secuencia_de_EjerciciosAddBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                                    </div>
+
+				
+								}
+							}
+						</div>
+					</div>
+
+				<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							@using (Html.BeginForm("Post", "Detalle_Secuencia_de_Ejercicios", FormMethod.Post, new { id = "CreateDetalle_Secuencia_de_Ejercicios", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+							{
+								<span id="popupNotification"></span>
+								<div class="container-fluid Detalle_Secuencia_de_EjerciciosCreateForm" id="viewmodeledit">
+							<div class="tabs-container">
+											<ul class="nav nav-tabs">
+				@@groupers@@
+											</ul>
+										<div class="tab-content">
+				<div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Secuencia_de_EjerciciosResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="260143" data-field-name="@Resources.Detalle_Secuencia_de_EjerciciosResources.Folio">
+                                    <label class="form-control" for="Detalle_Secuencia_de_EjerciciosFolio" id="Detalle_Secuencia_de_EjerciciosFolio">@Model.Folio</label>
+                                </div>
+                            </div>
+<div class="form-group" id="divOrden_del_Ejercicio">
+	<label class="col-sm-2 control-label">@Resources.Detalle_Secuencia_de_EjerciciosResources.Orden_del_Ejercicio</label>
+	<div class="col-sm-8" data-field-id="Orden_del_Ejercicio" data-attribute="260145" data-field-name="@Resources.Detalle_Secuencia_de_EjerciciosResources.Orden_del_Ejercicio">
+		<select class="form-control" data-val="true" data-val-number="The field Orden del Ejercicio must be a number." data-val-required="The Orden del Ejercicio field is required." id="Detalle_Secuencia_de_EjerciciosOrden_del_Ejercicio" name="Detalle_Secuencia_de_EjerciciosOrden_del_Ejercicio">
+			<option value=""></option>
+			@if (varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio != null){ 
+				foreach (var itemOrden_del_Ejercicio in varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio)
+				{
+					if (itemOrden_del_Ejercicio.Value == Convert.ToString(Model.Orden_del_Ejercicio))
+					{
+						<option value="@itemOrden_del_Ejercicio.Value" selected>@itemOrden_del_Ejercicio.Text</option>
+					}
+					else
+					{
+						<option value="@itemOrden_del_Ejercicio.Value">@itemOrden_del_Ejercicio.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+<div class="form-group" id="divTipo_de_Ejercicio">
+	<label class="col-sm-2 control-label">@Resources.Detalle_Secuencia_de_EjerciciosResources.Tipo_de_Ejercicio</label>
+	<div class="col-sm-8" data-field-id="Tipo_de_Ejercicio" data-attribute="260146" data-field-name="@Resources.Detalle_Secuencia_de_EjerciciosResources.Tipo_de_Ejercicio">
+		<select class="form-control" data-val="true" data-val-number="The field Tipo de Ejercicio must be a number." data-val-required="The Tipo de Ejercicio field is required." id="Detalle_Secuencia_de_EjerciciosTipo_de_Ejercicio" name="Detalle_Secuencia_de_EjerciciosTipo_de_Ejercicio">
+			<option value=""></option>
+			@if (varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio != null){ 
+				foreach (var itemTipo_de_Ejercicio in varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio)
+				{
+					if (itemTipo_de_Ejercicio.Value == Convert.ToString(Model.Tipo_de_Ejercicio))
+					{
+						<option value="@itemTipo_de_Ejercicio.Value" selected>@itemTipo_de_Ejercicio.Text</option>
+					}
+					else
+					{
+						<option value="@itemTipo_de_Ejercicio.Value">@itemTipo_de_Ejercicio.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+<div class="form-group" id="divEnfoque">
+	<label class="col-sm-2 control-label">@Resources.Detalle_Secuencia_de_EjerciciosResources.Enfoque</label>
+	<div class="col-sm-8" data-field-id="Enfoque" data-attribute="260147" data-field-name="@Resources.Detalle_Secuencia_de_EjerciciosResources.Enfoque">
+		<select class="form-control" data-val="true" data-val-number="The field Enfoque must be a number." data-val-required="The Enfoque field is required." id="Detalle_Secuencia_de_EjerciciosEnfoque" name="Detalle_Secuencia_de_EjerciciosEnfoque">
+			<option value=""></option>
+			@if (varTipo_de_Enfoque_del_Ejercicio_Enfoque != null){ 
+				foreach (var itemEnfoque in varTipo_de_Enfoque_del_Ejercicio_Enfoque)
+				{
+					if (itemEnfoque.Value == Convert.ToString(Model.Enfoque))
+					{
+						<option value="@itemEnfoque.Value" selected>@itemEnfoque.Text</option>
+					}
+					else
+					{
+						<option value="@itemEnfoque.Value">@itemEnfoque.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+<div class="form-group" id="divSecuencia_del_Ejercicio">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Secuencia_de_EjerciciosResources.Secuencia_del_Ejercicio</label>
+                                <div class="col-sm-8" data-field-id="Secuencia_del_Ejercicio" data-attribute="260148" data-field-name="@Resources.Detalle_Secuencia_de_EjerciciosResources.Secuencia_del_Ejercicio">
+                                    <input class="form-control" id="Detalle_Secuencia_de_EjerciciosSecuencia_del_Ejercicio" name="Detalle_Secuencia_de_EjerciciosSecuencia_del_Ejercicio" type="text" value="@Model.Secuencia_del_Ejercicio">
+                                </div>
+                            </div>
+
+								</div>	
+							</div>
+									<br />
+											<div class="form-actions fluid">
+												<input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+												<input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+												@if (!ViewBag.Consult)
+												{
+													<div id="dvSaveJob" style="display:inline-block"></div>
+
+													<button type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton">
+														<i class="fa fa-cogs fa-spin"></i>
+													</button>
+													<a title="@Resources.Resources.Configure" id="Detalle_Secuencia_de_EjerciciosConfigureSave" name="Detalle_Secuencia_de_EjerciciosConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success">@Resources.Resources.Configure</a>
+												}
+
+												<input type="hidden" id="hdnDetalle_Secuencia_de_EjerciciosConfigureType" />
+												<input type="hidden" id="hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId" />
+												<input type="hidden" id="hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName" />
+												<input type="hidden" id="hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute" />
+
+												<input data-dismiss="modal" type="button" value="@Resources.Resources.Cancelar" class="btn btn-danger noConsult" data-bind="click: cancel" tabindex="16" />
+
+												<button onclick="Detalle_Secuencia_de_EjerciciosGetBusinessRule('', 'Al Cancelar', '3')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Detalle_Secuencia_de_EjerciciosBusinessRule-form">
+													<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+														<i class="fa fa-cogs fa-spin"></i>
+													</a>
+												</button>
+											</div>
+										</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+					<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+				</div>
+			</div>
+		</div>
+</div>
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Detalle_Secuencia_de_Ejercicios.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/Detalle_Secuencia_de_EjerciciosGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Detalle_Secuencia_de_EjerciciosCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Configuracion_de_RutinasCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        
+
+
+
+        $(document).ready(function () {
+			var currentIndex = @ViewBag.currentRowIndex
+
+            var Detalle_Secuencia_de_EjerciciosRowElement = "Detalle_Secuencia_de_EjerciciosPop_" + currentIndex.toString();
+            var abc = "if(dynamicFieldValidation('" + Detalle_Secuencia_de_EjerciciosRowElement + "')){ Detalle_Secuencia_de_EjerciciosInsertRowFromPopup(" + currentIndex + "); }";
+            var insertRowHTML = '<a class="btn btn-primary m-b" onclick="' + abc + '">Save</a>';
+            $('#dvSaveJob').html(insertRowHTML);
+			
+
+
+            initiateUIControls();
+            EjecutarValidacionesAlComienzo();
+			$('a').tooltip();
+        });
+
+
+
+        function initiateUIControls() {
+            $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+
+        }
+		
+		function SendDetalle_Secuencia_de_EjerciciosData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateDetalle_Secuencia_de_Ejercicios").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateDetalle_Secuencia_de_Ejercicios")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+
+            var isNew = $('#hdnIsNew').val();
+           
+            if (checkClientValidate('Detalle_Secuencia_de_EjerciciosCreateForm')) {
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/Post?IsNew=")' + isNew,
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+                    success: function (result) {
+                        if (result < 0) {
+                            showNotification("@Resources.Resources.ErrorSave", "error");
+                        } else {
+
+                            showNotification("@Resources.Resources.SaveSuccess", "success");
+                            callBack(result);
+                        }
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            return false;
+        };
+		
+        function GetPropertyBag() {
+            $.get('@Url.Action("Detalle_Secuencia_de_EjerciciosPropertyBag", "Detalle_Secuencia_de_Ejercicios")', function (data) {
+                $(".PropertyModal").html(data);
+            });
+        }
+        function Detalle_Secuencia_de_EjerciciosGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(FieldId);
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(FieldName);
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("BusinessRule", "BussinessRule")', { FieldId: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(), ObjectId: '44614', Attribute: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(), Screen: 'Detalle_Secuencia_de_Ejercicios' }, function (data) {
+                $(".Detalle_Secuencia_de_EjerciciosBusinessRuleModal").html(data);
+            });
+        }
+        function Detalle_Secuencia_de_EjerciciosGetAddBusinessRule(RuleId, FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null) {
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(FieldId);
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(FieldName);
+				$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("AddBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(), ObjectId: '44614', Attribute: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(), Screen: 'Detalle_Secuencia_de_Ejercicios' }, function (data) {
+                $(".Detalle_Secuencia_de_EjerciciosAddBusinessRuleModal").html(data);
+                $(".datatable").DataTable();
+            });
+        }
+		function RemoveBusinessRule(RuleId) {
+			$.get('@Url.Action("RemoveBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(), ObjectId: '44614', Attribute: $('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(), Screen: 'Detalle_Secuencia_de_Ejercicios' }, function (data) {
+				$(".Detalle_Secuencia_de_EjerciciosBusinessRuleModal").html(data);
+			});
+		}
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function BackToGrid() {
+        location.href = "@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnDetalle_Secuencia_de_EjerciciosConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnDetalle_Secuencia_de_EjerciciosConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnDetalle_Secuencia_de_EjerciciosConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+                        var mainElementAttributes = '<div class="col-sm-2">';
+                        mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "Required" : "Not Required") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "Visible" : "In Visible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "Disabled" : "Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '</div>';
+                        $('#Detalle_Secuencia_de_Ejercicios' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+                        $('#Detalle_Secuencia_de_Ejercicios' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                    }
+					if (childElementObject != null) {
+						for (var i = 0; i < childElementObject.length; i++) {
+							$('.' + childElementObject[i].inputId + 'Header').show();
+							$('.' + childElementObject[i].inputId).parent().show();
+							$('.' + childElementObject[i].inputId + 'Header').append(returnAttributeHTML(i));
+						}
+					}
+                    $('#Detalle_Secuencia_de_EjerciciosConfigureSave').text('Save Settings');
+                    $('#hdnDetalle_Secuencia_de_EjerciciosConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateDetalle_Secuencia_de_Ejercicios').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldId').val(fieldId);
+			$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleFieldName').val(fieldName);
+			$('#hdnDetalle_Secuencia_de_EjerciciosBusinessRuleAttribute').val(attribute);
+		});
+		//Initialize HTML Editors
+		
+    </script>

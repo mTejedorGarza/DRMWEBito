@@ -1,0 +1,212 @@
+﻿@model IList<Spartane.Web.Areas.Frontal.Models.Codigos_de_DescuentoGridModel>
+
+@{
+    var rowCounter = 0;
+}
+
+<style>
+    .table {
+        width: 100%;
+        border: 1px solid #cccccc;
+        font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        /*border-collapse: separate !important;*/
+        font-size: 13px;
+    }
+
+        .table td {
+            padding: 2px;
+            border:1px solid #cccccc;
+        }
+
+    .table tr:nth-of-type(2n+1) {
+        background-color: #f9f9f9;
+    }
+
+        .table tr:nth-of-type(2n) {
+            background-color: #8da0c2;
+        }
+
+    .table-row-1 td, .table-row-1 th {
+    }
+
+    .table-row-2 td, .table-row-2 th, thead {
+    }
+
+    .tableHeaderRow {
+        font-weight: bold;
+        border: 1px solid #ff6a00;
+    }
+
+    .column1 {
+        width: 15%;
+    }
+
+    .column2 {
+        width: 15%;
+    }
+</style>
+<br />
+<body onbeforeprint="ocultarcolumnas();">
+ <span id="columnsVisible"></span>
+<table class="table" cellspacing="0" cellpadding="0" border="0">
+    <thead>
+        <tr>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Folio
+            </td>
+                        <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Folio
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Fecha_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Hora_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Usuario_que_Registra
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Tipo_de_Vendedor
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Vendedor
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Tipo_de_Descuento
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Descuento
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Texto_promocional
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Fecha_inicio_vigencia
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Fecha_fin_vigencia
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Cantidad_maxima_de_referenciados
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Codigo_de_descuento
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Estatus
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Fecha_de_autorizacion
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Hora_de_autorizacion
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Usuario_que_autoriza
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Observaciones
+            </td>
+            <td class="column1">
+                @Resources.Codigos_de_DescuentoResources.Resultado
+            </td>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var item in Model)
+            {                
+                <tr>
+                    <td>
+                        @item.Folio
+                    </td>
+					                    <td>
+                        @item.Folio
+                    </td>
+                    <td>
+                        @item.Fecha_de_Registro
+                    </td>
+                    <td>
+                        @item.Hora_de_Registro
+                    </td>
+                    <td>
+                        @item.Usuario_que_RegistraName
+                    </td>
+                    <td>
+                        @item.Tipo_de_VendedorDescripcion
+                    </td>
+                    <td>
+                        @item.VendedorName
+                    </td>
+                    <td>
+                        @item.Tipo_de_DescuentoNombre
+                    </td>
+                    <td>
+                        @item.Descuento
+                    </td>
+                    <td>
+                        @item.Texto_promocional
+                    </td>
+                    <td>
+                        @item.Fecha_inicio_vigencia
+                    </td>
+                    <td>
+                        @item.Fecha_fin_vigencia
+                    </td>
+                    <td>
+                        @item.Cantidad_maxima_de_referenciados
+                    </td>
+                    <td>
+                        @item.Codigo_de_descuento
+                    </td>
+                    <td>
+                        @item.EstatusNombre
+                    </td>
+                    <td>
+                        @item.Fecha_de_autorizacion
+                    </td>
+                    <td>
+                        @item.Hora_de_autorizacion
+                    </td>
+                    <td>
+                        @item.Usuario_que_autorizaName
+                    </td>
+                    <td>
+                        @item.Observaciones
+                    </td>
+                    <td>
+                        @item.ResultadoNombre
+                    </td>
+
+                </tr>
+                rowCounter++;
+            }
+        }
+    </tbody>
+</table>
+</body>
+
+<script>
+    function ocultarcolumnas() {        
+        var arr = document.getElementById('columnsVisible').text.split(',');
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == "false") {
+                show_hide_column(i-1, false);
+            }
+        }    
+    };
+
+    function show_hide_column(col_no, do_show) {
+        var rows = document.getElementsByClassName('table')[0].rows;
+        for (var row = 0; row < rows.length; row++) {
+            var cols = rows[row].cells;
+            if (col_no >= 0 && col_no < cols.length) {
+                console.log(col_no);
+                cols[col_no].style.display = do_show ? '' : 'none';
+            }
+        }
+    }
+</script>
+

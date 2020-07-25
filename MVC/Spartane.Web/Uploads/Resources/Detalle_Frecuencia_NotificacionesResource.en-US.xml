@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Detalle_Frecuencia_Notificaciones" value="Detalle Frecuencia Notificaciones"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Frecuencia" value="Frecuencia"></resource>
+  <resource culture="en-US" name="Dia" value="Día"></resource>
+  <resource culture="en-US" name="Hora" value="Hora"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

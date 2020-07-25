@@ -1,0 +1,254 @@
+﻿@model IList<Spartane.Web.Areas.Frontal.Models.Solicitud_de_Pago_de_FacturasGridModel>
+
+@{
+    var rowCounter = 0;
+}
+
+<style>
+    .table {
+        width: 100%;
+        border: 1px solid #cccccc;
+        font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        /*border-collapse: separate !important;*/
+        font-size: 13px;
+    }
+
+        .table td {
+            padding: 2px;
+            border:1px solid #cccccc;
+        }
+
+    .table tr:nth-of-type(2n+1) {
+        background-color: #f9f9f9;
+    }
+
+        .table tr:nth-of-type(2n) {
+            background-color: #8da0c2;
+        }
+
+    .table-row-1 td, .table-row-1 th {
+    }
+
+    .table-row-2 td, .table-row-2 th, thead {
+    }
+
+    .tableHeaderRow {
+        font-weight: bold;
+        border: 1px solid #ff6a00;
+    }
+
+    .column1 {
+        width: 15%;
+    }
+
+    .column2 {
+        width: 15%;
+    }
+</style>
+<br />
+<body onbeforeprint="ocultarcolumnas();">
+ <span id="columnsVisible"></span>
+<table class="table" cellspacing="0" cellpadding="0" border="0">
+    <thead>
+        <tr>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Folio
+            </td>
+                        <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Folio
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_Registra
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Mes_Facturado
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_inicio_del_periodo_facturado
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_fin_del_periodo_facturado
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_XML
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_PDF
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Recibo_de_Solicitud_de_Pago
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Total
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Estatus
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_autorizacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_autorizacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_autoriza
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Resultado_de_la_Revision
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Observaciones
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_programacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_programacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_programa
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_programada_de_Pago
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Estatus_de_Pago
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_actualizacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_actualizacion
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_actualiza
+            </td>
+            <td class="column1">
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Pago
+            </td>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var item in Model)
+            {                
+                <tr>
+                    <td>
+                        @item.Folio
+                    </td>
+					                    <td>
+                        @item.Folio
+                    </td>
+                    <td>
+                        @item.Fecha_de_Registro
+                    </td>
+                    <td>
+                        @item.Hora_de_Registro
+                    </td>
+                    <td>
+                        @item.Usuario_que_RegistraName
+                    </td>
+                    <td>
+                        @item.Mes_FacturadoNombre
+                    </td>
+                    <td>
+                        @item.Fecha_inicio_del_periodo_facturado
+                    </td>
+                    <td>
+                        @item.Fecha_fin_del_periodo_facturado
+                    </td>
+                    <td>
+                        @item.Archivo_XML
+                    </td>
+                    <td>
+                        @item.Archivo_PDF
+                    </td>
+                    <td>
+                        @item.Recibo_de_Solicitud_de_Pago
+                    </td>
+                    <td>
+                        @item.Total
+                    </td>
+                    <td>
+                        @item.EstatusDescripcion
+                    </td>
+                    <td>
+                        @item.Fecha_de_autorizacion
+                    </td>
+                    <td>
+                        @item.Hora_de_autorizacion
+                    </td>
+                    <td>
+                        @item.Usuario_que_autorizaName
+                    </td>
+                    <td>
+                        @item.Resultado_de_la_RevisionNombre
+                    </td>
+                    <td>
+                        @item.Observaciones
+                    </td>
+                    <td>
+                        @item.Fecha_de_programacion
+                    </td>
+                    <td>
+                        @item.Hora_de_programacion
+                    </td>
+                    <td>
+                        @item.Usuario_que_programaName
+                    </td>
+                    <td>
+                        @item.Fecha_programada_de_Pago
+                    </td>
+                    <td>
+                        @item.Estatus_de_PagoNombre
+                    </td>
+                    <td>
+                        @item.Fecha_de_actualizacion
+                    </td>
+                    <td>
+                        @item.Hora_de_actualizacion
+                    </td>
+                    <td>
+                        @item.Usuario_que_actualizaName
+                    </td>
+                    <td>
+                        @item.Fecha_de_Pago
+                    </td>
+
+                </tr>
+                rowCounter++;
+            }
+        }
+    </tbody>
+</table>
+</body>
+
+<script>
+    function ocultarcolumnas() {        
+        var arr = document.getElementById('columnsVisible').text.split(',');
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == "false") {
+                show_hide_column(i-1, false);
+            }
+        }    
+    };
+
+    function show_hide_column(col_no, do_show) {
+        var rows = document.getElementsByClassName('table')[0].rows;
+        for (var row = 0; row < rows.length; row++) {
+            var cols = rows[row].cells;
+            if (col_no >= 0 && col_no < cols.length) {
+                console.log(col_no);
+                cols[col_no].style.display = do_show ? '' : 'none';
+            }
+        }
+    }
+</script>
+

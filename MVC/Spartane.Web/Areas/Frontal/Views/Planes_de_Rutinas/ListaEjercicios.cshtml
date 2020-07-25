@@ -1,0 +1,426 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@using Spartane.Web.Areas.WebApiConsumer
+@model Spartane.Web.Areas.Frontal.Models.Planes_de_RutinasModel
+@{
+
+
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varPacientes_Paciente = null;
+    if (ViewBag.Pacientess_Paciente != null)
+    { varPacientes_Paciente = (List<SelectListItem>)ViewBag.Pacientess_Paciente; }
+    List<SelectListItem> varNivel_de_dificultad_Nivel_de_dificultad = null;
+    if (ViewBag.Nivel_de_dificultads_Nivel_de_dificultad != null)
+    { varNivel_de_dificultad_Nivel_de_dificultad = (List<SelectListItem>)ViewBag.Nivel_de_dificultads_Nivel_de_dificultad; }
+    List<SelectListItem> varSemanas_Planes_Semana = null;
+    if (ViewBag.Semanas_Planess_Semana != null)
+    { varSemanas_Planes_Semana = (List<SelectListItem>)ViewBag.Semanas_Planess_Semana; }
+    List<SelectListItem> varEstatus_Estatus = null;
+    if (ViewBag.Estatuss_Estatus != null)
+    { varEstatus_Estatus = (List<SelectListItem>)ViewBag.Estatuss_Estatus; }
+    List<SelectListItem> varRutinas_Rutina = null;
+    if (ViewBag.Rutinass_Rutina != null)
+    { varRutinas_Rutina = (List<SelectListItem>)ViewBag.Rutinass_Rutina; }
+    List<SelectListItem> varEstatus_Plan_de_Rutinas_Estatus_de_Seguimiento = null;
+    if (ViewBag.Estatus_Plan_de_Rutinass_Estatus_de_Seguimiento != null)
+    { varEstatus_Plan_de_Rutinas_Estatus_de_Seguimiento = (List<SelectListItem>)ViewBag.Estatus_Plan_de_Rutinass_Estatus_de_Seguimiento; }
+
+    Permission permissionDetalle_Planes_de_Rutinas = ViewBag.PermissionDetalle_Planes_de_Rutinas;
+
+    Permission permission = ViewBag.Permission;
+
+    if (ViewBag.IsPartial)
+    {
+        Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+    }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/Content/style-ejercicios.css">
+<link rel="stylesheet" href="~/fonts/font-awesome/css/all.css">
+<link rel="stylesheet" href="~/Content/venobox.css">
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.Planes_de_RutinasResources.Planes_de_Rutinas
+                <button onclick="Planes_de_RutinasGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Planes_de_RutinasBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                    @if (Session["PhaseName"] != null)
+                    {
+                        <strong>@Session["PhaseName"].ToString()</strong>
+                    }
+                    else
+                    {
+                        <strong>@Resources.Planes_de_RutinasResources.Planes_de_Rutinas</strong>
+                    }
+
+                </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!--div class="loading style-2"><div class="loading-wheel"></div></!--div-->
+    <!-- encabezado -->
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="container">
+            <div class="col-lg-12"  style="margin-top: 30px;">
+                <div class="card bgcardgray">
+                    <div class="card-body">
+                        <h4 id="EjerciciosEquipo" class="titlereco">
+                            <strong>Equipo:</strong> <br>
+                            Mancuernas de 6 lb como máximo, Mancuernas, Silla. <br>
+                            <strong>Si no cuentas con este equipo en casa puedes utilizar:</strong> <br>
+                            Bote de agua
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="EjerciciosRutina" style="margin-top: 40px;">
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Calentamiento</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir">Terminado</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 1</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 2</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 3</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 4</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 5</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 6</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 7</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 m-ejercicio">
+                    <div class="ejerciciocontenedor" data-aos="fade-up">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-4 video-box">
+                                    <img src="img/ejercicio-img.png" class="img-fluid" alt="">
+                                    <a href="https://www.youtube.com/watch?v=MY_gyv3ZDLE" class="venobox reproducir mb-4" data-vbtype="video" data-autoplay="true"></a>
+                                </div>
+
+                                <div class="col-lg-8 d-flex flex-column justify-content-center p-padd">
+
+                                    <div class="detalleejercicio">
+                                        <h4 class="tituloejercicio">Ejercicio 8</h4>
+                                        <p class="detalle-ejercicio">Voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident</p>
+                                        <a href="#" class="btn btn-elegir-disabled">Por realizar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
+    <script src="~/Scripts/venobox.min.js"></script>
+    <script src="~/Scripts/video.js"></script>
+
+
+    <script>
+
+        var urlWebApi = "@Request.Url.ToString()";
+        var urlWebApi2 = urlWebApi.replace("@Request.RawUrl.ToString()", "");
+
+        $(document).ready(function () {
+            GetDetalle_Planes_de_Rutinas_EjerciciosItem();
+            GetDetalle_EjerciciosItems();
+        });
+
+        var Detalle_Planes_de_Rutinas_EjerciciosItems;
+        function GetDetalle_Planes_de_Rutinas_EjerciciosItem() {
+            var folio = "@Model.Folio";
+            var numrows = 0;
+            Detalle_Planes_de_Rutinas_EjerciciosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Planes_de_Rutinas/GetDetalle_Planes_de_RutinasData")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                data: { Id: folio, start: 0, length: 32767, RowCount: numrows},
+                async: false,
+                global: false,
+                success: function (result) {
+                    console.log(result);
+                    Detalle_Planes_de_Rutinas_EjerciciosItems = result;
+                    ArmaListaEjercicios();
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+        var Detalle_EjerciciosItems;
+        function GetDetalle_EjerciciosItems() {
+            Detalle_Planes_de_Rutinas_EjerciciosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Planes_de_Rutinas/GetDetalle_Planes_de_Rutinas_EjerciciosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Detalle_EjerciciosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+        function GetDetalle_EjerciciosItems_Descripcion(Id) {
+            for (var i = 0; i < Detalle_EjerciciosItems.length; i++) {
+                if (Detalle_EjerciciosItems[i].Clave == Id) {
+                    return Detalle_EjerciciosItems[i].Descripcion_del_Ejercicio;
+                }
+            }
+            return "";
+        }
+
+
+        function ArmaListaEjercicios(){
+            var EjerciciosItem = "";
+
+            for (var i = 0; i < Detalle_Planes_de_Rutinas_EjerciciosItems.length; i++) {
+                EjerciciosItem = EjerciciosItem + "<div class='col-lg-12 m-ejercicio'>" +
+                    "<div class='ejerciciocontenedor' data-aos='fade-up'>" +
+                    "<div class='container'>" +
+                    "<div class='row'>" +
+                    "<div class='col-lg-4 video-box'>" +
+                    "<img src='" + urlWebApi2 + "/Images/ejercicio-img.png' class='img-fluid' alt=''>" +
+                    "<a href='https://www.youtube.com/watch?v=MY_gyv3ZDLE' class='venobox reproducir mb-4' data-vbtype='video' data-autoplay='true'></a>" +
+                    "</div>" +
+                    "<div class='col-lg-8 d-flex flex-column justify-content-center p-padd'>" +
+                    "<div class='detalleejercicio'>" +
+                    "<h4 class='tituloejercicio'>" + Detalle_Planes_de_Rutinas_EjerciciosItems[i].Secuencia_de_Ejercicio + " - " + Detalle_Planes_de_Rutinas_EjerciciosItems[i].EjercicioNombre_del_Ejercicio + "</h4>" +
+                    "<p class='detalle-ejercicio'>" + GetDetalle_EjerciciosItems_Descripcion(Detalle_Planes_de_Rutinas_EjerciciosItems[i].Ejercicio) + "</p>";
+
+                if (Detalle_Planes_de_Rutinas_EjerciciosItems[i].Realizado == true)
+                    EjerciciosItem = EjerciciosItem + "<a href='#' class='btn btn-elegir-disabled'>Terminado</a>";
+                else
+                    EjerciciosItem = EjerciciosItem + "<a href='#' class='btn btn-elegir'>Terminado</a>";
+
+                    EjerciciosItem = EjerciciosItem + "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>";
+            }
+
+            $("#EjerciciosRutina").html(EjerciciosItem);
+        }
+    </script>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Estatus_de_Funcionalidad_para_Notificacion" value="Estatus de Funcionalidad para Notificación"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Campo_para_Estatus" value="Campo para Estatus"></resource>
+  <resource culture="es-es" name="Nombre_Fisico_del_Campo" value="Nombre Físico del Campo"></resource>
+  <resource culture="es-es" name="Nombre_Fisico_de_la_Tabla" value="Nombre Físico de la Tabla"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

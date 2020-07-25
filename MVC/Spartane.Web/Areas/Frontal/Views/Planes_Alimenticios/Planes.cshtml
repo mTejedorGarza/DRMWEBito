@@ -1,0 +1,366 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@using Spartane.Web.Areas.WebApiConsumer
+
+<link rel="stylesheet" href="~/Content/platillos.css">
+<!--div class="loading style-2"><div class="loading-wheel"></div></!--div-->
+<!-- encabezado -->
+<div id="container" class="row wrapper border-bottom white-bg page-heading">
+    <div class="container">
+        <h4><i class="fa fa-cutlery" aria-hidden="true"></i> Selecciona los platillos que deseas para tu dieta</h4>
+        <div>
+            <form action="">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1"><i class="fa fa-calendar" aria-hidden="true"></i> Del día</label>
+                            <div class='input-group date bordecolorverde' id='datetimepicker1'>
+                                <input class="form-control col-md-12 Datos_Generales bordecolorverde" id="Fecha_inicio_del_Plan" name="Fecha_inicio_del_Plan" type="text" value="">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="form-group">
+                            <label for="exampleFormControlSelect1">Al día</label>
+                            <div class='input-group date bordecolorverde' id='datetimepicker1'>
+                                <input class="form-control col-md-12 Datos_Generales bordecolorverde" id="Fecha_fin_del_Plan" name="Fecha_fin_del_Plan" disabled type="text" value="">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+<div class="modal fade" id="modalcomida" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title titulomodalcomida" id="titulomodal">Desayuno</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="contenedormodal">
+                    <div>
+                        <img id="imgPlatillo" src="" alt="" class="imgcambiomodal">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <p id="nombrePlatillo" class="nombreplatillomodal"></p>
+                        </div>
+                        <div class="col-xs-5">
+                            <button  data-dia="dia" id="btn-tuplatillo" data-folio="folioPlatillo" class="btn-tuplatillo"><i class="fa fa-check iconcolormodal" aria-hidden="true"></i> Tu platillo actual</button>
+                        </div>
+                    </div>
+                    <div>
+                        <hr>
+                        <p class="ingredientestitulo">Ingredientes:</p>
+                        <p id="ingredientes" class="ingredientesp"></p>
+                        <hr>
+
+                        <p class="preguntacambio">¿Quieres cambiar tu platillo??</p>
+                        <p class="decripcambio">Disfruta otras opciones <br>que tenemos para ti.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="masPlatillos" class="row">
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary cerrarplatillo" data-dismiss="modal">Cerrar</button>
+                <button onclick="mostrarMas()" type="button" class="btn btn-primary masplatillos">Mostrar más platillos</button>
+            </div>
+
+           
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+}
+<script src="~/Scripts/platillos.js"></script>
+
+<script>
+
+    var platillos = [];
+    $('.btn-actual-platillo,.btn-tuplatillo').click(function () {
+         var fecha_inicio = $('#Fecha_inicio_del_Plan').val();
+         var fecha_fin = $('#Fecha_fin_del_Plan').val();
+         var usuario = @Spartane.Web.SessionHelper.UserEntity.Id_User;
+         var platillo = $(this).data('folio');
+         var tiempo = getTiempo($('#titulomodal').html());
+         var dia = $('.btn-tuplatillo').data('dia');
+        cambiar(fecha_inicio, fecha_fin, usuario, platillo, tiempo, dia, $(this));
+    })
+
+    function cambiar(fecha_inicio, fecha_fin, usuario, platillo, tiempo, dia, boton) {
+         var query = "sp_createPlan '" + fecha_inicio + "','" + fecha_fin + "'," + usuario + "," + platillo + "," + tiempo + "," + dia;
+        var res = '';
+        var data = {
+            query: query
+        }
+        $.ajax({
+            url: url_content + "Frontal/General/ExecuteQuery",
+            type: 'POST',
+            cache: false,
+            dataType: "json",
+            async: false,
+            data: data,
+            success: function (result) {
+                res = result;
+                $('#container').html('');
+                getPlatillos();
+                 boton.html("Tu platillo actual");
+            },
+            error: function (result) {
+                showNotification("Error ejecutando query", "error");
+            }
+        });
+    }
+    function getTiempo(tiempo) {
+        if (tiempo == 'Desayuno') 
+            return 1;        
+        if (tiempo == 'Snack 1') 
+            return 2;        
+        if (tiempo == 'Comida') 
+            return 3;
+        if (tiempo == 'Snack 2') 
+            return 3;
+        if (tiempo == 'Cena') 
+            return 3;        
+    }
+    
+         Date.prototype.ddmmyyyy = function () {
+            var dd = this.getDate().toString();
+            var mm = (this.getMonth() + 1).toString();
+            var yyyy = this.getFullYear().toString();
+            return (dd[1] ? dd : "0" + dd[0]) + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + yyyy;
+        };
+
+        $(document).ready(function () {
+          var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            var maxDate = new Date(y, m + 1, 0).ddmmyyyy();
+
+         $('#Fecha_inicio_del_Plan').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                minDate: 0,
+                forceParse: false,
+                calendarWeeks: true,
+                maxDate: maxDate,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+         });
+            $('#Fecha_fin_del_Plan').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+
+            $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+            setFechaFin();    
+
+            $('#Fecha_inicio_del_Plan').change(function () {
+                var fecha = $('#Fecha_inicio_del_Plan').datepicker('getDate', '+1d');
+                var todaysDate = new Date().ddmmyyyy();
+                var mesActual =  new Date().getMonth();
+                if (fecha.getMonth() > mesActual) {
+                    alert('La fecha de inicio del plan no debe ser mayor al mes actual');
+                    $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+                    return;
+                }
+                if (fecha  < todaysDate || fecha.getMonth() < mesActual) {
+                    alert('La fecha de inicio del plan debe ser mayor que la fecha de hoy');
+                   $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+                    return;
+                }
+                setFechaFin();           
+            });
+
+         getPlatillos();
+        });
+
+    function setFechaFin() {
+         var nextDayDate = $('#Fecha_inicio_del_Plan').datepicker('getDate', '+1d');
+         nextDayDate.setDate(nextDayDate.getDate() + 7);
+         $('#Fecha_fin_del_Plan'). datepicker('setDate', nextDayDate);
+    }
+
+    function ShowDetail(tipoComida, ingredientes, nombrePlatillo, urlImagen, actual, folio, dia) {
+        $('#ingredientes').html('');
+        $('#titulomodal').html(tipoComida);
+        $('#ingredientes').html(ingredientes);
+        $('#nombrePlatillo').html(nombrePlatillo);
+        $('#imgPlatillo').attr("src", urlImagen);
+        $('.btn-tuplatillo').attr('data-folio', folio);
+         $('.btn-tuplatillo').attr('data-dia', dia);
+
+        if (!actual) {
+            $('.btn-tuplatillo').html("Cambiar por este platillo");
+        } else {
+            $('.btn-tuplatillo').html("Tu platillo actual");
+        }
+        $('#masPlatillos').html('');
+        $('#modalcomida').modal('show');
+    }
+       function  mostrarMas() {
+        var li = '<div div class="carousel__elemento col-sm-6">'+
+						'<img src="imgUrl" alt="" width="245px">'+
+						'<div class="margencard">'+
+							'<p class="tituloplatillo">nombrePlatillo</p>'+
+							'<hr class="linea-gris">'+
+							'<p class="ingrediente">Ingredientes</p>'+
+							'<p class="descripplatillo">ingredientes</p>'+
+							'<hr class="linea-gris">'	 +
+							'<button data-folio="folioPlatillo" cambiarPlatillo() class="btn-actual-platillo">'+
+								'<i class="fas fa-sync-alt icono-blanco" aria-hidden="true"></i>'+
+								'Cambiar por este platillo'+
+							'</button>'+
+						'</div>'+
+        '</div>';
+
+
+         var lis = '';
+        var urlWebApi = "@ApiUrlManager.BaseUrlLocal";
+        var tiempo = getTiempo($('#titulomodal').html());
+        var query = "SP_GET_PlatillosRamdom " + @Spartane.Web.SessionHelper.UserEntity.Id_User + ',' + tiempo + ',\'' + platillos.join() + '\'';
+        var i = 1;
+        var data = {
+            query: query
+        }
+         var ajaxUrl = "@Url.Content("~/Frontal/General/ExecuteQueryTable")";
+            $.ajax({
+                url: ajaxUrl,
+            type: 'POST',
+            dataType: "json",
+                async: true,
+                 data: data,
+                success: function (jsonObj) {
+                    if (jsonObj == '' || jsonObj == "[]") {
+                        alert('No hay mas platillos para mostrar');
+                        return;
+                    }
+                    var result = $.parseJSON(jsonObj);
+                    var tipoComida = result[0].Comida;
+                    $.each(result, function (index, element) {                      
+                        var urlImage = urlWebApi + "api/Spartan_File/Files/" + element.Imagen + "/" + element.Description;
+                        var htmlli = li.replace(/nombrePlatillo/g, element.Nombre_de_Platillo)
+                            .replace(/imgUrl/g, urlImage)
+                            .replace('ingredientes', element.Ingredientes != null ? element.Ingredientes : '')
+                            .replace("tipoComida", tipoComida).replace('folio', element.Folio);
+                     
+                        lis = lis + htmlli;
+                        i++;
+                    });
+                    $('#masPlatillos').append(lis);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+
+    }
+
+    function getPlatillos() {
+  
+         var li = '<li onClick="ShowDetail(\'tipoComida\', \'ingredientes\', \'nombrePlatillo\',\'imgUrl\', actual,folio )" class="card classAdd">' +
+            '<div class="inside-top">' +
+            '   <img class="imgcard" src="imgUrl">' +
+            '  <div class="card-contend">' +
+            '        <h4>nombrePlatillo</h4>' +
+            '        <p class="descrip">descrip</p>' +            
+                '</div>' +
+            '</div>' +
+            '</li>';
+
+        var containerPlan = '<div class="container">' +
+    '<div id="wrapper-carrusel">' +
+        '<span id="controlL_cena" class="left-controls" role="button" aria-label="See Previous Modules">' +
+         '   <b class="fa fa-chevron-left fa-chevron-left-extra" aria-hidden="true"></b>' +
+        '</span>' +
+        '<div class="title text-center h1">comida</div>' +
+        '<div class="module-section clearfix">' +
+            '<ul id="content_cena" class="contentcarrusel">lista' +
+            '</ul>' +
+        '</div><!--end of module-section-->' +
+        '<span id="controlR_cena" class="right-controls" role="button" aria-label="See Previous Modules">' +
+            '<b class="fa fa-chevron-right fa-chevron-right-extra" aria-hidden="true"></b>' +
+        '</span>' +
+    '</div>' +
+            '</div>';
+        
+        var lis = '';
+        var urlWebApi = "@ApiUrlManager.BaseUrlLocal";
+
+        var query = "SP_GET_Platillos " + @Spartane.Web.SessionHelper.UserEntity.Id_User;
+        var i = 1;
+         var data = {
+        query: query
+    }
+         var ajaxUrl = "@Url.Content("~/Frontal/General/ExecuteQueryTable")";
+            $.ajax({
+                url: ajaxUrl,
+            type: 'POST',
+            dataType: "json",
+                async: true,
+                 data: data,
+                success: function (jsonObj) {
+                    if (jsonObj == '' || jsonObj == "[]") {
+                        alert('No hay platillos definidos');
+                        return;
+                    }
+                    var result = $.parseJSON(jsonObj);
+                    var classAdd = 'effect1';
+                    var tipoComida = result[0].Comida;
+                    $.each(result, function (index, element) {
+                       
+                        var urlImage = urlWebApi + "api/Spartan_File/Files/" + element.Imagen + "/" + element.Description;
+                        var htmlli = li.replace(/nombrePlatillo/g, element.Nombre_de_Platillo)
+                            .replace(/descrip/g, 'dia ' + i.toString()).replace(/imgUrl/g, urlImage).replace('classAdd', classAdd)
+                            .replace('ingredientes', element.Ingredientes != null ? element.Ingredientes : '')
+                            .replace("tipoComida", tipoComida).replace('actual', element.Actual).replace('folio', element.Folio)
+                            .replace("dia", i.toString());
+                        classAdd = 'element.Folio';
+                        platillos.push(element.Folio);
+                        lis = lis + htmlli;
+                        i++;
+                        if (element.Comida != tipoComida || index == result.length - 1) {
+                            var container = containerPlan.replace("comida", tipoComida).replace('lista', lis);
+                            $('#container').append(container);
+                            lis = '';
+                            htmlli = '';
+                            var classAdd = 'effect1';
+                            i = 1;
+                        }
+                        tipoComida = element.Comida;
+                    });
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+    }
+
+</script>

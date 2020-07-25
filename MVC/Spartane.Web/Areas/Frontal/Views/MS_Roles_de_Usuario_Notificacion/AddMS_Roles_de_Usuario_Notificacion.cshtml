@@ -1,0 +1,447 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.MS_Roles_de_Usuario_NotificacionModel
+@{
+
+
+    List<SelectListItem> varNombre_del_campo_en_MS_Nombre_del_Campo = null;
+    if (ViewBag.Nombre_del_campo_en_MSs_Nombre_del_Campo != null)
+    { varNombre_del_campo_en_MS_Nombre_del_Campo = (List<SelectListItem>)ViewBag.Nombre_del_campo_en_MSs_Nombre_del_Campo; }
+
+
+    Permission permission = ViewBag.Permission;
+}
+<div class="modal-dialog" style="width:95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Add MS Roles de Usuario Notificación
+                <button data-dismiss="modal" class="close" type="button" onclick="@(ViewBag.functionMode == 0 ? "MS_Roles_de_Usuario_NotificacionRemoveAddRow("+ ViewBag.currentRowIndex +")" : "")"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            </h4>
+        </div>
+        <div class="modal-body scroll_content">
+            <div class="form-horizontal MS_Roles_de_Usuario_NotificacionPop_@ViewBag.currentRowIndex">
+				<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" id="lblAttributeType">Value</label>
+									<div class="col-sm-7">
+										<input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+									</div>
+									<div class="col-sm-2">
+										<a class="btn btn-primary" onclick="SaveValue()">Submit</a>
+									</div>
+									<input type="hidden" id="hdnAttributType" />
+									<input type="hidden" id="hdnAttributElement" />
+									<input type="hidden" id="hdnAttributNumber" />
+									<input type="hidden" id="hdnElementType" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row wrapper border-bottom white-bg page-heading">
+
+					<div class="row">
+						<div class="col-lg-10">
+							<h2>
+								MS Roles de Usuario Notificación
+								<button onclick="MS_Roles_de_Usuario_NotificacionGetBusinessRule('', 'Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MS_Roles_de_Usuario_NotificacionBusinessRule-form">
+									<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+										<i class="fa fa-cogs fa-spin"></i>
+									</a>
+								</button>
+							</h2>
+							<ol class="breadcrumb">
+								<li>
+									<a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+								</li>
+								<li class="">
+									<label>@Resources.MS_Roles_de_Usuario_NotificacionResources.MS_Roles_de_Usuario_Notificacion</label>
+								</li>
+								<li class="active">
+									<strong>@Resources.Resources.Create</strong>
+								</li>
+							</ol>
+						</div>
+						<div class="col-lg-2">
+
+							@{
+								if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+								{
+									<h2>&nbsp;</h2>
+									<button onclick="MS_Roles_de_Usuario_NotificacionDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+										<i class="fa fa-cogs fa-spin"></i>
+									</button>
+
+									<div aria-hidden="true" class="modal fade in MS_Roles_de_Usuario_NotificacionPropertyBusinessModal" id="MS_Roles_de_Usuario_NotificacionPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">
+														Property & Business Rules
+														<button class="close" type="button" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">Properties</a>
+														</div>
+														<div class="clearfix col-sm-12">&nbsp;</div>
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#MS_Roles_de_Usuario_NotificacionBusinessRule-form" onclick="MS_Roles_de_Usuario_NotificacionGetBusinessRule()">Business Rule</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									 <div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Roles_de_Usuario_NotificacionPropertyModal" id="MS_Roles_de_Usuario_NotificacionPropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+									<div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Roles_de_Usuario_NotificacionBusinessRuleModal" id="MS_Roles_de_Usuario_NotificacionBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+                                    <div aria-hidden="true" data-backdrop="static" class="modal fade in MS_Roles_de_Usuario_NotificacionAddBusinessRuleModal" id="MS_Roles_de_Usuario_NotificacionAddBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                                    </div>
+
+				
+								}
+							}
+						</div>
+					</div>
+
+				<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							@using (Html.BeginForm("Post", "MS_Roles_de_Usuario_Notificacion", FormMethod.Post, new { id = "CreateMS_Roles_de_Usuario_Notificacion", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+							{
+								<span id="popupNotification"></span>
+								<div class="container-fluid MS_Roles_de_Usuario_NotificacionCreateForm" id="viewmodeledit">
+							<div class="tabs-container">
+											<ul class="nav nav-tabs">
+				@@groupers@@
+											</ul>
+										<div class="tab-content">
+				<div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.MS_Roles_de_Usuario_NotificacionResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="260647" data-field-name="@Resources.MS_Roles_de_Usuario_NotificacionResources.Folio">
+                                    <label class="form-control" for="MS_Roles_de_Usuario_NotificacionFolio" id="MS_Roles_de_Usuario_NotificacionFolio">@Model.Folio</label>
+                                </div>
+                            </div>
+<div class="form-group" id="divNombre_del_Campo">
+	<label class="col-sm-2 control-label">@Resources.MS_Roles_de_Usuario_NotificacionResources.Nombre_del_Campo</label>
+	<div class="col-sm-8" data-field-id="Nombre_del_Campo" data-attribute="260649" data-field-name="@Resources.MS_Roles_de_Usuario_NotificacionResources.Nombre_del_Campo">
+		<select class="form-control" data-val="true" data-val-number="The field Nombre del Campo must be a number." data-val-required="The Nombre del Campo field is required." id="MS_Roles_de_Usuario_NotificacionNombre_del_Campo" name="MS_Roles_de_Usuario_NotificacionNombre_del_Campo">
+			<option value=""></option>
+			@if (varNombre_del_campo_en_MS_Nombre_del_Campo != null){ 
+				foreach (var itemNombre_del_Campo in varNombre_del_campo_en_MS_Nombre_del_Campo)
+				{
+					if (itemNombre_del_Campo.Value == Convert.ToString(Model.Nombre_del_Campo))
+					{
+						<option value="@itemNombre_del_Campo.Value" selected>@itemNombre_del_Campo.Text</option>
+					}
+					else
+					{
+						<option value="@itemNombre_del_Campo.Value">@itemNombre_del_Campo.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+
+								</div>	
+							</div>
+									<br />
+											<div class="form-actions fluid">
+												<input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+												<input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+												@if (!ViewBag.Consult)
+												{
+													<div id="dvSaveJob" style="display:inline-block"></div>
+
+													<button type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton">
+														<i class="fa fa-cogs fa-spin"></i>
+													</button>
+													<a title="@Resources.Resources.Configure" id="MS_Roles_de_Usuario_NotificacionConfigureSave" name="MS_Roles_de_Usuario_NotificacionConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success">@Resources.Resources.Configure</a>
+												}
+
+												<input type="hidden" id="hdnMS_Roles_de_Usuario_NotificacionConfigureType" />
+												<input type="hidden" id="hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId" />
+												<input type="hidden" id="hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName" />
+												<input type="hidden" id="hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute" />
+
+												<input data-dismiss="modal" type="button" value="@Resources.Resources.Cancelar" class="btn btn-danger noConsult" data-bind="click: cancel" tabindex="16" />
+
+												<button onclick="MS_Roles_de_Usuario_NotificacionGetBusinessRule('', 'Al Cancelar', '3')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MS_Roles_de_Usuario_NotificacionBusinessRule-form">
+													<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+														<i class="fa fa-cogs fa-spin"></i>
+													</a>
+												</button>
+											</div>
+										</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+					<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+				</div>
+			</div>
+		</div>
+</div>
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/MS_Roles_de_Usuario_Notificacion.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/MS_Roles_de_Usuario_NotificacionGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/MS_Roles_de_Usuario_NotificacionCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Funcionalidades_para_NotificacionCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        
+
+
+
+        $(document).ready(function () {
+			var currentIndex = @ViewBag.currentRowIndex
+
+            var MS_Roles_de_Usuario_NotificacionRowElement = "MS_Roles_de_Usuario_NotificacionPop_" + currentIndex.toString();
+            var abc = "if(dynamicFieldValidation('" + MS_Roles_de_Usuario_NotificacionRowElement + "')){ MS_Roles_de_Usuario_NotificacionInsertRowFromPopup(" + currentIndex + "); }";
+            var insertRowHTML = '<a class="btn btn-primary m-b" onclick="' + abc + '">Save</a>';
+            $('#dvSaveJob').html(insertRowHTML);
+			
+
+
+            initiateUIControls();
+            EjecutarValidacionesAlComienzo();
+			$('a').tooltip();
+        });
+
+
+
+        function initiateUIControls() {
+            $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+
+        }
+		
+		function SendMS_Roles_de_Usuario_NotificacionData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateMS_Roles_de_Usuario_Notificacion").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateMS_Roles_de_Usuario_Notificacion")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+
+            var isNew = $('#hdnIsNew').val();
+           
+            if (checkClientValidate('MS_Roles_de_Usuario_NotificacionCreateForm')) {
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/Post?IsNew=")' + isNew,
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+                    success: function (result) {
+                        if (result < 0) {
+                            showNotification("@Resources.Resources.ErrorSave", "error");
+                        } else {
+
+                            showNotification("@Resources.Resources.SaveSuccess", "success");
+                            callBack(result);
+                        }
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            return false;
+        };
+		
+        function GetPropertyBag() {
+            $.get('@Url.Action("MS_Roles_de_Usuario_NotificacionPropertyBag", "MS_Roles_de_Usuario_Notificacion")', function (data) {
+                $(".PropertyModal").html(data);
+            });
+        }
+        function MS_Roles_de_Usuario_NotificacionGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(FieldId);
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(FieldName);
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("BusinessRule", "BussinessRule")', { FieldId: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(), ObjectId: '44705', Attribute: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(), Screen: 'MS_Roles_de_Usuario_Notificacion' }, function (data) {
+                $(".MS_Roles_de_Usuario_NotificacionBusinessRuleModal").html(data);
+            });
+        }
+        function MS_Roles_de_Usuario_NotificacionGetAddBusinessRule(RuleId, FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null) {
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(FieldId);
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(FieldName);
+				$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("AddBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(), ObjectId: '44705', Attribute: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(), Screen: 'MS_Roles_de_Usuario_Notificacion' }, function (data) {
+                $(".MS_Roles_de_Usuario_NotificacionAddBusinessRuleModal").html(data);
+                $(".datatable").DataTable();
+            });
+        }
+		function RemoveBusinessRule(RuleId) {
+			$.get('@Url.Action("RemoveBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(), FieldName: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(), ObjectId: '44705', Attribute: $('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(), Screen: 'MS_Roles_de_Usuario_Notificacion' }, function (data) {
+				$(".MS_Roles_de_Usuario_NotificacionBusinessRuleModal").html(data);
+			});
+		}
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function BackToGrid() {
+        location.href = "@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnMS_Roles_de_Usuario_NotificacionConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnMS_Roles_de_Usuario_NotificacionConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnMS_Roles_de_Usuario_NotificacionConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/MS_Roles_de_Usuario_Notificacion/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+                        var mainElementAttributes = '<div class="col-sm-2">';
+                        mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "Required" : "Not Required") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "Visible" : "In Visible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "Disabled" : "Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '</div>';
+                        $('#MS_Roles_de_Usuario_Notificacion' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+                        $('#MS_Roles_de_Usuario_Notificacion' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                    }
+					if (childElementObject != null) {
+						for (var i = 0; i < childElementObject.length; i++) {
+							$('.' + childElementObject[i].inputId + 'Header').show();
+							$('.' + childElementObject[i].inputId).parent().show();
+							$('.' + childElementObject[i].inputId + 'Header').append(returnAttributeHTML(i));
+						}
+					}
+                    $('#MS_Roles_de_Usuario_NotificacionConfigureSave').text('Save Settings');
+                    $('#hdnMS_Roles_de_Usuario_NotificacionConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateMS_Roles_de_Usuario_Notificacion').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldId').val(fieldId);
+			$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleFieldName').val(fieldName);
+			$('#hdnMS_Roles_de_Usuario_NotificacionBusinessRuleAttribute').val(attribute);
+		});
+		//Initialize HTML Editors
+		
+    </script>

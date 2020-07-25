@@ -1,0 +1,366 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.MR_Detalle_PlatilloAdvanceSearchModel
+@{
+    List<SelectListItem> varIngredientes_Ingrediente = null;
+    if (ViewBag.Ingredientess_Ingrediente != null)
+    { varIngredientes_Ingrediente = (List<SelectListItem>)ViewBag.Ingredientess_Ingrediente; }
+    List<SelectListItem> varUnidades_de_Medida_Unidad = null;
+    if (ViewBag.Unidades_de_Medidas_Unidad != null)
+    { varUnidades_de_Medida_Unidad = (List<SelectListItem>)ViewBag.Unidades_de_Medidas_Unidad; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "MR_Detalle_Platillo", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Ingrediente</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.IngredienteFilter, filters, new { @class = "form-control", @id = "ddlIngredienteFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceIngrediente, new { @class = "form-control", @type = "text", @id = "txtAdvanceIngrediente" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varIngredientes_Ingrediente!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceIngredienteMultiple, varIngredientes_Ingrediente,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceIngrediente"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Cantidad</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.CantidadFilter, filters, new { @class = "form-control", @id = "ddlCantidadFilter" })
+                    @Html.TextBoxFor(m => m.Cantidad, new { @class = "form-control", @type = "text", @id = "txtCantidad" })
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Cantidad_en_Fraccion</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromCantidad_en_Fraccion, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceFromCantidad_en_Fraccion" })
+                    @Html.ValidationMessageFor(m => m.FromCantidad_en_Fraccion)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToCantidad_en_Fraccion, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceToCantidad_en_Fraccion", @data_min = "txtAdvanceFromCantidad_en_Fraccion" })
+                    @Html.ValidationMessageFor(m => m.ToCantidad_en_Fraccion)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Unidad</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.UnidadFilter, filters, new { @class = "form-control", @id = "ddlUnidadFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUnidad, new { @class = "form-control", @type = "text", @id = "txtAdvanceUnidad" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varUnidades_de_Medida_Unidad!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUnidadMultiple, varUnidades_de_Medida_Unidad,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUnidad"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Cantidad_a_mostrar</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Cantidad_a_mostrarFilter, filters, new { @class = "form-control", @id = "ddlCantidad_a_mostrarFilter" })
+                    @Html.TextBoxFor(m => m.Cantidad_a_mostrar, new { @class = "form-control", @type = "text", @id = "txtCantidad_a_mostrar" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.MR_Detalle_PlatilloResources.Ingrediente_a_mostrar</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Ingrediente_a_mostrarFilter, filters, new { @class = "form-control", @id = "ddlIngrediente_a_mostrarFilter" })
+                    @Html.TextBoxFor(m => m.Ingrediente_a_mostrar, new { @class = "form-control", @type = "text", @id = "txtIngrediente_a_mostrar" })
+                </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/MR_Detalle_Platillo/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.MR_Detalle_PlatilloFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.MR_Detalle_PlatilloFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        advanceSearch.IngredienteSearchType = 0;
+        if ($('#ddlAdvanceIngrediente').val().length > 0 || $("#txtAdvanceIngrediente").val() == "") {
+
+
+            if (isMR_Detalle_PlatilloTextSearch) {
+                advanceSearch.IngredienteName = $("#txtAdvanceIngrediente").val();
+                advanceSearch.IngredienteNameSearchType = $("#ddlAdvanceIngrediente").val();
+                advanceSearch.IngredienteSearchType = 1;
+            }
+            else {
+
+                advanceSearch.IngredienteToSearch = $("#ddlAdvanceIngrediente").val();
+                advanceSearch.IngredienteSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceCantidad").val() != "") {
+            hasParameter = true;
+            advanceSearch.MR_Detalle_PlatilloCantidad = $("#txtAdvanceCantidad").val();
+            advanceSearch.MR_Detalle_PlatilloCantidadSearchType = $("#ddlAdvanceCantidadFilter").val();
+        }
+        if ($("#txtAdvanceFromCantidad_en_Fraccion").val() != "" || $("#txtAdvanceToCantidad_en_Fraccion").val() != "") {
+            hasParameter = true;
+            advanceSearch.MR_Detalle_PlatilloCantidad_en_FraccionFrom = $("#txtAdvanceFromCantidad_en_Fraccion").val();
+            advanceSearch.MR_Detalle_PlatilloCantidad_en_FraccionTo = $("#txtAdvanceToCantidad_en_Fraccion").val();
+        }
+        advanceSearch.UnidadSearchType = 0;
+        if ($('#ddlAdvanceUnidad').val().length > 0 || $("#txtAdvanceUnidad").val() == "") {
+
+
+            if (isMR_Detalle_PlatilloTextSearch) {
+                advanceSearch.UnidadName = $("#txtAdvanceUnidad").val();
+                advanceSearch.UnidadNameSearchType = $("#ddlAdvanceUnidad").val();
+                advanceSearch.UnidadSearchType = 1;
+            }
+            else {
+
+                advanceSearch.UnidadToSearch = $("#ddlAdvanceUnidad").val();
+                advanceSearch.UnidadSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceCantidad_a_mostrar").val() != "") {
+            hasParameter = true;
+            advanceSearch.MR_Detalle_PlatilloCantidad_a_mostrar = $("#txtAdvanceCantidad_a_mostrar").val();
+            advanceSearch.MR_Detalle_PlatilloCantidad_a_mostrarSearchType = $("#ddlAdvanceCantidad_a_mostrarFilter").val();
+        }
+        if ($("#txtAdvanceIngrediente_a_mostrar").val() != "") {
+            hasParameter = true;
+            advanceSearch.MR_Detalle_PlatilloIngrediente_a_mostrar = $("#txtAdvanceIngrediente_a_mostrar").val();
+            advanceSearch.MR_Detalle_PlatilloIngrediente_a_mostrarSearchType = $("#ddlAdvanceIngrediente_a_mostrarFilter").val();
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblMR_Detalle_Platillo').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isMR_Detalle_PlatilloTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceIngrediente").keypress(function () {
+            isMR_Detalle_PlatilloTextSearch = true;
+            $("#ddlAdvanceIngrediente").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceIngrediente").change(function () {
+            isMR_Detalle_PlatilloTextSearch = false;
+            $("#txtAdvanceIngrediente").val('');
+        });
+        $("#txtAdvanceUnidad").keypress(function () {
+            isMR_Detalle_PlatilloTextSearch = true;
+            $("#ddlAdvanceUnidad").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUnidad").change(function () {
+            isMR_Detalle_PlatilloTextSearch = false;
+            $("#txtAdvanceUnidad").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Configuracion_del_Paciente" value="Configuración del Paciente"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Fecha_de_Registro" value="Fecha de Registro"></resource>
+  <resource culture="es-es" name="Hora_de_Registro" value="Hora de Registro"></resource>
+  <resource culture="es-es" name="Usuario_Registrado" value="Usuario Registrado"></resource>
+  <resource culture="es-es" name="Rol" value="Rol"></resource>
+  <resource culture="es-es" name="Token" value="Token"></resource>
+  <resource culture="es-es" name="Android" value="Android"></resource>
+  <resource culture="es-es" name="iOS" value="iOS"></resource>
+  <resource culture="es-es" name="Permite_notificaciones_por_email" value="¿Permite notificaciones por email?"></resource>
+  <resource culture="es-es" name="Permite_notificaciones_push" value="¿Permite notificaciones push?"></resource>
+  <resource culture="es-es" name="MR_Notificaciones" value="MR Notificaciones"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

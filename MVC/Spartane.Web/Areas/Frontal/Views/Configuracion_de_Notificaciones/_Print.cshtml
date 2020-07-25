@@ -1,0 +1,218 @@
+﻿@model IList<Spartane.Web.Areas.Frontal.Models.Configuracion_de_NotificacionesGridModel>
+
+@{
+    var rowCounter = 0;
+}
+
+<style>
+    .table {
+        width: 100%;
+        border: 1px solid #cccccc;
+        font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+        /*border-collapse: separate !important;*/
+        font-size: 13px;
+    }
+
+        .table td {
+            padding: 2px;
+            border:1px solid #cccccc;
+        }
+
+    .table tr:nth-of-type(2n+1) {
+        background-color: #f9f9f9;
+    }
+
+        .table tr:nth-of-type(2n) {
+            background-color: #8da0c2;
+        }
+
+    .table-row-1 td, .table-row-1 th {
+    }
+
+    .table-row-2 td, .table-row-2 th, thead {
+    }
+
+    .tableHeaderRow {
+        font-weight: bold;
+        border: 1px solid #ff6a00;
+    }
+
+    .column1 {
+        width: 15%;
+    }
+
+    .column2 {
+        width: 15%;
+    }
+</style>
+<br />
+<body onbeforeprint="ocultarcolumnas();">
+ <span id="columnsVisible"></span>
+<table class="table" cellspacing="0" cellpadding="0" border="0">
+    <thead>
+        <tr>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Folio
+            </td>
+                        <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Folio
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Fecha_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Hora_de_Registro
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Usuario_que_Registra
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Nombre_de_la_Notificacion
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Es_permanente
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Funcionalidad
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Tipo_de_Notificacion
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Tipo_de_Accion
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Tipo_de_Recordatorio
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Fecha_inicio
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Tiene_fecha_de_finalizacion_definida
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Cantidad_de_dias_a_validar
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Fecha_a_validar
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Fecha_fin
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Estatus
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Notificar_por_correo
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Texto_que_llevara_el_correo
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Notificacion_push
+            </td>
+            <td class="column1">
+                @Resources.Configuracion_de_NotificacionesResources.Texto_a_mostrar_en_la_notificacion_Push
+            </td>
+
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            foreach (var item in Model)
+            {                
+                <tr>
+                    <td>
+                        @item.Folio
+                    </td>
+					                    <td>
+                        @item.Folio
+                    </td>
+                    <td>
+                        @item.Fecha_de_Registro
+                    </td>
+                    <td>
+                        @item.Hora_de_Registro
+                    </td>
+                    <td>
+                        @item.Usuario_que_RegistraName
+                    </td>
+                    <td>
+                        @item.Nombre_de_la_Notificacion
+                    </td>
+                    <td>
+                        @item.Es_permanente
+                    </td>
+                    <td>
+                        @item.FuncionalidadFuncionalidad
+                    </td>
+                    <td>
+                        @item.Tipo_de_NotificacionDescripcion
+                    </td>
+                    <td>
+                        @item.Tipo_de_AccionDescripcion
+                    </td>
+                    <td>
+                        @item.Tipo_de_RecordatorioDescripcion
+                    </td>
+                    <td>
+                        @item.Fecha_inicio
+                    </td>
+                    <td>
+                        @item.Tiene_fecha_de_finalizacion_definida
+                    </td>
+                    <td>
+                        @item.Cantidad_de_dias_a_validar
+                    </td>
+                    <td>
+                        @item.Fecha_a_validarDescripcion
+                    </td>
+                    <td>
+                        @item.Fecha_fin
+                    </td>
+                    <td>
+                        @item.EstatusDescripcion
+                    </td>
+                    <td>
+                        @item.Notificar_por_correo
+                    </td>
+                    <td>
+                        @item.Texto_que_llevara_el_correo
+                    </td>
+                    <td>
+                        @item.Notificacion_push
+                    </td>
+                    <td>
+                        @item.Texto_a_mostrar_en_la_notificacion_Push
+                    </td>
+
+                </tr>
+                rowCounter++;
+            }
+        }
+    </tbody>
+</table>
+</body>
+
+<script>
+    function ocultarcolumnas() {        
+        var arr = document.getElementById('columnsVisible').text.split(',');
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] == "false") {
+                show_hide_column(i-1, false);
+            }
+        }    
+    };
+
+    function show_hide_column(col_no, do_show) {
+        var rows = document.getElementsByClassName('table')[0].rows;
+        for (var row = 0; row < rows.length; row++) {
+            var cols = rows[row].cells;
+            if (col_no >= 0 && col_no < cols.length) {
+                console.log(col_no);
+                cols[col_no].style.display = do_show ? '' : 'none';
+            }
+        }
+    }
+</script>
+

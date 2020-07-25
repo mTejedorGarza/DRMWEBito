@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Detalle_Laboratorios_Clinicos" value="Detalle Laboratorios Clínicos"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Numero_de_Empleado_Titular" value="Número de Empleado Titular"></resource>
+  <resource culture="en-US" name="Nombre_Completo" value="Nombre Completo"></resource>
+  <resource culture="en-US" name="Familiar_del_Empleado" value="Familiar del Empleado"></resource>
+  <resource culture="en-US" name="Numero_de_Empleado_Beneficiario" value="Número de Empleado Beneficiario"></resource>
+  <resource culture="en-US" name="Indicador" value="Indicador"></resource>
+  <resource culture="en-US" name="Resultado" value="Resultado"></resource>
+  <resource culture="en-US" name="Unidad" value="Unidad"></resource>
+  <resource culture="en-US" name="Intervalo_de_referencia" value="Intervalo de referencia"></resource>
+  <resource culture="en-US" name="Fecha_de_Resultado" value="Fecha de Resultado"></resource>
+  <resource culture="en-US" name="Estatus_Indicador" value="Estatus Indicador"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

@@ -1,0 +1,372 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Detalle_Secuencia_de_EjerciciosAdvanceSearchModel
+@{
+    List<SelectListItem> varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio = null;
+    if (ViewBag.Secuencia_de_Ejercicios_en_Rutinass_Orden_del_Ejercicio != null)
+    { varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio = (List<SelectListItem>)ViewBag.Secuencia_de_Ejercicios_en_Rutinass_Orden_del_Ejercicio; }
+    List<SelectListItem> varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio = null;
+    if (ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Ejercicio != null)
+    { varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio = (List<SelectListItem>)ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Ejercicio; }
+    List<SelectListItem> varTipo_de_Enfoque_del_Ejercicio_Enfoque = null;
+    if (ViewBag.Tipo_de_Enfoque_del_Ejercicios_Enfoque != null)
+    { varTipo_de_Enfoque_del_Ejercicio_Enfoque = (List<SelectListItem>)ViewBag.Tipo_de_Enfoque_del_Ejercicios_Enfoque; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "Detalle_Secuencia_de_Ejercicios", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.Detalle_Secuencia_de_EjerciciosResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Secuencia_de_EjerciciosResources.Orden_del_Ejercicio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Orden_del_EjercicioFilter, filters, new { @class = "form-control", @id = "ddlOrden_del_EjercicioFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceOrden_del_Ejercicio, new { @class = "form-control", @type = "text", @id = "txtAdvanceOrden_del_Ejercicio" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceOrden_del_EjercicioMultiple, varSecuencia_de_Ejercicios_en_Rutinas_Orden_del_Ejercicio,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceOrden_del_Ejercicio"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Secuencia_de_EjerciciosResources.Tipo_de_Ejercicio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Tipo_de_EjercicioFilter, filters, new { @class = "form-control", @id = "ddlTipo_de_EjercicioFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceTipo_de_Ejercicio, new { @class = "form-control", @type = "text", @id = "txtAdvanceTipo_de_Ejercicio" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceTipo_de_EjercicioMultiple, varTipo_de_Ejercicio_Rutina_Tipo_de_Ejercicio,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceTipo_de_Ejercicio"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Secuencia_de_EjerciciosResources.Enfoque</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EnfoqueFilter, filters, new { @class = "form-control", @id = "ddlEnfoqueFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEnfoque, new { @class = "form-control", @type = "text", @id = "txtAdvanceEnfoque" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varTipo_de_Enfoque_del_Ejercicio_Enfoque!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEnfoqueMultiple, varTipo_de_Enfoque_del_Ejercicio_Enfoque,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEnfoque"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Secuencia_de_EjerciciosResources.Secuencia_del_Ejercicio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Secuencia_del_EjercicioFilter, filters, new { @class = "form-control", @id = "ddlSecuencia_del_EjercicioFilter" })
+                    @Html.TextBoxFor(m => m.Secuencia_del_Ejercicio, new { @class = "form-control", @type = "text", @id = "txtSecuencia_del_Ejercicio" })
+                </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/Detalle_Secuencia_de_Ejercicios/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Secuencia_de_EjerciciosFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.Detalle_Secuencia_de_EjerciciosFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        advanceSearch.Orden_del_EjercicioSearchType = 0;
+        if ($('#ddlAdvanceOrden_del_Ejercicio').val().length > 0 || $("#txtAdvanceOrden_del_Ejercicio").val() == "") {
+
+
+            if (isDetalle_Secuencia_de_EjerciciosTextSearch) {
+                advanceSearch.Orden_del_EjercicioName = $("#txtAdvanceOrden_del_Ejercicio").val();
+                advanceSearch.Orden_del_EjercicioNameSearchType = $("#ddlAdvanceOrden_del_Ejercicio").val();
+                advanceSearch.Orden_del_EjercicioSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Orden_del_EjercicioToSearch = $("#ddlAdvanceOrden_del_Ejercicio").val();
+                advanceSearch.Orden_del_EjercicioSearchType = 2;
+            }
+        }
+        advanceSearch.Tipo_de_EjercicioSearchType = 0;
+        if ($('#ddlAdvanceTipo_de_Ejercicio').val().length > 0 || $("#txtAdvanceTipo_de_Ejercicio").val() == "") {
+
+
+            if (isDetalle_Secuencia_de_EjerciciosTextSearch) {
+                advanceSearch.Tipo_de_EjercicioName = $("#txtAdvanceTipo_de_Ejercicio").val();
+                advanceSearch.Tipo_de_EjercicioNameSearchType = $("#ddlAdvanceTipo_de_Ejercicio").val();
+                advanceSearch.Tipo_de_EjercicioSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Tipo_de_EjercicioToSearch = $("#ddlAdvanceTipo_de_Ejercicio").val();
+                advanceSearch.Tipo_de_EjercicioSearchType = 2;
+            }
+        }
+        advanceSearch.EnfoqueSearchType = 0;
+        if ($('#ddlAdvanceEnfoque').val().length > 0 || $("#txtAdvanceEnfoque").val() == "") {
+
+
+            if (isDetalle_Secuencia_de_EjerciciosTextSearch) {
+                advanceSearch.EnfoqueName = $("#txtAdvanceEnfoque").val();
+                advanceSearch.EnfoqueNameSearchType = $("#ddlAdvanceEnfoque").val();
+                advanceSearch.EnfoqueSearchType = 1;
+            }
+            else {
+
+                advanceSearch.EnfoqueToSearch = $("#ddlAdvanceEnfoque").val();
+                advanceSearch.EnfoqueSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceSecuencia_del_Ejercicio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Secuencia_de_EjerciciosSecuencia_del_Ejercicio = $("#txtAdvanceSecuencia_del_Ejercicio").val();
+            advanceSearch.Detalle_Secuencia_de_EjerciciosSecuencia_del_EjercicioSearchType = $("#ddlAdvanceSecuencia_del_EjercicioFilter").val();
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblDetalle_Secuencia_de_Ejercicios').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isDetalle_Secuencia_de_EjerciciosTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceOrden_del_Ejercicio").keypress(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = true;
+            $("#ddlAdvanceOrden_del_Ejercicio").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceOrden_del_Ejercicio").change(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = false;
+            $("#txtAdvanceOrden_del_Ejercicio").val('');
+        });
+        $("#txtAdvanceTipo_de_Ejercicio").keypress(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = true;
+            $("#ddlAdvanceTipo_de_Ejercicio").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceTipo_de_Ejercicio").change(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = false;
+            $("#txtAdvanceTipo_de_Ejercicio").val('');
+        });
+        $("#txtAdvanceEnfoque").keypress(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = true;
+            $("#ddlAdvanceEnfoque").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEnfoque").change(function () {
+            isDetalle_Secuencia_de_EjerciciosTextSearch = false;
+            $("#txtAdvanceEnfoque").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

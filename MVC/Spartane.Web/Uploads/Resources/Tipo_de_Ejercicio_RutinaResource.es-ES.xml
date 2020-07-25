@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Tipo_de_Ejercicio_Rutina" value="Tipo de Ejercicio Rutina"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Descripcion" value="Descripción"></resource>
+  <resource culture="es-es" name="Tipo_de_Rutina" value="Tipo de Rutina"></resource>
+  <resource culture="es-es" name="Nombre_para_Secuencia" value="Nombre para Secuencia"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

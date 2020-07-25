@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Configuracion_de_Notificaciones" value="Configuración de Notificaciones"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Fecha_de_Registro" value="Fecha de Registro"></resource>
+  <resource culture="en-US" name="Hora_de_Registro" value="Hora de Registro"></resource>
+  <resource culture="en-US" name="Usuario_que_Registra" value="Usuario que Registra"></resource>
+  <resource culture="en-US" name="Nombre_de_la_Notificacion" value="Nombre de la Notificación"></resource>
+  <resource culture="en-US" name="Dirigido_a" value="Dirigido a:"></resource>
+  <resource culture="en-US" name="Es_permanente" value="¿Es permanente?"></resource>
+  <resource culture="en-US" name="Funcionalidad" value="Funcionalidad"></resource>
+  <resource culture="en-US" name="Tipo_de_Notificacion" value="Tipo de Notificación:"></resource>
+  <resource culture="en-US" name="Tipo_de_Accion" value="Tipo de Acción:"></resource>
+  <resource culture="en-US" name="Tipo_de_Recordatorio" value="Tipo de Recordatorio:"></resource>
+  <resource culture="en-US" name="Fecha_inicio" value="Fecha inicio"></resource>
+  <resource culture="en-US" name="Tiene_fecha_de_finalizacion_definida" value="¿Tiene fecha de finalización definida?"></resource>
+  <resource culture="en-US" name="Cantidad_de_dias_a_validar" value="Cantidad de días a validar"></resource>
+  <resource culture="en-US" name="Fecha_a_validar" value="Fecha a validar"></resource>
+  <resource culture="en-US" name="Fecha_fin" value="Fecha fin"></resource>
+  <resource culture="en-US" name="Estatus" value="Estatus"></resource>
+  <resource culture="en-US" name="Notificar_por_correo" value="¿Notificar por correo?"></resource>
+  <resource culture="en-US" name="Texto_que_llevara_el_correo" value="Texto que llevará el correo"></resource>
+  <resource culture="en-US" name="Notificacion_push" value="¿Notificación push?"></resource>
+  <resource culture="en-US" name="Texto_a_mostrar_en_la_notificacion_Push" value="Texto a mostrar en la notificación Push"></resource>
+  <resource culture="en-US" name="Frecuencia_Notificacion" value="Frecuencia Notificación"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

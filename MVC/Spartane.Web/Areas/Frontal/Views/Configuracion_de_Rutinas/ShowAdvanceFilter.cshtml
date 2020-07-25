@@ -1,0 +1,588 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Configuracion_de_RutinasAdvanceSearchModel
+@{
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina = null;
+    if (ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Rutina != null)
+    { varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina = (List<SelectListItem>)ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Rutina; }
+    List<SelectListItem> varNivel_de_dificultad_Nivel_de_Dificultad = null;
+    if (ViewBag.Nivel_de_dificultads_Nivel_de_Dificultad != null)
+    { varNivel_de_dificultad_Nivel_de_Dificultad = (List<SelectListItem>)ViewBag.Nivel_de_dificultads_Nivel_de_Dificultad; }
+    List<SelectListItem> varSexo_Sexo = null;
+    if (ViewBag.Sexos_Sexo != null)
+    { varSexo_Sexo = (List<SelectListItem>)ViewBag.Sexos_Sexo; }
+    List<SelectListItem> varEstatus_Estatus = null;
+    if (ViewBag.Estatuss_Estatus != null)
+    { varEstatus_Estatus = (List<SelectListItem>)ViewBag.Estatuss_Estatus; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "Configuracion_de_Rutinas", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Configuracion_de_RutinasResources.Fecha_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_Registro" name="FromFecha_de_Registro" type="text" value="@Model.FromFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_Registro" name="ToFecha_de_Registro" type="text" value="@Model.ToFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Configuracion_de_RutinasResources.Hora_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_Registro" name="FromHora_de_Registro" type="text" value="@Model.FromHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_Registro" name="ToHora_de_Registro" type="text" value="@Model.ToHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Usuario_que_Registra</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_RegistraFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_RegistraFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_Registra, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_Registra" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_Registra!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_RegistraMultiple, varSpartan_User_Usuario_que_Registra,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_Registra"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Tipo_de_Rutina</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Tipo_de_RutinaFilter, filters, new { @class = "form-control", @id = "ddlTipo_de_RutinaFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceTipo_de_Rutina, new { @class = "form-control", @type = "text", @id = "txtAdvanceTipo_de_Rutina" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceTipo_de_RutinaMultiple, varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceTipo_de_Rutina"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Nivel_de_Dificultad</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Nivel_de_DificultadFilter, filters, new { @class = "form-control", @id = "ddlNivel_de_DificultadFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceNivel_de_Dificultad, new { @class = "form-control", @type = "text", @id = "txtAdvanceNivel_de_Dificultad" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varNivel_de_dificultad_Nivel_de_Dificultad!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceNivel_de_DificultadMultiple, varNivel_de_dificultad_Nivel_de_Dificultad,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceNivel_de_Dificultad"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Sexo</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.SexoFilter, filters, new { @class = "form-control", @id = "ddlSexoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceSexo, new { @class = "form-control", @type = "text", @id = "txtAdvanceSexo" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSexo_Sexo!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceSexoMultiple, varSexo_Sexo,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceSexo"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Cantidad_de_ejercicios</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromCantidad_de_ejercicios, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromCantidad_de_ejercicios" })
+                    @Html.ValidationMessageFor(m => m.FromCantidad_de_ejercicios)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToCantidad_de_ejercicios, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToCantidad_de_ejercicios", @data_min = "txtAdvanceFromCantidad_de_ejercicios" })
+                    @Html.ValidationMessageFor(m => m.ToCantidad_de_ejercicios)
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Cantidad_de_series</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromCantidad_de_series, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromCantidad_de_series" })
+                    @Html.ValidationMessageFor(m => m.FromCantidad_de_series)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToCantidad_de_series, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToCantidad_de_series", @data_min = "txtAdvanceFromCantidad_de_series" })
+                    @Html.ValidationMessageFor(m => m.ToCantidad_de_series)
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Cantidad_de_repeticiones</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromCantidad_de_repeticiones, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromCantidad_de_repeticiones" })
+                    @Html.ValidationMessageFor(m => m.FromCantidad_de_repeticiones)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToCantidad_de_repeticiones, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToCantidad_de_repeticiones", @data_min = "txtAdvanceFromCantidad_de_repeticiones" })
+                    @Html.ValidationMessageFor(m => m.ToCantidad_de_repeticiones)
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Descanso_segundos</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromDescanso_segundos, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromDescanso_segundos" })
+                    @Html.ValidationMessageFor(m => m.FromDescanso_segundos)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToDescanso_segundos, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToDescanso_segundos", @data_min = "txtAdvanceFromDescanso_segundos" })
+                    @Html.ValidationMessageFor(m => m.ToDescanso_segundos)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Texto_Ejercicios</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Texto_EjerciciosFilter, filters, new { @class = "form-control", @id = "ddlTexto_EjerciciosFilter" })
+                    @Html.TextBoxFor(m => m.Texto_Ejercicios, new { @class = "form-control", @type = "text", @id = "txtTexto_Ejercicios" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Configuracion_de_RutinasResources.Estatus</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EstatusFilter, filters, new { @class = "form-control", @id = "ddlEstatusFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEstatus, new { @class = "form-control", @type = "text", @id = "txtAdvanceEstatus" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varEstatus_Estatus!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEstatusMultiple, varEstatus_Estatus,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEstatus"
+                        });
+                    }
+                </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/Configuracion_de_Rutinas/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.Configuracion_de_RutinasFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        if ($("#txtAdvanceFromFecha_de_Registro").val() != "" || $("#txtAdvanceToFecha_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasFecha_de_RegistroFrom = $("#txtAdvanceFromFecha_de_Registro").val();
+            advanceSearch.Configuracion_de_RutinasFecha_de_RegistroTo = $("#txtAdvanceToFecha_de_Registro").val();
+        }
+        if ($("#txtAdvanceHora_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasHora_de_Registro = $("#txtAdvanceHora_de_Registro").val();
+            advanceSearch.Configuracion_de_RutinasHora_de_RegistroSearchType = $("#ddlAdvanceHora_de_RegistroFilter").val();
+        }
+        advanceSearch.Usuario_que_RegistraSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_Registra').val().length > 0 || $("#txtAdvanceUsuario_que_Registra").val() == "") {
+
+
+            if (isConfiguracion_de_RutinasTextSearch) {
+                advanceSearch.Usuario_que_RegistraName = $("#txtAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraNameSearchType = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_RegistraToSearch = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 2;
+            }
+        }
+        advanceSearch.Tipo_de_RutinaSearchType = 0;
+        if ($('#ddlAdvanceTipo_de_Rutina').val().length > 0 || $("#txtAdvanceTipo_de_Rutina").val() == "") {
+
+
+            if (isConfiguracion_de_RutinasTextSearch) {
+                advanceSearch.Tipo_de_RutinaName = $("#txtAdvanceTipo_de_Rutina").val();
+                advanceSearch.Tipo_de_RutinaNameSearchType = $("#ddlAdvanceTipo_de_Rutina").val();
+                advanceSearch.Tipo_de_RutinaSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Tipo_de_RutinaToSearch = $("#ddlAdvanceTipo_de_Rutina").val();
+                advanceSearch.Tipo_de_RutinaSearchType = 2;
+            }
+        }
+        advanceSearch.Nivel_de_DificultadSearchType = 0;
+        if ($('#ddlAdvanceNivel_de_Dificultad').val().length > 0 || $("#txtAdvanceNivel_de_Dificultad").val() == "") {
+
+
+            if (isConfiguracion_de_RutinasTextSearch) {
+                advanceSearch.Nivel_de_DificultadName = $("#txtAdvanceNivel_de_Dificultad").val();
+                advanceSearch.Nivel_de_DificultadNameSearchType = $("#ddlAdvanceNivel_de_Dificultad").val();
+                advanceSearch.Nivel_de_DificultadSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Nivel_de_DificultadToSearch = $("#ddlAdvanceNivel_de_Dificultad").val();
+                advanceSearch.Nivel_de_DificultadSearchType = 2;
+            }
+        }
+        advanceSearch.SexoSearchType = 0;
+        if ($('#ddlAdvanceSexo').val().length > 0 || $("#txtAdvanceSexo").val() == "") {
+
+
+            if (isConfiguracion_de_RutinasTextSearch) {
+                advanceSearch.SexoName = $("#txtAdvanceSexo").val();
+                advanceSearch.SexoNameSearchType = $("#ddlAdvanceSexo").val();
+                advanceSearch.SexoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.SexoToSearch = $("#ddlAdvanceSexo").val();
+                advanceSearch.SexoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromCantidad_de_ejercicios").val() != "" || $("#txtAdvanceToCantidad_de_ejercicios").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasCantidad_de_ejerciciosFrom = $("#txtAdvanceFromCantidad_de_ejercicios").val();
+            advanceSearch.Configuracion_de_RutinasCantidad_de_ejerciciosTo = $("#txtAdvanceToCantidad_de_ejercicios").val();
+        }
+        if ($("#txtAdvanceFromCantidad_de_series").val() != "" || $("#txtAdvanceToCantidad_de_series").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasCantidad_de_seriesFrom = $("#txtAdvanceFromCantidad_de_series").val();
+            advanceSearch.Configuracion_de_RutinasCantidad_de_seriesTo = $("#txtAdvanceToCantidad_de_series").val();
+        }
+        if ($("#txtAdvanceFromCantidad_de_repeticiones").val() != "" || $("#txtAdvanceToCantidad_de_repeticiones").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasCantidad_de_repeticionesFrom = $("#txtAdvanceFromCantidad_de_repeticiones").val();
+            advanceSearch.Configuracion_de_RutinasCantidad_de_repeticionesTo = $("#txtAdvanceToCantidad_de_repeticiones").val();
+        }
+        if ($("#txtAdvanceFromDescanso_segundos").val() != "" || $("#txtAdvanceToDescanso_segundos").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasDescanso_segundosFrom = $("#txtAdvanceFromDescanso_segundos").val();
+            advanceSearch.Configuracion_de_RutinasDescanso_segundosTo = $("#txtAdvanceToDescanso_segundos").val();
+        }
+        if ($("#txtAdvanceTexto_Ejercicios").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasTexto_Ejercicios = $("#txtAdvanceTexto_Ejercicios").val();
+            advanceSearch.Configuracion_de_RutinasTexto_EjerciciosSearchType = $("#ddlAdvanceTexto_EjerciciosFilter").val();
+        }
+        if ($("#ddlAdvanceLleva_Calentamiento").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasLleva_Calentamiento = $("#ddlAdvanceLleva_Calentamiento").val();
+        }
+        if ($("#ddlAdvanceLleva_Enfriamiento").val() != "") {
+            hasParameter = true;
+            advanceSearch.Configuracion_de_RutinasLleva_Enfriamiento = $("#ddlAdvanceLleva_Enfriamiento").val();
+        }
+        advanceSearch.EstatusSearchType = 0;
+        if ($('#ddlAdvanceEstatus').val().length > 0 || $("#txtAdvanceEstatus").val() == "") {
+
+
+            if (isConfiguracion_de_RutinasTextSearch) {
+                advanceSearch.EstatusName = $("#txtAdvanceEstatus").val();
+                advanceSearch.EstatusNameSearchType = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 1;
+            }
+            else {
+
+                advanceSearch.EstatusToSearch = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 2;
+            }
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblConfiguracion_de_Rutinas').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isConfiguracion_de_RutinasTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceUsuario_que_Registra").keypress(function () {
+            isConfiguracion_de_RutinasTextSearch = true;
+            $("#ddlAdvanceUsuario_que_Registra").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_Registra").change(function () {
+            isConfiguracion_de_RutinasTextSearch = false;
+            $("#txtAdvanceUsuario_que_Registra").val('');
+        });
+        $("#txtAdvanceTipo_de_Rutina").keypress(function () {
+            isConfiguracion_de_RutinasTextSearch = true;
+            $("#ddlAdvanceTipo_de_Rutina").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceTipo_de_Rutina").change(function () {
+            isConfiguracion_de_RutinasTextSearch = false;
+            $("#txtAdvanceTipo_de_Rutina").val('');
+        });
+        $("#txtAdvanceNivel_de_Dificultad").keypress(function () {
+            isConfiguracion_de_RutinasTextSearch = true;
+            $("#ddlAdvanceNivel_de_Dificultad").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceNivel_de_Dificultad").change(function () {
+            isConfiguracion_de_RutinasTextSearch = false;
+            $("#txtAdvanceNivel_de_Dificultad").val('');
+        });
+        $("#txtAdvanceSexo").keypress(function () {
+            isConfiguracion_de_RutinasTextSearch = true;
+            $("#ddlAdvanceSexo").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceSexo").change(function () {
+            isConfiguracion_de_RutinasTextSearch = false;
+            $("#txtAdvanceSexo").val('');
+        });
+        $("#txtAdvanceEstatus").keypress(function () {
+            isConfiguracion_de_RutinasTextSearch = true;
+            $("#ddlAdvanceEstatus").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEstatus").change(function () {
+            isConfiguracion_de_RutinasTextSearch = false;
+            $("#txtAdvanceEstatus").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

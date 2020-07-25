@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Codigos_de_Descuento" value="Códigos de Descuento"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Fecha_de_Registro" value="Fecha de Registro"></resource>
+  <resource culture="en-US" name="Hora_de_Registro" value="Hora de Registro"></resource>
+  <resource culture="en-US" name="Usuario_que_Registra" value="Usuario que Registra"></resource>
+  <resource culture="en-US" name="Tipo_de_Vendedor" value="Tipo de Vendedor"></resource>
+  <resource culture="en-US" name="Vendedor" value="Vendedor"></resource>
+  <resource culture="en-US" name="Tipo_de_Descuento" value="Tipo de Descuento"></resource>
+  <resource culture="en-US" name="Descuento" value="Descuento"></resource>
+  <resource culture="en-US" name="Productos" value="Productos"></resource>
+  <resource culture="en-US" name="Texto_promocional" value="Texto promocional"></resource>
+  <resource culture="en-US" name="Fecha_inicio_vigencia" value="Fecha inicio vigencia"></resource>
+  <resource culture="en-US" name="Fecha_fin_vigencia" value="Fecha fin vigencia"></resource>
+  <resource culture="en-US" name="Cantidad_maxima_de_referenciados" value="Cantidad máxima de referenciados"></resource>
+  <resource culture="en-US" name="Codigo_de_descuento" value="Código de descuento"></resource>
+  <resource culture="en-US" name="Estatus" value="Estatus"></resource>
+  <resource culture="en-US" name="Fecha_de_autorizacion" value="Fecha de autorización"></resource>
+  <resource culture="en-US" name="Hora_de_autorizacion" value="Hora de autorización"></resource>
+  <resource culture="en-US" name="Usuario_que_autoriza" value="Usuario que autoriza"></resource>
+  <resource culture="en-US" name="Observaciones" value="Observaciones"></resource>
+  <resource culture="en-US" name="Resultado" value="Resultado"></resource>
+  <resource culture="en-US" name="Referenciados" value="Referenciados"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+<resource culture="en-US" name="TabAutorizacion" value="Autorización"></resource>
+<resource culture="en-US" name="TabReferenciados" value="Referenciados"></resource>
+
+</resources>

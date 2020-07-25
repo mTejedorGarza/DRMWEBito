@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Modules>
+  <Module culture="en-us" Id="1" value="Objects"></Module>
+  <Module culture="es-es" Id="1" value="Objetos"></Module>
+  <Module culture="en-us" Id="23" value="Security"></Module>
+  <Module culture="es-es" Id="23" value="Seguridad"></Module>
+  <Module culture="en-us" Id="34" value="Formats"></Module>
+  <Module culture="es-es" Id="34" value="Formatos"></Module>
+  <Module culture="en-us" Id="38" value="Reports"></Module>
+  <Module culture="es-es" Id="38" value="Reportes"></Module>
+  <Module culture="en-us" Id="39" value="Workflows"></Module>
+  <Module culture="es-es" Id="39" value="Flujos de Trabajo"></Module>
+  <Module culture="en-us" Id="45" value="Languages"></Module>
+  <Module culture="es-es" Id="45" value="Lenguajes"></Module>
+  <Module culture="en-us" Id="46" value="Workflows"></Module>
+  <Module culture="es-es" Id="46" value="Flujos de Trabajo"></Module>
+  <Module culture="en-us" Id="51" value="Business Rules"></Module>
+  <Module culture="es-es" Id="51" value="Reglas de Negocio"></Module>
+  <Module culture="en-us" Id="52" value="Expedientes Médicos"></Module>
+  <Module culture="es-es" Id="52" value="Expedientes Médicos"></Module>
+  <Module culture="en-us" Id="53" value="Catálogos"></Module>
+  <Module culture="es-es" Id="53" value="Catálogos"></Module>
+  <Module culture="en-us" Id="54" value="Mis Consultas"></Module>
+  <Module culture="es-es" Id="54" value="Mis Consultas"></Module>
+  <Module culture="en-us" Id="55" value="Mis Consultas"></Module>
+  <Module culture="es-es" Id="55" value="Mis Consultas"></Module>
+  <Module culture="en-us" Id="56" value="Mis Consultas"></Module>
+  <Module culture="es-es" Id="56" value="Mis Consultas"></Module>
+  <Module culture="en-us" Id="57" value="Vendedor"></Module>
+  <Module culture="es-es" Id="57" value="Vendedor"></Module>
+  <Module culture="en-us" Id="58" value="Mis Datos"></Module>
+  <Module culture="es-es" Id="58" value="Mis Datos"></Module>
+  <Module culture="en-us" Id="59" value="Mis Datos"></Module>
+  <Module culture="es-es" Id="59" value="Mis Datos"></Module>
+  <Module culture="en-us" Id="60" value="Códigos de Descuento"></Module>
+  <Module culture="es-es" Id="60" value="Códigos de Descuento"></Module>
+  <Module culture="en-us" Id="61" value="Facturación"></Module>
+  <Module culture="es-es" Id="61" value="Facturación"></Module>
+  <Module culture="en-us" Id="62" value="Facturación"></Module>
+  <Module culture="es-es" Id="62" value="Facturación"></Module>
+  <Module culture="en-us" Id="63" value="Facturación"></Module>
+  <Module culture="es-es" Id="63" value="Facturación"></Module>
+  <Module culture="en-us" Id="64" value="Códigos de Referencia"></Module>
+  <Module culture="es-es" Id="64" value="Códigos de Referencia"></Module>
+  <Module culture="en-us" Id="65" value="Tips y Promociones"></Module>
+  <Module culture="es-es" Id="65" value="Tips y Promociones"></Module>
+  <Module culture="en-us" Id="66" value="Eventos"></Module>
+  <Module culture="es-es" Id="66" value="Eventos"></Module>
+  <Module culture="en-us" Id="67" value="Consultas"></Module>
+  <Module culture="es-es" Id="67" value="Consultas"></Module>
+  <Module culture="en-us" Id="68" value="Planes Alimenticios"></Module>
+  <Module culture="es-es" Id="68" value="Planes Alimenticios"></Module>
+  <Module culture="en-us" Id="69" value="Planes de Rutinas de Ejercicios"></Module>
+  <Module culture="es-es" Id="69" value="Planes de Rutinas de Ejercicios"></Module>
+  <Module culture="en-us" Id="70" value="Catálogos para Platillos"></Module>
+  <Module culture="es-es" Id="70" value="Catálogos para Platillos"></Module>
+  <Module culture="en-us" Id="71" value="Catálogos para Ejercicios"></Module>
+  <Module culture="es-es" Id="71" value="Catálogos para Ejercicios"></Module>
+  <Module culture="en-us" Id="72" value="Catálogos para Vendedores"></Module>
+  <Module culture="es-es" Id="72" value="Catálogos para Vendedores"></Module>
+  <Module culture="en-us" Id="73" value="Catálogos para Especialistas"></Module>
+  <Module culture="es-es" Id="73" value="Catálogos para Especialistas"></Module>
+  <Module culture="en-us" Id="74" value="Catálogos Empresas"></Module>
+  <Module culture="es-es" Id="74" value="Catálogos Empresas"></Module>
+  <Module culture="en-us" Id="75" value="Catálogos para Empresas"></Module>
+  <Module culture="es-es" Id="75" value="Catálogos para Empresas"></Module>
+  <Module culture="en-us" Id="76" value="Catálogos para Empresas"></Module>
+  <Module culture="es-es" Id="76" value="Catálogos para Empresas"></Module>
+  <Module culture="en-us" Id="77" value="Catálogos para Empresas"></Module>
+  <Module culture="es-es" Id="77" value="Catálogos para Empresas"></Module>
+  <Module culture="en-us" Id="78" value="Catálogos para Finanzas"></Module>
+  <Module culture="es-es" Id="78" value="Catálogos para Finanzas"></Module>
+  <Module culture="en-us" Id="79" value="Vendedores"></Module>
+  <Module culture="es-es" Id="79" value="Vendedores"></Module>
+  <Module culture="en-us" Id="80" value="Especialistas"></Module>
+  <Module culture="es-es" Id="80" value="Especialistas"></Module>
+  <Module culture="en-us" Id="81" value="Empresas"></Module>
+  <Module culture="es-es" Id="81" value="Empresas"></Module>
+  <Module culture="en-us" Id="82" value="Platillos"></Module>
+  <Module culture="es-es" Id="82" value="Platillos"></Module>
+  <Module culture="en-us" Id="83" value="Platillos"></Module>
+  <Module culture="es-es" Id="83" value="Platillos"></Module>
+  <Module culture="en-us" Id="84" value="Finanzas"></Module>
+  <Module culture="es-es" Id="84" value="Finanzas"></Module>
+  <Module culture="en-us" Id="85" value="App"></Module>
+  <Module culture="es-es" Id="85" value="App"></Module>
+  <Module culture="en-us" Id="86" value="Catálogos para App"></Module>
+  <Module culture="es-es" Id="86" value="Catálogos para App"></Module>
+  <Module culture="en-us" Id="87" value="Notificaciones"></Module>
+  <Module culture="es-es" Id="87" value="Notificaciones"></Module>
+  <Module culture="en-us" Id="88" value="Pacientes"></Module>
+  <Module culture="es-es" Id="88" value="Pacientes"></Module>
+  <Module culture="en-us" Id="89" value="Catálogos para Pacientes"></Module>
+  <Module culture="es-es" Id="89" value="Catálogos para Pacientes"></Module>
+  <Module culture="en-us" Id="90" value="Solicitudes del App"></Module>
+  <Module culture="es-es" Id="90" value="Solicitudes del App"></Module>
+  <Module culture="en-us" Id="91" value="Mis Códigos"></Module>
+  <Module culture="es-es" Id="91" value="Mis Códigos"></Module>
+  <Module culture="en-us" Id="92" value="Mis Facturas"></Module>
+  <Module culture="es-es" Id="92" value="Mis Facturas"></Module>
+</Modules>

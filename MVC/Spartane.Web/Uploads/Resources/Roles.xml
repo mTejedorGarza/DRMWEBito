@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Roles>
+  <Role culture="en-us" Id="1" value="Administrator"></Role>
+  <Role culture="es-es" Id="1" value="Administrador"></Role>
+  <Role culture="en-us" Id="7" value="Administrador Fit Eat"></Role>
+  <Role culture="es-es" Id="7" value="Administrador Fit Eat"></Role>
+  <Role culture="en-us" Id="8" value="Especialista Vendedor"></Role>
+  <Role culture="es-es" Id="8" value="Especialista Vendedor"></Role>
+  <Role culture="en-us" Id="9" value="Especialista Vendedor + Red de Especialistas"></Role>
+  <Role culture="es-es" Id="9" value="Especialista Vendedor + Red de Especialistas"></Role>
+  <Role culture="en-us" Id="10" value="DRM Staff"></Role>
+  <Role culture="es-es" Id="10" value="DRM Staff"></Role>
+  <Role culture="en-us" Id="0" value="Administrador Comerciales"></Role>
+  <Role culture="es-es" Id="0" value="Administrador Comerciales"></Role>
+  <Role culture="en-us" Id="11" value="Red de Especialistas"></Role>
+  <Role culture="es-es" Id="11" value="Red de Especialistas"></Role>
+  <Role culture="en-us" Id="12" value="Empresa con Beneficio de App"></Role>
+  <Role culture="es-es" Id="12" value="Empresa con Beneficio de App"></Role>
+  <Role culture="en-us" Id="13" value="Empresa con Eventos"></Role>
+  <Role culture="es-es" Id="13" value="Empresa con Eventos"></Role>
+  <Role culture="en-us" Id="14" value="Empresa con Beneficio de App + Eventos"></Role>
+  <Role culture="es-es" Id="14" value="Empresa con Beneficio de App + Eventos"></Role>
+  <Role culture="en-us" Id="15" value="Especialista Expositor en Eventos"></Role>
+  <Role culture="es-es" Id="15" value="Especialista Expositor en Eventos"></Role>
+  <Role culture="en-us" Id="16" value="Paciente Particular"></Role>
+  <Role culture="es-es" Id="16" value="Paciente Particular"></Role>
+  <Role culture="en-us" Id="17" value="Paciente Beneficiario de Empresa"></Role>
+  <Role culture="es-es" Id="17" value="Paciente Beneficiario de Empresa"></Role>
+  <Role culture="en-us" Id="18" value="DRM Comercial"></Role>
+  <Role culture="es-es" Id="18" value="DRM Comercial"></Role>
+  <Role culture="en-us" Id="19" value="DRM Contabilidad"></Role>
+  <Role culture="es-es" Id="19" value="DRM Contabilidad"></Role>
+  <Role culture="en-us" Id="20" value="DRM Apoyo Administración"></Role>
+  <Role culture="es-es" Id="20" value="DRM Apoyo Administración"></Role>
+  <Role culture="en-us" Id="21" value="Vendedor"></Role>
+  <Role culture="es-es" Id="21" value="Vendedor"></Role>
+  <Role culture="en-us" Id="22" value="Mis Datos"></Role>
+  <Role culture="es-es" Id="22" value="Mis Datos"></Role>
+  <Role culture="en-us" Id="23" value="DRM Vendedor"></Role>
+  <Role culture="es-es" Id="23" value="DRM Vendedor"></Role>
+  <Role culture="en-us" Id="24" value="DrM Finanzas"></Role>
+  <Role culture="es-es" Id="24" value="DrM Finanzas"></Role>
+  <Role culture="en-us" Id="25" value="Administrador Comerciales"></Role>
+  <Role culture="es-es" Id="25" value="Administrador Comerciales"></Role>
+  <Role culture="en-us" Id="26" value="Paciente Beneficiario de Eventos"></Role>
+  <Role culture="es-es" Id="26" value="Paciente Beneficiario de Eventos"></Role>
+</Roles>

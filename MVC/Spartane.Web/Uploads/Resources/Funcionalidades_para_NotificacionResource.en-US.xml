@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Funcionalidades_para_Notificacion" value="Funcionalidades para Notificación"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Funcionalidad" value="Funcionalidad"></resource>
+  <resource culture="en-US" name="Nombre_de_la_Tabla" value="Nombre de la Tabla"></resource>
+  <resource culture="en-US" name="Campos_para_Vigencia" value="Campos para Vigencia"></resource>
+  <resource culture="en-US" name="Campos_de_Estatus" value="Campos de Estatus"></resource>
+  <resource culture="en-US" name="Validacion_Obligatoria" value="Validación Obligatoria"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

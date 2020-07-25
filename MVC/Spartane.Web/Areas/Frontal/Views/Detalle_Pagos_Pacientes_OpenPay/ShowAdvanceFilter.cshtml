@@ -1,0 +1,544 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Detalle_Pagos_Pacientes_OpenPayAdvanceSearchModel
+@{
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varFormas_de_Pago_Forma_de_pago = null;
+    if (ViewBag.Formas_de_Pagos_Forma_de_pago != null)
+    { varFormas_de_Pago_Forma_de_pago = (List<SelectListItem>)ViewBag.Formas_de_Pagos_Forma_de_pago; }
+    List<SelectListItem> varEstatus_de_Pago_Estatus = null;
+    if (ViewBag.Estatus_de_Pagos_Estatus != null)
+    { varEstatus_de_Pago_Estatus = (List<SelectListItem>)ViewBag.Estatus_de_Pagos_Estatus; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "Detalle_Pagos_Pacientes_OpenPay", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Usuario_que_Registra</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_RegistraFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_RegistraFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_Registra, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_Registra" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_Registra!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_RegistraMultiple, varSpartan_User_Usuario_que_Registra,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_Registra"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Fecha_de_Pago</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_Pago" name="FromFecha_de_Pago" type="text" value="@Model.FromFecha_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_Pago" name="ToFecha_de_Pago" type="text" value="@Model.ToFecha_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Hora_de_Pago</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_Pago" name="FromHora_de_Pago" type="text" value="@Model.FromHora_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_Pago" name="ToHora_de_Pago" type="text" value="@Model.ToHora_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.TokenID</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.TokenIDFilter, filters, new { @class = "form-control", @id = "ddlTokenIDFilter" })
+                    @Html.TextBoxFor(m => m.TokenID, new { @class = "form-control", @type = "text", @id = "txtTokenID" })
+                </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Importe</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromImporte, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceFromImporte" })
+                    @Html.ValidationMessageFor(m => m.FromImporte)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToImporte, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceToImporte", @data_min = "txtAdvanceFromImporte" })
+                    @Html.ValidationMessageFor(m => m.ToImporte)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Concepto</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.ConceptoFilter, filters, new { @class = "form-control", @id = "ddlConceptoFilter" })
+                    @Html.TextBoxFor(m => m.Concepto, new { @class = "form-control", @type = "text", @id = "txtConcepto" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Forma_de_pago</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Forma_de_pagoFilter, filters, new { @class = "form-control", @id = "ddlForma_de_pagoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceForma_de_pago, new { @class = "form-control", @type = "text", @id = "txtAdvanceForma_de_pago" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varFormas_de_Pago_Forma_de_pago!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceForma_de_pagoMultiple, varFormas_de_Pago_Forma_de_pago,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceForma_de_pago"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Autorizacion</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.AutorizacionFilter, filters, new { @class = "form-control", @id = "ddlAutorizacionFilter" })
+                    @Html.TextBoxFor(m => m.Autorizacion, new { @class = "form-control", @type = "text", @id = "txtAutorizacion" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Nombre</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.NombreFilter, filters, new { @class = "form-control", @id = "ddlNombreFilter" })
+                    @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control", @type = "text", @id = "txtNombre" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Apellidos</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.ApellidosFilter, filters, new { @class = "form-control", @id = "ddlApellidosFilter" })
+                    @Html.TextBoxFor(m => m.Apellidos, new { @class = "form-control", @type = "text", @id = "txtApellidos" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Telefono</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.TelefonoFilter, filters, new { @class = "form-control", @id = "ddlTelefonoFilter" })
+                    @Html.TextBoxFor(m => m.Telefono, new { @class = "form-control", @type = "text", @id = "txtTelefono" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Email</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EmailFilter, filters, new { @class = "form-control", @id = "ddlEmailFilter" })
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @type = "text", @id = "txtEmail" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.DeviceID</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.DeviceIDFilter, filters, new { @class = "form-control", @id = "ddlDeviceIDFilter" })
+                    @Html.TextBoxFor(m => m.DeviceID, new { @class = "form-control", @type = "text", @id = "txtDeviceID" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.PuntosID</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.PuntosIDFilter, filters, new { @class = "form-control", @id = "ddlPuntosIDFilter" })
+                    @Html.TextBoxFor(m => m.PuntosID, new { @class = "form-control", @type = "text", @id = "txtPuntosID" })
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Detalle_Pagos_Pacientes_OpenPayResources.Estatus</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EstatusFilter, filters, new { @class = "form-control", @id = "ddlEstatusFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEstatus, new { @class = "form-control", @type = "text", @id = "txtAdvanceEstatus" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varEstatus_de_Pago_Estatus!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEstatusMultiple, varEstatus_de_Pago_Estatus,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEstatus"
+                        });
+                    }
+                </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/Detalle_Pagos_Pacientes_OpenPay/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        advanceSearch.Usuario_que_RegistraSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_Registra').val().length > 0 || $("#txtAdvanceUsuario_que_Registra").val() == "") {
+
+
+            if (isDetalle_Pagos_Pacientes_OpenPayTextSearch) {
+                advanceSearch.Usuario_que_RegistraName = $("#txtAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraNameSearchType = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_RegistraToSearch = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_de_Pago").val() != "" || $("#txtAdvanceToFecha_de_Pago").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayFecha_de_PagoFrom = $("#txtAdvanceFromFecha_de_Pago").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayFecha_de_PagoTo = $("#txtAdvanceToFecha_de_Pago").val();
+        }
+        if ($("#txtAdvanceHora_de_Pago").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayHora_de_Pago = $("#txtAdvanceHora_de_Pago").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayHora_de_PagoSearchType = $("#ddlAdvanceHora_de_PagoFilter").val();
+        }
+        if ($("#txtAdvanceTokenID").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayTokenID = $("#txtAdvanceTokenID").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayTokenIDSearchType = $("#ddlAdvanceTokenIDFilter").val();
+        }
+        if ($("#txtAdvanceFromImporte").val() != "" || $("#txtAdvanceToImporte").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayImporteFrom = $("#txtAdvanceFromImporte").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayImporteTo = $("#txtAdvanceToImporte").val();
+        }
+        if ($("#txtAdvanceConcepto").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayConcepto = $("#txtAdvanceConcepto").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayConceptoSearchType = $("#ddlAdvanceConceptoFilter").val();
+        }
+        advanceSearch.Forma_de_pagoSearchType = 0;
+        if ($('#ddlAdvanceForma_de_pago').val().length > 0 || $("#txtAdvanceForma_de_pago").val() == "") {
+
+
+            if (isDetalle_Pagos_Pacientes_OpenPayTextSearch) {
+                advanceSearch.Forma_de_pagoName = $("#txtAdvanceForma_de_pago").val();
+                advanceSearch.Forma_de_pagoNameSearchType = $("#ddlAdvanceForma_de_pago").val();
+                advanceSearch.Forma_de_pagoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Forma_de_pagoToSearch = $("#ddlAdvanceForma_de_pago").val();
+                advanceSearch.Forma_de_pagoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceAutorizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayAutorizacion = $("#txtAdvanceAutorizacion").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayAutorizacionSearchType = $("#ddlAdvanceAutorizacionFilter").val();
+        }
+        if ($("#txtAdvanceNombre").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayNombre = $("#txtAdvanceNombre").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayNombreSearchType = $("#ddlAdvanceNombreFilter").val();
+        }
+        if ($("#txtAdvanceApellidos").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayApellidos = $("#txtAdvanceApellidos").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayApellidosSearchType = $("#ddlAdvanceApellidosFilter").val();
+        }
+        if ($("#txtAdvanceTelefono").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayTelefono = $("#txtAdvanceTelefono").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayTelefonoSearchType = $("#ddlAdvanceTelefonoFilter").val();
+        }
+        if ($("#txtAdvanceEmail").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayEmail = $("#txtAdvanceEmail").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayEmailSearchType = $("#ddlAdvanceEmailFilter").val();
+        }
+        if ($("#txtAdvanceDeviceID").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayDeviceID = $("#txtAdvanceDeviceID").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayDeviceIDSearchType = $("#ddlAdvanceDeviceIDFilter").val();
+        }
+        if ($("#ddlAdvanceUsaPuntos").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayUsaPuntos = $("#ddlAdvanceUsaPuntos").val();
+        }
+        if ($("#txtAdvancePuntosID").val() != "") {
+            hasParameter = true;
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayPuntosID = $("#txtAdvancePuntosID").val();
+            advanceSearch.Detalle_Pagos_Pacientes_OpenPayPuntosIDSearchType = $("#ddlAdvancePuntosIDFilter").val();
+        }
+        advanceSearch.EstatusSearchType = 0;
+        if ($('#ddlAdvanceEstatus').val().length > 0 || $("#txtAdvanceEstatus").val() == "") {
+
+
+            if (isDetalle_Pagos_Pacientes_OpenPayTextSearch) {
+                advanceSearch.EstatusName = $("#txtAdvanceEstatus").val();
+                advanceSearch.EstatusNameSearchType = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 1;
+            }
+            else {
+
+                advanceSearch.EstatusToSearch = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 2;
+            }
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblDetalle_Pagos_Pacientes_OpenPay').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isDetalle_Pagos_Pacientes_OpenPayTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceUsuario_que_Registra").keypress(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = true;
+            $("#ddlAdvanceUsuario_que_Registra").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_Registra").change(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = false;
+            $("#txtAdvanceUsuario_que_Registra").val('');
+        });
+        $("#txtAdvanceForma_de_pago").keypress(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = true;
+            $("#ddlAdvanceForma_de_pago").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceForma_de_pago").change(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = false;
+            $("#txtAdvanceForma_de_pago").val('');
+        });
+        $("#txtAdvanceEstatus").keypress(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = true;
+            $("#ddlAdvanceEstatus").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEstatus").change(function () {
+            isDetalle_Pagos_Pacientes_OpenPayTextSearch = false;
+            $("#txtAdvanceEstatus").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

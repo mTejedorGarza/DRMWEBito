@@ -1,0 +1,1429 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Solicitud_de_Pago_de_FacturasModel
+@{
+    Spartane_File attachedFileArchivo_XML = (Spartane_File)ViewBag.Archivo_XMLSpartane_File;
+    Spartane_File attachedFileArchivo_PDF = (Spartane_File)ViewBag.Archivo_PDFSpartane_File;
+    Spartane_File attachedFileRecibo_de_Solicitud_de_Pago = (Spartane_File)ViewBag.Recibo_de_Solicitud_de_PagoSpartane_File;
+
+/*
+    string Fecha_de_Registro = "";
+    if (Model.Fecha_de_Registro == "")
+    { Model.Fecha_de_Registro = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_inicio_del_periodo_facturado = "";
+    if (Model.Fecha_inicio_del_periodo_facturado == "")
+    { Model.Fecha_inicio_del_periodo_facturado = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_fin_del_periodo_facturado = "";
+    if (Model.Fecha_fin_del_periodo_facturado == "")
+    { Model.Fecha_fin_del_periodo_facturado = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_de_autorizacion = "";
+    if (Model.Fecha_de_autorizacion == "")
+    { Model.Fecha_de_autorizacion = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_de_programacion = "";
+    if (Model.Fecha_de_programacion == "")
+    { Model.Fecha_de_programacion = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_programada_de_Pago = "";
+    if (Model.Fecha_programada_de_Pago == "")
+    { Model.Fecha_programada_de_Pago = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_de_actualizacion = "";
+    if (Model.Fecha_de_actualizacion == "")
+    { Model.Fecha_de_actualizacion = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+    string Fecha_de_Pago = "";
+    if (Model.Fecha_de_Pago == "")
+    { Model.Fecha_de_Pago = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+
+*/
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varMeses_Mes_Facturado = null;
+    if (ViewBag.Mesess_Mes_Facturado != null)
+    { varMeses_Mes_Facturado = (List<SelectListItem>)ViewBag.Mesess_Mes_Facturado; }
+    List<SelectListItem> varEstatus_Facturas_Estatus = null;
+    if (ViewBag.Estatus_Facturass_Estatus != null)
+    { varEstatus_Facturas_Estatus = (List<SelectListItem>)ViewBag.Estatus_Facturass_Estatus; }
+    List<SelectListItem> varSpartan_User_Usuario_que_autoriza = null;
+    if (ViewBag.Spartan_Users_Usuario_que_autoriza != null)
+    { varSpartan_User_Usuario_que_autoriza = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_autoriza; }
+    List<SelectListItem> varResultados_de_Revision_Resultado_de_la_Revision = null;
+    if (ViewBag.Resultados_de_Revisions_Resultado_de_la_Revision != null)
+    { varResultados_de_Revision_Resultado_de_la_Revision = (List<SelectListItem>)ViewBag.Resultados_de_Revisions_Resultado_de_la_Revision; }
+    List<SelectListItem> varSpartan_User_Usuario_que_programa = null;
+    if (ViewBag.Spartan_Users_Usuario_que_programa != null)
+    { varSpartan_User_Usuario_que_programa = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_programa; }
+    List<SelectListItem> varEstatus_de_Pago_de_Facturas_Estatus_de_Pago = null;
+    if (ViewBag.Estatus_de_Pago_de_Facturass_Estatus_de_Pago != null)
+    { varEstatus_de_Pago_de_Facturas_Estatus_de_Pago = (List<SelectListItem>)ViewBag.Estatus_de_Pago_de_Facturass_Estatus_de_Pago; }
+    List<SelectListItem> varSpartan_User_Usuario_que_actualiza = null;
+    if (ViewBag.Spartan_Users_Usuario_que_actualiza != null)
+    { varSpartan_User_Usuario_que_actualiza = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_actualiza; }
+
+
+    Permission permission = ViewBag.Permission;
+	
+	if (ViewBag.IsPartial)
+   { 
+       Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+   }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.Solicitud_de_Pago_de_FacturasResources.Solicitud_de_Pago_de_Facturas
+                <button onclick="Solicitud_de_Pago_de_FacturasGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Solicitud_de_Pago_de_FacturasBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                @if (Session["PhaseName"] != null)
+                {
+                    <strong>@Session["PhaseName"].ToString()</strong>
+                }
+                else
+                {
+                    <strong>@Resources.Solicitud_de_Pago_de_FacturasResources.Solicitud_de_Pago_de_Facturas</strong>
+                }
+                
+            </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+            @{
+                if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+                {
+                    <h2>&nbsp;</h2>
+                    <button onclick="Solicitud_de_Pago_de_FacturasDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </button>
+
+                    <div aria-hidden="true" class="modal fade in Solicitud_de_Pago_de_FacturasPropertyBusinessModal" id="Solicitud_de_Pago_de_FacturasPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">
+                                          @Resources.Resources.titleBussinesRules
+                                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">@Resources.Resources.Close</span></button>
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">@Resources.Resources.Property</a>
+                                        </div>
+                                        <div class="clearfix col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#Solicitud_de_Pago_de_FacturasBusinessRule-form" onclick="Solicitud_de_Pago_de_FacturasGetBusinessRule()">Business Rule</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div aria-hidden="true" data-backdrop="static" class="modal fade in PropertyModal" id="PropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+					<div aria-hidden="true" data-backdrop="static" class="modal fade in Solicitud_de_Pago_de_FacturasBusinessRuleModal" id="Solicitud_de_Pago_de_FacturasBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+
+
+                }
+            }
+
+        </div>
+    </div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @using (Html.BeginForm("Post", "Solicitud_de_Pago_de_Facturas", FormMethod.Post, new { id = "CreateSolicitud_de_Pago_de_Facturas", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+            {
+                                <input type="hidden" id="hdnIsNew" name="hdnIsNew" value="@ViewBag.IsNew.ToString()" />
+                <span id="popupNotification"></span>
+                <div class="container-fluid Solicitud_de_Pago_de_FacturasCreateForm" id="viewmodeledit">
+				 <div class="alert alert-warning" id="controlsRequerid" style="display:none">
+                        <a href="#" class="close" onclick="$('#controlsRequerid').hide();">&times;</a>
+                        <span id="textRequired"></span>
+                 </div>
+			<div class="tabs-container">
+                        	<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#tabDatos_Generales"> @Resources.Solicitud_de_Pago_de_FacturasResources.TabDatos_Generales</a></li>
+<li class=""><a data-toggle="tab" href="#tabAutorizacion"> @Resources.Solicitud_de_Pago_de_FacturasResources.TabAutorizacion</a></li>
+<li class=""><a data-toggle="tab" href="#tabProgramacion_de_Pago"> @Resources.Solicitud_de_Pago_de_FacturasResources.TabProgramacion_de_Pago</a></li>
+<li class=""><a data-toggle="tab" href="#tabPago"> @Resources.Solicitud_de_Pago_de_FacturasResources.TabPago</a></li>
+
+                        	</ul>
+	                	<div class="tab-content">
+                            <div id="tabDatos_Generales" class="tab-pane active">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="260944" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Folio">
+                                    <label class="form-control" for="Folio" id="lblFolio">
+                                    @if (Model.Folio== 0)
+                                        {
+                                            <text>@Resources.Resources.ClaveDefault</text>
+                                        }
+                                        else
+                                        { 
+                                            <text>@Model.Folio</text>
+                                        }
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divFecha_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Registro" data-attribute="260945" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Registro">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_de_Registro"  name="Fecha_de_Registro" type="text" value="@Model.Fecha_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_Registro" data-attribute="260946" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_Registro">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Hora_de_Registro"  name="Hora_de_Registro" type="text" data-autoclose="true" value="@Model.Hora_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_Registra">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_Registra</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_Registra" data-attribute="260947" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_Registra">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Usuario que Registra must be a number." data-val-required="The Usuario que Registra field is required." id="Usuario_que_Registra" name="Usuario_que_Registra">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_Registra != null){ 
+                                            foreach (var itemUsuario_que_Registra in varSpartan_User_Usuario_que_Registra)
+                                            {
+                                                if (itemUsuario_que_Registra.Value == Convert.ToString(Model.Usuario_que_Registra))
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value" selected>@itemUsuario_que_Registra.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value">@itemUsuario_que_Registra.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_Registra" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260947).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_Registra');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divMes_Facturado">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Mes_Facturado</label>
+                                <div class="col-sm-8" data-field-id="Mes_Facturado" data-attribute="260948" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Mes_Facturado">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Mes Facturado must be a number." data-val-required="The Mes Facturado field is required." id="Mes_Facturado" name="Mes_Facturado">
+                                        <option value=""></option>
+                                        @if (varMeses_Mes_Facturado != null){ 
+                                            foreach (var itemMes_Facturado in varMeses_Mes_Facturado)
+                                            {
+                                                if (itemMes_Facturado.Value == Convert.ToString(Model.Mes_Facturado))
+                                                {
+                                                    <option value="@itemMes_Facturado.Value" selected>@itemMes_Facturado.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemMes_Facturado.Value">@itemMes_Facturado.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Mes_Facturado" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260948).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Meses', 'Mes_Facturado');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divFecha_inicio_del_periodo_facturado">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_inicio_del_periodo_facturado</label>
+                                <div class="col-sm-8" data-field-id="Fecha_inicio_del_periodo_facturado" data-attribute="260949" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_inicio_del_periodo_facturado">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_inicio_del_periodo_facturado"  name="Fecha_inicio_del_periodo_facturado" type="text" value="@Model.Fecha_inicio_del_periodo_facturado">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divFecha_fin_del_periodo_facturado">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_fin_del_periodo_facturado</label>
+                                <div class="col-sm-8" data-field-id="Fecha_fin_del_periodo_facturado" data-attribute="260950" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_fin_del_periodo_facturado">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_fin_del_periodo_facturado"  name="Fecha_fin_del_periodo_facturado" type="text" value="@Model.Fecha_fin_del_periodo_facturado">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (attachedFileArchivo_XML != null && attachedFileArchivo_XML.File_Id > 0)
+                            {
+                                <div class="form-group" id="divAttachmentArchivo_XML">
+                                    <label class="col-sm-2 control-label">@Resources.Resources.PreviouslyAttachedFile</label>
+                                    <div class="col-sm-8 Datos_Generales" data-field-id="Archivo_XML" data-attribute="260951" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_XML">
+                                        <a href="@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/GetFile")?id=@attachedFileArchivo_XML.File_Id" target="_blank">@attachedFileArchivo_XML.Description</a>
+                                        <img src="@Url.Content("~/Content/Images/RemoveAttachment.png")" onclick="RemoveAttachmentMainArchivo_XML('@attachedFileArchivo_XML.File_Id')" />
+                                    </div>
+                                    <input id="hdnRemoveArchivo_XML" name="RemoveArchivo_XML" value="0" type="hidden" />
+                                    <input class="form-control col-md-12 Datos_Generales" id="hdnAttachedArchivo_XML" type="hidden" name="Archivo_XML" value="@Model.Archivo_XML">
+                                </div>
+                            }
+                            <div class="form-group" id="divArchivo_XML">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_XML</label>
+                                <div class="col-sm-8" data-field-id="Archivo_XML" data-attribute="260951" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_XML">
+                                    <input type="file" name="Archivo_XMLFile" id="Archivo_XMLFile" class="form-control" />
+                                </div>
+                            </div>
+                            @if (attachedFileArchivo_PDF != null && attachedFileArchivo_PDF.File_Id > 0)
+                            {
+                                <div class="form-group" id="divAttachmentArchivo_PDF">
+                                    <label class="col-sm-2 control-label">@Resources.Resources.PreviouslyAttachedFile</label>
+                                    <div class="col-sm-8 Datos_Generales" data-field-id="Archivo_PDF" data-attribute="260952" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_PDF">
+                                        <a href="@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/GetFile")?id=@attachedFileArchivo_PDF.File_Id" target="_blank">@attachedFileArchivo_PDF.Description</a>
+                                        <img src="@Url.Content("~/Content/Images/RemoveAttachment.png")" onclick="RemoveAttachmentMainArchivo_PDF('@attachedFileArchivo_PDF.File_Id')" />
+                                    </div>
+                                    <input id="hdnRemoveArchivo_PDF" name="RemoveArchivo_PDF" value="0" type="hidden" />
+                                    <input class="form-control col-md-12 Datos_Generales" id="hdnAttachedArchivo_PDF" type="hidden" name="Archivo_PDF" value="@Model.Archivo_PDF">
+                                </div>
+                            }
+                            <div class="form-group" id="divArchivo_PDF">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_PDF</label>
+                                <div class="col-sm-8" data-field-id="Archivo_PDF" data-attribute="260952" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Archivo_PDF">
+                                    <input type="file" name="Archivo_PDFFile" id="Archivo_PDFFile" class="form-control" />
+                                </div>
+                            </div>
+                            @if (attachedFileRecibo_de_Solicitud_de_Pago != null && attachedFileRecibo_de_Solicitud_de_Pago.File_Id > 0)
+                            {
+                                <div class="form-group" id="divAttachmentRecibo_de_Solicitud_de_Pago">
+                                    <label class="col-sm-2 control-label">@Resources.Resources.PreviouslyAttachedFile</label>
+                                    <div class="col-sm-8 Datos_Generales" data-field-id="Recibo_de_Solicitud_de_Pago" data-attribute="261189" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Recibo_de_Solicitud_de_Pago">
+                                        <a href="@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/GetFile")?id=@attachedFileRecibo_de_Solicitud_de_Pago.File_Id" target="_blank">@attachedFileRecibo_de_Solicitud_de_Pago.Description</a>
+                                        <img src="@Url.Content("~/Content/Images/RemoveAttachment.png")" onclick="RemoveAttachmentMainRecibo_de_Solicitud_de_Pago('@attachedFileRecibo_de_Solicitud_de_Pago.File_Id')" />
+                                    </div>
+                                    <input id="hdnRemoveRecibo_de_Solicitud_de_Pago" name="RemoveRecibo_de_Solicitud_de_Pago" value="0" type="hidden" />
+                                    <input class="form-control col-md-12 Datos_Generales" id="hdnAttachedRecibo_de_Solicitud_de_Pago" type="hidden" name="Recibo_de_Solicitud_de_Pago" value="@Model.Recibo_de_Solicitud_de_Pago">
+                                </div>
+                            }
+                            <div class="form-group" id="divRecibo_de_Solicitud_de_Pago">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Recibo_de_Solicitud_de_Pago</label>
+                                <div class="col-sm-8" data-field-id="Recibo_de_Solicitud_de_Pago" data-attribute="261189" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Recibo_de_Solicitud_de_Pago">
+                                    <input type="file" name="Recibo_de_Solicitud_de_PagoFile" id="Recibo_de_Solicitud_de_PagoFile" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group" id="divTotal">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Total</label>
+                                <div class="col-sm-8" data-field-id="Total" data-attribute="260953" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Total">
+									@if(Model.Total.HasValue)
+									{
+										<input class="form-control col-md-12 inputNumber Datos_Generales" id="Total" name="Total" type="text" min="0.00" max="999999.99" value="@Model.Total.Value.ToString(new CultureInfo("en-US"))">
+									}
+									else
+									{
+										<input class="form-control col-md-12 inputNumber Datos_Generales" id="Total" name="Total" type="text" min="0.00" max="999999.99" value="">
+									}                                    
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEstatus">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus</label>
+                                <div class="col-sm-8" data-field-id="Estatus" data-attribute="260954" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Estatus must be a number." data-val-required="The Estatus field is required." id="Estatus" name="Estatus">
+                                        <option value=""></option>
+                                        @if (varEstatus_Facturas_Estatus != null){ 
+                                            foreach (var itemEstatus in varEstatus_Facturas_Estatus)
+                                            {
+                                                if (itemEstatus.Value == Convert.ToString(Model.Estatus))
+                                                {
+                                                    <option value="@itemEstatus.Value" selected>@itemEstatus.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemEstatus.Value">@itemEstatus.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Estatus" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260954).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Estatus_Facturas', 'Estatus');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            </div>
+                                </div>
+
+
+                            <div id="tabAutorizacion" class="tab-pane">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFecha_de_autorizacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_autorizacion</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_autorizacion" data-attribute="260955" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_autorizacion">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Autorizacion" id="Fecha_de_autorizacion"  name="Fecha_de_autorizacion" type="text" value="@Model.Fecha_de_autorizacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_autorizacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_autorizacion</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_autorizacion" data-attribute="260956" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_autorizacion">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Autorizacion" id="Hora_de_autorizacion"  name="Hora_de_autorizacion" type="text" data-autoclose="true" value="@Model.Hora_de_autorizacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_autoriza">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_autoriza</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_autoriza" data-attribute="260957" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_autoriza">
+                                    <select class="form-control Autorizacion" data-val="true" data-val-number="The field Usuario que autoriza must be a number." data-val-required="The Usuario que autoriza field is required." id="Usuario_que_autoriza" name="Usuario_que_autoriza">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_autoriza != null){ 
+                                            foreach (var itemUsuario_que_autoriza in varSpartan_User_Usuario_que_autoriza)
+                                            {
+                                                if (itemUsuario_que_autoriza.Value == Convert.ToString(Model.Usuario_que_autoriza))
+                                                {
+                                                    <option value="@itemUsuario_que_autoriza.Value" selected>@itemUsuario_que_autoriza.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_autoriza.Value">@itemUsuario_que_autoriza.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_autoriza" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260957).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_autoriza');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divResultado_de_la_Revision">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Resultado_de_la_Revision</label>
+                                <div class="col-sm-8" data-field-id="Resultado_de_la_Revision" data-attribute="260958" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Resultado_de_la_Revision">
+                                    <select class="form-control Autorizacion" data-val="true" data-val-number="The field Resultado de la Revisión must be a number." data-val-required="The Resultado de la Revisión field is required." id="Resultado_de_la_Revision" name="Resultado_de_la_Revision">
+                                        <option value=""></option>
+                                        @if (varResultados_de_Revision_Resultado_de_la_Revision != null){ 
+                                            foreach (var itemResultado_de_la_Revision in varResultados_de_Revision_Resultado_de_la_Revision)
+                                            {
+                                                if (itemResultado_de_la_Revision.Value == Convert.ToString(Model.Resultado_de_la_Revision))
+                                                {
+                                                    <option value="@itemResultado_de_la_Revision.Value" selected>@itemResultado_de_la_Revision.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemResultado_de_la_Revision.Value">@itemResultado_de_la_Revision.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Resultado_de_la_Revision" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260958).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Resultados_de_Revision', 'Resultado_de_la_Revision');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divObservaciones">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Observaciones</label>
+                                <div class="col-sm-8" data-field-id="Observaciones" data-attribute="260959" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Observaciones">
+                                    <textarea id="Observaciones" name="Observaciones" class="form-control Autorizacion" rows="4" cols="50">@Model.Observaciones</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Observaciones" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            </div>
+                                </div>
+
+
+                            <div id="tabProgramacion_de_Pago" class="tab-pane">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFecha_de_programacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_programacion</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_programacion" data-attribute="260960" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_programacion">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Programacion_de_Pago" id="Fecha_de_programacion"  name="Fecha_de_programacion" type="text" value="@Model.Fecha_de_programacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_programacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_programacion</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_programacion" data-attribute="260961" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_programacion">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Programacion_de_Pago" id="Hora_de_programacion"  name="Hora_de_programacion" type="text" data-autoclose="true" value="@Model.Hora_de_programacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_programa">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_programa</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_programa" data-attribute="260962" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_programa">
+                                    <select class="form-control Programacion_de_Pago" data-val="true" data-val-number="The field Usuario que programa must be a number." data-val-required="The Usuario que programa field is required." id="Usuario_que_programa" name="Usuario_que_programa">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_programa != null){ 
+                                            foreach (var itemUsuario_que_programa in varSpartan_User_Usuario_que_programa)
+                                            {
+                                                if (itemUsuario_que_programa.Value == Convert.ToString(Model.Usuario_que_programa))
+                                                {
+                                                    <option value="@itemUsuario_que_programa.Value" selected>@itemUsuario_que_programa.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_programa.Value">@itemUsuario_que_programa.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_programa" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260962).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_programa');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divFecha_programada_de_Pago">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_programada_de_Pago</label>
+                                <div class="col-sm-8" data-field-id="Fecha_programada_de_Pago" data-attribute="260963" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_programada_de_Pago">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Programacion_de_Pago" id="Fecha_programada_de_Pago"  name="Fecha_programada_de_Pago" type="text" value="@Model.Fecha_programada_de_Pago">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEstatus_de_Pago">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus_de_Pago</label>
+                                <div class="col-sm-8" data-field-id="Estatus_de_Pago" data-attribute="260964" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus_de_Pago">
+                                    <select class="form-control Programacion_de_Pago" data-val="true" data-val-number="The field Estatus de Pago must be a number." data-val-required="The Estatus de Pago field is required." id="Estatus_de_Pago" name="Estatus_de_Pago">
+                                        <option value=""></option>
+                                        @if (varEstatus_de_Pago_de_Facturas_Estatus_de_Pago != null){ 
+                                            foreach (var itemEstatus_de_Pago in varEstatus_de_Pago_de_Facturas_Estatus_de_Pago)
+                                            {
+                                                if (itemEstatus_de_Pago.Value == Convert.ToString(Model.Estatus_de_Pago))
+                                                {
+                                                    <option value="@itemEstatus_de_Pago.Value" selected>@itemEstatus_de_Pago.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemEstatus_de_Pago.Value">@itemEstatus_de_Pago.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Estatus_de_Pago" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260964).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Estatus_de_Pago_de_Facturas', 'Estatus_de_Pago');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            </div>
+                                </div>
+
+
+                            <div id="tabPago" class="tab-pane">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFecha_de_actualizacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_actualizacion</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_actualizacion" data-attribute="260965" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_actualizacion">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Pago" id="Fecha_de_actualizacion"  name="Fecha_de_actualizacion" type="text" value="@Model.Fecha_de_actualizacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_actualizacion">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_actualizacion</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_actualizacion" data-attribute="260966" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_actualizacion">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Pago" id="Hora_de_actualizacion"  name="Hora_de_actualizacion" type="text" data-autoclose="true" value="@Model.Hora_de_actualizacion">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_actualiza">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_actualiza</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_actualiza" data-attribute="260967" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_actualiza">
+                                    <select class="form-control Pago" data-val="true" data-val-number="The field Usuario que actualiza must be a number." data-val-required="The Usuario que actualiza field is required." id="Usuario_que_actualiza" name="Usuario_que_actualiza">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_actualiza != null){ 
+                                            foreach (var itemUsuario_que_actualiza in varSpartan_User_Usuario_que_actualiza)
+                                            {
+                                                if (itemUsuario_que_actualiza.Value == Convert.ToString(Model.Usuario_que_actualiza))
+                                                {
+                                                    <option value="@itemUsuario_que_actualiza.Value" selected>@itemUsuario_que_actualiza.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_actualiza.Value">@itemUsuario_que_actualiza.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_actualiza" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260967).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_actualiza');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divFecha_de_Pago">
+                                <label class="col-sm-2 control-label">@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Pago</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Pago" data-attribute="260968" data-field-name="@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Pago">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Pago" id="Fecha_de_Pago"  name="Fecha_de_Pago" type="text" value="@Model.Fecha_de_Pago">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                                </div>
+
+				</div>	
+                    <br />
+                            <div class="form-actions fluid">
+                                <input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+                                <input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+                                <input type="hidden" value="@ViewBag.Operation" name="Operation" id="Operation" />
+                                @if (!ViewBag.Consult)
+                                {
+                                    <input type="button" value="@Resources.Resources.Guardar" id="Solicitud_de_Pago_de_FacturasGuardar" class="btn btn-w-m btn-primary btn_save" onclick="return checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm');"  />
+									<button onclick="Solicitud_de_Pago_de_FacturasGetBusinessRule('', 'Al Guardar o al Cerrar la Pantalla', '2')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Solicitud_de_Pago_de_FacturasBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleBeforeSave">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>                                    
+
+                                    <input type="button" value="@Resources.Resources.GuardarNuevo" id="Solicitud_de_Pago_de_FacturasGuardarYNuevo" onclick="return checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandnew"  />
+                                    <input type="button" value="@Resources.Resources.GuardarCopia" id="Solicitud_de_Pago_de_FacturasGuardarYCopia" onclick="return checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandcopy"  />
+                                    if (permission.Configure)
+                                    {
+                                        <a title="@Resources.Resources.Configure" id="ConfigureSave" name="ConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success btn-configure">@Resources.Resources.Configure</a>
+                                    }
+                                }
+
+                                <input type="hidden" id="hdnConfigureType" />
+								<input type="hidden" id="hdnSolicitud_de_Pago_de_FacturasBusinessRuleFieldId" />
+                                <input type="hidden" id="hdnSolicitud_de_Pago_de_FacturasBusinessRuleFieldName" />
+                                <input type="hidden" id="hdnSolicitud_de_Pago_de_FacturasBusinessRuleAttribute" />
+
+                                <input type="button" value="@Resources.Resources.Cancelar" id="Solicitud_de_Pago_de_FacturasCancelar" name="Solicitud_de_Pago_de_FacturasCancelar" class="btn btn-danger noConsult btn_cancelar" data-bind="click: cancel" tabindex="16" />
+
+                                <button onclick="Solicitud_de_Pago_de_FacturasGetBusinessRule('', 'Al Cancelar', '4')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Solicitud_de_Pago_de_FacturasBusinessRule-form">
+                                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                                        <i class="fa fa-cogs fa-spin"></i>
+                                    </a>
+                                </button>
+                            </div>
+						</div>
+					</div>
+                }
+        </div>
+    </div>
+</div>
+<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        /*i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }*/
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Solicitud_de_Pago_de_Facturas.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/Solicitud_de_Pago_de_FacturasGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Solicitud_de_Pago_de_FacturasCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+@section Scripts {
+
+
+    <script type="text/javascript">
+        
+        function RemoveAttachmentMainArchivo_XML () {
+            $("#hdnRemoveArchivo_XML").val("1");
+            $("#divAttachmentArchivo_XML").hide();
+        }
+        function RemoveAttachmentMainArchivo_PDF () {
+            $("#hdnRemoveArchivo_PDF").val("1");
+            $("#divAttachmentArchivo_PDF").hide();
+        }
+        function RemoveAttachmentMainRecibo_de_Solicitud_de_Pago () {
+            $("#hdnRemoveRecibo_de_Solicitud_de_Pago").val("1");
+            $("#divAttachmentRecibo_de_Solicitud_de_Pago").hide();
+        }
+
+
+	function GetTraduction(text) {
+         switch (text.toLowerCase()) {
+            case 'edit':
+                return "@Resources.Resources.Edit";          
+            case 'delete':
+                return "@Resources.Resources.Delete";               
+            case 'required':
+                return "@Resources.Resources.Required";              
+            case 'notrequired':
+                return "@Resources.Resources.NotRequired";           
+            case 'enabled':
+                return "@Resources.Resources.Enabled";         
+            case 'disabled':
+                return "@Resources.Resources.Disabled";           
+            case 'visible':
+                return "@Resources.Resources.Visible";            
+            case 'botvisible':
+                return "@Resources.Resources.InVisible";
+            case 'messagednoinvisible':
+                return "@Resources.Resources.messagedNoInVisible";
+            case 'messagednoreadonly':
+                return "@Resources.Resources.messagedNoReadOnly";
+            case 'defaultvalue':
+                return "@Resources.Resources.DefaultValue";
+            case 'helptext':
+                return "@Resources.Resources.HelpText";                     
+            default:
+                return "";
+        }
+    }
+	
+	    var isPartial = ('@ViewBag.IsPartial' == 'True');
+        var isMR = ('@ViewBag.isMR' == 'True');
+        var nameMR = '@ViewBag.nameMR';
+		var nameAttribute = '@ViewBag.nameAttribute';
+		var Tab_Datos_Generales = true;
+
+		var Tab_Autorizacion = true;
+
+		var Tab_Programacion_de_Pago = true;
+
+		var Tab_Pago = true;
+
+
+        $(document).ready(function () {
+            $('#ObjectId').val('44742');
+		   
+		   
+			
+             @if(ViewBag.IsNew)
+            { 
+                <text>$('input:checkbox').prop('checked', false);</text>
+            }
+			else
+            {
+                <text>
+				if (Tab_Datos_Generales)
+					Fill_Datos_Generales();
+
+				if (Tab_Autorizacion)
+					Fill_Autorizacion();
+
+				if (Tab_Programacion_de_Pago)
+					Fill_Programacion_de_Pago();
+
+				if (Tab_Pago)
+					Fill_Pago();
+
+
+                </text>
+             }
+             EjecutarValidacionesAlComienzo();
+                         $('#Fecha_de_Registro').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_Registro').clockpicker();
+            $('#Fecha_inicio_del_periodo_facturado').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Fecha_fin_del_periodo_facturado').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Fecha_de_autorizacion').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_autorizacion').clockpicker();
+            $('#Fecha_de_programacion').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_programacion').clockpicker();
+            $('#Fecha_programada_de_Pago').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Fecha_de_actualizacion').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_actualizacion').clockpicker();
+            $('#Fecha_de_Pago').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+
+
+            initiateUIControls();
+			$('a').tooltip();
+			$('.loading').css('display', 'none');
+			
+
+        });
+
+
+
+        function initiateUIControls() {
+             $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+            $('.inputMoney').inputmask("currency", { greedy: false, prefix: "", rightAlign: false });
+			$('td.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+			$('td input.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+
+        }
+
+    </script>
+
+<script type="text/javascript">
+
+
+   function GetCatalogPopup(catalog, nameAttribute, isMR, nameMR) {
+        if (!isMR)
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, nameAttribute = "AttributoNombre" })";
+        else
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, isMR = true, nameMR = "Multirenglon",nameAttribute= "AttributoNombre" })";
+
+        url = url.replace("Catalog", catalog).replace("Multirenglon", nameMR).replace("AttributoNombre", nameAttribute);
+
+        window.open(htmlDecode(url), '_blank', 'left=200,top=100,width=850,height=550,toolbar=0,resizable=0');
+    }
+
+    function RefreshCatalog(catalog, control) {
+
+	 if ($('#' + control).hasClass('AutoComplete'))   {
+		   if ($('#' + control).attr("data-isfilter") == "true") {
+				eval(GetReglaFilter(control, $('#ObjectId').val()));
+				return;
+			}
+		}
+			
+			var url = '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/GetCatalogAll")';
+			url = url.replace(/Catalog/g, catalog);
+
+			$.ajax({
+				url: url,
+				async: true,
+				success:function(result)
+				{
+					addItemsToSelect($('#' + control), result);
+				},
+				error: function (result)
+				{
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				}
+			});
+		
+    }
+
+
+        function SendSolicitud_de_Pago_de_FacturasData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateSolicitud_de_Pago_de_Facturas").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateSolicitud_de_Pago_de_Facturas")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+			var id = $("#ReferenceFolio").val();
+            var isNew = $('#hdnIsNew').val();
+           
+			if (Tab_Datos_Generales && !checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm', 'Datos_Generales')) {
+				return false;
+			}						
+
+			if (Tab_Autorizacion && !checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm', 'Autorizacion')) {
+				return false;
+			}						
+
+			if (Tab_Programacion_de_Pago && !checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm', 'Programacion_de_Pago')) {
+				return false;
+			}						
+
+			if (Tab_Pago && !checkClientValidate('Solicitud_de_Pago_de_FacturasCreateForm', 'Pago')) {
+				return false;
+			}						
+
+
+			
+			if (isNew == "True")
+            {
+                id = CreateID();
+            }
+			
+			
+			if (Tab_Datos_Generales)
+				Save_Datos_Generales(id);
+
+			if (Tab_Autorizacion)
+				Save_Autorizacion(id);
+
+			if (Tab_Programacion_de_Pago)
+				Save_Programacion_de_Pago(id);
+
+			if (Tab_Pago)
+				Save_Pago(id);
+
+
+			showNotification("@Resources.Resources.SaveSuccess", "success");
+			callBack(id);
+            return true;
+        };
+		function CreateID()
+		{
+			var newId = 0;
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/CreateID")',
+				type: 'GET',
+				async: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "error");
+					} else {
+						newId = result;
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+			return newId;
+		}
+		
+		function OpenRules()
+		{
+			$.get('@Url.Action("Index", "Business_Rule_Creation")', {}, function (data) {
+				$(".Solicitud_de_Pago_de_FacturasBusinessRuleModal").html(data);
+			});
+		}
+                function Solicitud_de_Pago_de_FacturasGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+			        $('#FieldId').val(FieldId);
+				$('#FieldName').val(FieldName);
+				$('#Attribute').val(Attribute);
+			}
+			$('#ObjectId').val('44742');
+			$('#Screen').val('Solicitud_de_Pago_de_Facturas');
+			OpenRules();
+               }
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function Solicitud_de_Pago_de_FacturasBackToGrid() {
+        		if (isPartial)
+			window.close('', '_parent', '');
+        else
+			location.href = "@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+							var mainElementAttributes = '<div class="col-sm-2">';
+							mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "@Resources.Resources.Required" : "@Resources.Resources.NotRequired") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "@Resources.Resources.Visible" : "@Resources.Resources.InVisible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "@Resources.Resources.Disabled" : "@Resources.Resources.Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+							mainElementAttributes += '</div>';
+							$('#' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+							$('#' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                  }
+					 if (childElementObject != null) {
+                        for (var j = 0; j < childElementObject.length; j++) {
+                            var table = childElementObject[j].table.trim();
+                            var grid = '#' + table + 'Grid';
+                            $(grid).find("thead").find("tr").find("th").each(function () {
+                                for (var i = 0; i < childElementObject[j].elements.length; i++) {
+                                    if ($(this).hasClass(childElementObject[j].elements[i].inputId + 'Header')) {
+                                        $(this).show();
+                                        $(this).parent().show();
+                                        $(this).append(returnAttributeHTML(childElementObject[j].elements[i], table, i));
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                     $('#ConfigureSave').text('@Html.Raw(Resources.Resources.Save  +" "+ Resources.Resources.Settings)');
+                    $('#hdnConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateSolicitud_de_Pago_de_Facturas').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#FieldId').val(fieldId);
+			$('#FieldName').val(fieldName);
+			$('#Attribute').val(attribute);
+                        Solicitud_de_Pago_de_FacturasGetBusinessRule();
+		});
+		//Initialize HTML Editors            
+  var filebrowserBrowseUrl = '../../ckfinder/ckfinder.html';
+  var filebrowserImageBrowseUrl = '../../ckfinder/ckfinder.html?type=Images';
+  var filebrowserUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Files';
+  var filebrowserImageUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Images';
+		
+		
+		function Fill_Datos_Generales()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Get_Datos_Generales")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_Registro').val(result.data.Fecha_de_Registro);
+                    $('#Hora_de_Registro').val(result.data.Hora_de_Registro);
+                    $('#Usuario_que_Registra').val(result.data.Usuario_que_Registra);
+                    $('#Mes_Facturado').val(result.data.Mes_Facturado);
+                    $('#Fecha_inicio_del_periodo_facturado').val(result.data.Fecha_inicio_del_periodo_facturado);
+                    $('#Fecha_fin_del_periodo_facturado').val(result.data.Fecha_fin_del_periodo_facturado);
+                    $('#Archivo_XML').val(result.data.Archivo_XML);
+                    $('#Archivo_PDF').val(result.data.Archivo_PDF);
+                    $('#Recibo_de_Solicitud_de_Pago').val(result.data.Recibo_de_Solicitud_de_Pago);
+                    $('#Total').val(result.data.Total);
+                    $('#Estatus').val(result.data.Estatus);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Datos_Generales(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_Registro', $('#Fecha_de_Registro').val());
+                data.append('Hora_de_Registro', $('#Hora_de_Registro').val());
+                data.append('Usuario_que_Registra', $('#Usuario_que_Registra').val());
+                data.append('Mes_Facturado', $('#Mes_Facturado').val());
+                data.append('Fecha_inicio_del_periodo_facturado', $('#Fecha_inicio_del_periodo_facturado').val());
+                data.append('Fecha_fin_del_periodo_facturado', $('#Fecha_fin_del_periodo_facturado').val());
+                data.append('Archivo_XML', $('#hdnAttachedArchivo_XML').val());
+                data.append('Archivo_XMLFile', $('#Archivo_XMLFile')[0].files[0]);
+                data.append('Archivo_XMLRemoveAttachment', $('#hdnRemoveArchivo_XML').val());
+                data.append('Archivo_PDF', $('#hdnAttachedArchivo_PDF').val());
+                data.append('Archivo_PDFFile', $('#Archivo_PDFFile')[0].files[0]);
+                data.append('Archivo_PDFRemoveAttachment', $('#hdnRemoveArchivo_PDF').val());
+                data.append('Recibo_de_Solicitud_de_Pago', $('#hdnAttachedRecibo_de_Solicitud_de_Pago').val());
+                data.append('Recibo_de_Solicitud_de_PagoFile', $('#Recibo_de_Solicitud_de_PagoFile')[0].files[0]);
+                data.append('Recibo_de_Solicitud_de_PagoRemoveAttachment', $('#hdnRemoveRecibo_de_Solicitud_de_Pago').val());
+                data.append('Total', $('#Total').val());
+                data.append('Estatus', $('#Estatus').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Post_Datos_Generales")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Datos_Generales");
+					} else {
+						newId = result;
+                    
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Datos_Generales");
+				},
+				cache: false
+			});
+		}
+
+		function Fill_Autorizacion()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Get_Autorizacion")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_autorizacion').val(result.data.Fecha_de_autorizacion);
+                    $('#Hora_de_autorizacion').val(result.data.Hora_de_autorizacion);
+                    $('#Usuario_que_autoriza').val(result.data.Usuario_que_autoriza);
+                    $('#Resultado_de_la_Revision').val(result.data.Resultado_de_la_Revision);
+                    $('#Observaciones').val(result.data.Observaciones);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Autorizacion(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_autorizacion', $('#Fecha_de_autorizacion').val());
+                data.append('Hora_de_autorizacion', $('#Hora_de_autorizacion').val());
+                data.append('Usuario_que_autoriza', $('#Usuario_que_autoriza').val());
+                data.append('Resultado_de_la_Revision', $('#Resultado_de_la_Revision').val());
+                data.append('Observaciones', $('#Observaciones').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Post_Autorizacion")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Autorizacion");
+					} else {
+						newId = result;
+                    
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Autorizacion");
+				},
+				cache: false
+			});
+		}
+
+		function Fill_Programacion_de_Pago()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Get_Programacion_de_Pago")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_programacion').val(result.data.Fecha_de_programacion);
+                    $('#Hora_de_programacion').val(result.data.Hora_de_programacion);
+                    $('#Usuario_que_programa').val(result.data.Usuario_que_programa);
+                    $('#Fecha_programada_de_Pago').val(result.data.Fecha_programada_de_Pago);
+                    $('#Estatus_de_Pago').val(result.data.Estatus_de_Pago);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Programacion_de_Pago(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_programacion', $('#Fecha_de_programacion').val());
+                data.append('Hora_de_programacion', $('#Hora_de_programacion').val());
+                data.append('Usuario_que_programa', $('#Usuario_que_programa').val());
+                data.append('Fecha_programada_de_Pago', $('#Fecha_programada_de_Pago').val());
+                data.append('Estatus_de_Pago', $('#Estatus_de_Pago').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Post_Programacion_de_Pago")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Programacion_de_Pago");
+					} else {
+						newId = result;
+                    
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Programacion_de_Pago");
+				},
+				cache: false
+			});
+		}
+
+		function Fill_Pago()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Get_Pago")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_actualizacion').val(result.data.Fecha_de_actualizacion);
+                    $('#Hora_de_actualizacion').val(result.data.Hora_de_actualizacion);
+                    $('#Usuario_que_actualiza').val(result.data.Usuario_que_actualiza);
+                    $('#Fecha_de_Pago').val(result.data.Fecha_de_Pago);
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Pago(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_actualizacion', $('#Fecha_de_actualizacion').val());
+                data.append('Hora_de_actualizacion', $('#Hora_de_actualizacion').val());
+                data.append('Usuario_que_actualiza', $('#Usuario_que_actualiza').val());
+                data.append('Fecha_de_Pago', $('#Fecha_de_Pago').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/Post_Pago")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Pago");
+					} else {
+						newId = result;
+                    
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Pago");
+				},
+				cache: false
+			});
+		}
+
+
+    </script>
+}
+    <input type="hidden" id="FieldId" name="FieldId" value="" />
+    <input type="hidden" id="FieldName" name="FieldName" value="" />
+    <input type="hidden" id="ObjectId" name="ObjectId" value="" />
+    <input type="hidden" id="Attribute" name="Attribute" value="" />
+    <input type="hidden" id="Screen" name="Screen" value="" />
+     <input type="hidden" id="Solicitud_de_Pago_de_Facturas_cmbLabelSelect" name="Solicitud_de_Pago_de_Facturas_cmbLabelSelect" value="@Resources.Resources.CmbSelect" />
+

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Rangos_Pediatria_por_Platillos" value="Rangos Pediatría por Platillos"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Nombre_de_rango" value="Nombre de rango"></resource>
+  <resource culture="es-es" name="Edad_minima" value="Edad mínima"></resource>
+  <resource culture="es-es" name="Edad_maxima" value="Edad máxima"></resource>
+  <resource culture="es-es" name="Tiene_padecimientos" value="Tiene padecimientos"></resource>
+  <resource culture="es-es" name="Padecimientos" value="Padecimientos"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

@@ -1,0 +1,618 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@using Spartane.Web.Areas.WebApiConsumer
+@using Spartane.Web.Areas.Frontal.Models
+@model Spartane.Web.Areas.Frontal.Models.Planes_de_RutinasModel
+@{
+    Detalle_Planes_de_RutinasModel detalle_Planes_De_RutinasModel = new Detalle_Planes_de_RutinasModel();
+
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varPacientes_Paciente = null;
+    if (ViewBag.Pacientess_Paciente != null)
+    { varPacientes_Paciente = (List<SelectListItem>)ViewBag.Pacientess_Paciente; }
+    List<SelectListItem> varNivel_de_dificultad_Nivel_de_dificultad = null;
+    if (ViewBag.Nivel_de_dificultads_Nivel_de_dificultad != null)
+    { varNivel_de_dificultad_Nivel_de_dificultad = (List<SelectListItem>)ViewBag.Nivel_de_dificultads_Nivel_de_dificultad; }
+    List<SelectListItem> varSemanas_Planes_Semana = null;
+    if (ViewBag.Semanas_Planess_Semana != null)
+    { varSemanas_Planes_Semana = (List<SelectListItem>)ViewBag.Semanas_Planess_Semana; }
+    List<SelectListItem> varEstatus_Estatus = null;
+    if (ViewBag.Estatuss_Estatus != null)
+    { varEstatus_Estatus = (List<SelectListItem>)ViewBag.Estatuss_Estatus; }
+    List<SelectListItem> varRutinas_Rutina = null;
+    if (ViewBag.Rutinass_Rutina != null)
+    { varRutinas_Rutina = (List<SelectListItem>)ViewBag.Rutinass_Rutina; }
+    List<SelectListItem> varEstatus_Plan_de_Rutinas_Estatus_de_Seguimiento = null;
+    if (ViewBag.Estatus_Plan_de_Rutinass_Estatus_de_Seguimiento != null)
+    { varEstatus_Plan_de_Rutinas_Estatus_de_Seguimiento = (List<SelectListItem>)ViewBag.Estatus_Plan_de_Rutinass_Estatus_de_Seguimiento; }
+
+    Permission permissionDetalle_Planes_de_Rutinas = ViewBag.PermissionDetalle_Planes_de_Rutinas;
+
+    Permission permission = ViewBag.Permission;
+
+    if (ViewBag.IsPartial)
+    {
+        Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+    }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/Content/style-ejercicios.css">
+<link rel="stylesheet" href="~/fonts/font-awesome/css/all.css">
+<link rel="stylesheet" href="~/Content/venobox.css">
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.Planes_de_RutinasResources.Planes_de_Rutinas
+                <button onclick="Planes_de_RutinasGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Planes_de_RutinasBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                    @if (Session["PhaseName"] != null)
+                    {
+                        <strong>@Session["PhaseName"].ToString()</strong>
+                    }
+                    else
+                    {
+                        <strong>@Resources.Planes_de_RutinasResources.Planes_de_Rutinas</strong>
+                    }
+
+                </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <!--div class="loading style-2"><div class="loading-wheel"></div></!--div-->
+    <!-- encabezado -->
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="container">
+            <div id="PlanesRutinas" style="display:none;">
+                <div>
+                    <form action="">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1"><i class="fa fa-calendar" aria-hidden="true"></i> Del día</label>
+                                    <div class='input-group date bordecolorverde' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales bordecolorverde" id="Fecha_inicio_del_Plan" name="Fecha_inicio_del_Plan" type="text" value="">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label for="exampleFormControlSelect1">Al día</label>
+                                    <div class='input-group date bordecolorverde' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales bordecolorverde" id="Fecha_fin_del_Plan" name="Fecha_fin_del_Plan" disabled type="text" value="">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card bgcardgray">
+                    <div class="card-body">
+                        <h4 id="txtNivel" class="titlereco">
+                            Te sugerimos iniciar con el nivel de: <strong>Principiante</strong>
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="col-lg-12">
+                    <div class="row row2" style="margin-top: 30px;">
+                        <div class="col-md-4 margentopcard">
+                            <div class="card bdrad">
+                                <div class="card-body">
+                                    <div id="nprincipiante" class="hovereffect">
+                                        <img class="img-responsive" src="~/Images/principiante.1.png" alt="">
+                                    </div>
+
+                                    <div>
+                                        <h5>Principiante <span class="badgee badge-secondarye" data-toggle="tooltip" title="8 Ejercicios Disponibles"> 8</span></h5>
+                                        <p class="card-text descrip-card">
+                                            Nivel indicado para pacientes que tienen una actividad física de acuerdo
+                                            a sus necesidades diarias de movimiento, sin llevar acabo ningún tipo de
+                                            entrenamiento especifico.
+                                        </p>
+
+                                        <a href="#" onclick="ObtenEjercicios(1)" id="btnprincipiante" class="btn btn-elegir">Elegir</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 margentopcard">
+                            <div class="card bdrad">
+                                <div class="card-body">
+                                    <div id="nbasico" class="hovereffect">
+                                        <img class="img-responsive" src="~/Images/basico.1.png" alt="">
+                                        <div class="overlay">
+                                            <h2><i class="fas fa-lock"></i></h2>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h5>Básico <span class="badgee badge-secondarye" data-toggle="tooltip" title="8 Ejercicios Disponibles"> 8</span></h5>
+                                        <p class="card-text descrip-card">
+                                            Estimula el metabolismo y mejora la asistencia con éste
+                                            entrenamiento que puedes hacerlo dónde y cuando puedas.
+                                        </p>
+                                        <a href="#" onclick="ObtenEjercicios(2)" id="btnbasico" class="btn btn-elegir-disabled">Elegir</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 margentopcard">
+                            <div class="card bdrad">
+                                <div class="card-body">
+                                    <div id="nintermedio" class="hovereffect">
+                                        <img class="img-responsive" src="~/Images/intermedio.1.png" alt="">
+                                        <div class="overlay">
+                                            <h2><i class="fas fa-lock"></i></h2>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h5>Intermedio <span class="badgee badge-secondarye" data-toggle="tooltip" title="8 Ejercicios Disponibles"> 8</span></h5>
+                                        <p class="card-text descrip-card">
+                                            Estimula el metabolismo y mejora la asistencia con éste
+                                            entrenamiento que puedes hacerlo dónde y cuando puedas.
+                                        </p>
+                                        <a href="#" onclick="ObtenEjercicios(3)" id="btnintermedio" class="btn btn-elegir-disabled">Elegir</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 margentopcard">
+                            <div class="card bdrad">
+                                <div class="card-body">
+                                    <div id="navanzado" class="hovereffect">
+                                        <img class="img-responsive" src="~/Images/avanzado.1.png" alt="">
+                                        <div class="overlay">
+                                            <h2><i class="fas fa-lock"></i></h2>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h5>Avanzado <span class="badgee badge-secondarye" data-toggle="tooltip" title="8 Ejercicios Disponibles"> 8</span></h5>
+                                        <p class="card-text descrip-card">
+                                            Estimula el metabolismo y mejora la asistencia con éste
+                                            entrenamiento que puedes hacerlo dónde y cuando puedas.
+                                        </p>
+                                        <a href="#" onclick="ObtenEjercicios(4)" id="btnavanzado" class="btn btn-elegir-disabled">Elegir</a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="EjerciciosRutina" style="display:none;">
+                <div id="EjerciciosRutinaEncabezado" >
+                </div>
+                <div id="EjerciciosRutinaDetalle" >
+                </div>
+            </div>
+        </div>
+
+
+    @section Styles {
+        <link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    }
+    <script src="https://kit.fontawesome.com/2c36e9b7b1.js" crossorigin="anonymous"></script>
+    <script src="~/Scripts/venobox.min.js"></script>
+    <script src="~/Scripts/video.js"></script>
+
+    <script>
+        var idFolioRutina = 0;
+        var ControlNiveles = new Array(4);
+        ControlNiveles[0] = new Array(1, "Principiante", "principiante", "Te sugerimos iniciar con el nivel de: ",2);
+        ControlNiveles[1] = new Array(2, "Básico", "basico", "Te sugerimos continuar con el nivel de: ",3);
+        ControlNiveles[2] = new Array(3, "Intermedio", "intermedio", "Te sugerimos continuar con el nivel de: ",4);
+        ControlNiveles[3] = new Array(4, "Avanzado", "avanzado", "Te sugerimos continuar con el nivel de: ", 4);
+
+        var urlWebApi = "@Request.Url.ToString()";
+        var urlWebApi2 = urlWebApi.replace("@Request.RawUrl.ToString()", "");
+        var imgactual1 = "<img class='img-responsive' src='" + urlWebApi2 + "/MVCdrm/Images/";
+        var imgactual2 = ".1.png' alt = '' >";
+        var block = "<div class='overlay'> <h2><i class='fas fa-lock'></i></h2></div>";
+
+        function CargaNivelesCorrectos(folio, nivel) {
+            for (var i = 0;i<4;i++) {
+                if (ControlNiveles[i][1] == nivel) {
+                    var showme = document.getElementById("btn" + ControlNiveles[i][2]);
+                    $("#n" + ControlNiveles[i][2]).html(imgactual1 + ControlNiveles[i][2] + imgactual2);
+                    $("#txtNivel").html(ControlNiveles[i][3] + "<strong>" + ControlNiveles[i][1] + "</strong>");
+                    showme.className = "btn btn-elegir";
+                    if (i < 3) {
+                        $("#n" + ControlNiveles[i + 1][2]).html(imgactual1 + ControlNiveles[i + 1][2] + imgactual2);
+                        showme = document.getElementById("btn" + ControlNiveles[i + 1][2]);
+                        showme.className = "btn btn-elegir";
+                    }
+                    i++;
+                } else {
+                    $("#n" + ControlNiveles[i][2]).html(imgactual1 + ControlNiveles[i][2] + imgactual2 + block);
+                    showme = document.getElementById("btn" + ControlNiveles[i][2]);
+                    showme.className = "btn btn-elegir-disabled";
+                }
+            }
+        }
+
+         Date.prototype.ddmmyyyy = function () {
+            var dd = this.getDate().toString();
+            var mm = (this.getMonth() + 1).toString();
+            var yyyy = this.getFullYear().toString();
+            return (dd[1] ? dd : "0" + dd[0]) + "-" + (mm[1] ? mm : "0" + mm[0]) + "-" + yyyy;
+        };
+
+        function ConvertFormatDate(sdia) {
+            console.log(sdia);
+            var parts = sdia.split('-');
+            return parts[1] + "-" + parts[0] + "-" + parts[2];
+        }
+
+        $(document).ready(function () {
+          var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            var maxDate = new Date(y, m + 1, 0).ddmmyyyy();
+
+             $('#Fecha_inicio_del_Plan').datepicker({
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    minDate: 0,
+                    forceParse: false,
+                    calendarWeeks: true,
+                    maxDate: maxDate,
+                    autoclose: true,
+                    format: "@ConfigurationProperty.DateFormatDatePicker"
+             });
+                $('#Fecha_fin_del_Plan').datepicker({
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    forceParse: false,
+                    calendarWeeks: true,
+                    autoclose: true,
+                    format: "@ConfigurationProperty.DateFormatDatePicker"
+                });
+
+                $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+                setFechaFin();
+
+                $('#Fecha_inicio_del_Plan').change(function () {
+                    var fecha = $('#Fecha_inicio_del_Plan').datepicker('getDate', '+1d');
+                    var todaysDate = new Date().ddmmyyyy();
+                    var mesActual =  new Date().getMonth();
+                    if (fecha.getMonth() > mesActual) {
+                        alert('La fecha de inicio del plan no debe ser mayor al mes actual');
+                        $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+                        return;
+                    }
+                    if (fecha  < todaysDate || fecha.getMonth() < mesActual) {
+                        alert('La fecha de inicio del plan debe ser mayor que la fecha de hoy');
+                       $('#Fecha_inicio_del_Plan').datepicker('setDate', new Date());
+                        return;
+                    }
+                    setFechaFin();
+                });
+
+
+            if ("@ViewBag.IsNew" == "True") {
+                $("#PlanesRutinas").css("display", "block");
+                console.log("nuevo");
+                ObtenerRutinasByPaciente();
+            } else {
+                $("#PlanesRutinas").css("display", "none");
+                console.log("Folio:" + "@Model.Folio");
+                idFolioRutina = "@Model.Folio";
+                CargaEjercicios();
+            }
+            $('.loading').hide();
+        });
+
+        var Planes_de_RutinasbyPaciente;
+        function ObtenerRutinasByPaciente() {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Planes_de_Rutinas/GetPlanes_de_RutinasListbyIdPaciente")",
+                type: 'POST',
+                dataType: "json",
+                success: function (result) {
+                    if (result == '' || result == "[]")
+                        return;
+
+                    CargaNivelesCorrectos(result.aaData[0].Folio, result.aaData[0].Nivel_de_dificultadDificultad);
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    return null;
+                }
+            });
+        }
+
+        function ObtenEjercicios(idnivel) {
+            $('.loading').show();
+            var fecha_inicio = ConvertFormatDate($('#Fecha_inicio_del_Plan').val());
+            var usuario = @Spartane.Web.SessionHelper.UserEntity.Id_User;
+            GenerarRutina(fecha_inicio, usuario, idnivel);
+            CargaEjercicios();
+        }
+
+        function CargaEjercicios() {
+            if (idFolioRutina > 0) {
+                GetDetalle_EjerciciosItems();
+                GetDetalle_Planes_de_Rutinas_EjerciciosItem();
+                ArmaListaEncabezadoEquipo();
+                ArmaListaEjercicios(1);
+                $('.loading').hide();
+            }
+        }
+
+        function ActualizayObtieneDataEjercicio(idEjercicioRutina) {
+            for (var i = 0; i < Detalle_Planes_de_Rutinas_EjerciciosItems.length; i++) {
+                if (Detalle_Planes_de_Rutinas_EjerciciosItems[i].Folio == idEjercicioRutina) {
+                    Detalle_Planes_de_Rutinas_EjerciciosItems[i].Realizado = true;
+                    return Detalle_Planes_de_Rutinas_EjerciciosItems[i];
+                }
+            }
+            return "";
+        }
+        
+        function ActualizaEstatusEjercicioRutina(idEjercicioRutina) {
+            detalle_Planes_De_RutinasModel = ActualizayObtieneDataEjercicio(idEjercicioRutina);
+            $.ajax({
+                url: '@Url.Content("~/Frontal/Detalle_Planes_de_Rutinas/Post?IsNew=")' + false,
+                type: 'POST',
+                dataType: "json",
+                data: detalle_Planes_De_RutinasModel,
+                async: true,                
+                success: function (result) {
+                    console.log("respuesta" + result);
+                    if (result < 0) {
+                        showNotification("@Resources.Resources.ErrorSave", "error");
+                    } else {
+                        showNotification("@Resources.Resources.SaveSuccess", "success");
+                        $("#bEj" + idEjercicioRutina).removeClass("btn-elegir");
+                        $("#bEj" + idEjercicioRutina).addClass("btn-elegir-disabled");
+                        $("#bEj" + idEjercicioRutina).html("Terminado");
+                    }
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                },
+            });
+        }
+
+        var Detalle_Planes_de_Rutinas_EjerciciosItems;
+        function GetDetalle_Planes_de_Rutinas_EjerciciosItem() {
+            Detalle_Planes_de_Rutinas_EjerciciosItems = null;
+            var folio = idFolioRutina;
+            var numrows = 0;
+            Detalle_Planes_de_Rutinas_EjerciciosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Planes_de_Rutinas/GetDetalle_Planes_de_RutinaEjercicios")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                data: { Id: folio },
+                async: false,
+                global: false,
+                success: function (result) {
+                    console.log(result);
+                    Detalle_Planes_de_Rutinas_EjerciciosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+        var Detalle_EjerciciosItems;
+        function GetDetalle_EjerciciosItems() {
+            Detalle_EjerciciosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Planes_de_Rutinas/GetDetalle_Planes_de_Rutinas_EjerciciosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    console.log(result);
+                    Detalle_EjerciciosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+        function GetDetalle_EjerciciosItems_Descripcion(Id) {
+            for (var i = 0; i < Detalle_EjerciciosItems.length; i++) {
+                if (Detalle_EjerciciosItems[i].Clave == Id) {
+                    return Detalle_EjerciciosItems[i].Descripcion_del_Ejercicio;
+                }
+            }
+            return "";
+        }
+
+        function ActiveBoton(id) {
+            console.log("#dm" + id);
+            for (var i = 1; i < 8; i++) {
+                if(i==id)
+                    $("#dm" + i).css("background-color", "lightgray");
+                else
+                    $("#dm" + i).css("background-color", "white");
+            }
+        }
+
+        function Terminado(idEjercicioRutina) {
+            ActualizaEstatusEjercicioRutina(idEjercicioRutina);
+        }
+
+        function ArmaListaEncabezadoEquipo() {
+            var EncabezadoEquipo = "";
+
+            //Genera Encabezado de Equipo de ejercicios
+            EncabezadoEquipo = "<div class='col-lg-12' style='margin-top: 30px;'>" +
+                "<h4 class='tituloplan'><i class='fas fa-dumbbell'></i> Ejercicios</h4>" +
+                "<div class='card bgcardgray'>" +
+                "<div class='card-body'>" +
+                "<h4 id='EjerciciosEquipo' class='titlereco'>" +
+                "<strong>Equipo:</strong><br>Mancuernas de 6 lb como máximo, Mancuernas, Silla.<br>" +
+                "<strong>Si no cuentas con este equipo en casa puedes utilizar:</strong><br>" +
+                "Bote de agua" +
+                "</h4>" +
+                "</div>" +
+                "</div>" +
+                "</div>";
+
+            EncabezadoEquipo = EncabezadoEquipo +   "<br/><div class='tab'>" +
+                    "<button class='tablinks' id='dm1' onclick='ArmaListaEjercicios(1)'>Día 1</button>" +
+                    "<button class='tablinks' id='dm2' onclick='ArmaListaEjercicios(2)'>Día 2</button>" +
+                    "<button class='tablinks' id='dm3' onclick='ArmaListaEjercicios(3)'>Día 3</button>" +
+                    "<button class='tablinks' id='dm4' onclick='ArmaListaEjercicios(4)'>Día 4</button>" +
+                    "<button class='tablinks' id='dm5' onclick='ArmaListaEjercicios(5)'>Día 5</button>" +
+                    "<button class='tablinks' id='dm6' onclick='ArmaListaEjercicios(6)'>Día 6</button>" +
+                    "<button class='tablinks' id='dm7' onclick='ArmaListaEjercicios(7)'>Día 7</button>" +
+                "</div>";
+            $("#EjerciciosRutinaEncabezado").html(EncabezadoEquipo);
+        }
+
+        function ArmaListaEjercicios(dia){
+            var EjerciciosItem = "";
+            EjerciciosItem = EjerciciosItem + "<div class='row' style='margin-top: 40px;'>";
+
+            //Detalle_Planes_de_Rutinas_EjerciciosItems.length
+            for (var i = 0; i < Detalle_Planes_de_Rutinas_EjerciciosItems.length; i++) {
+                if (Detalle_Planes_de_Rutinas_EjerciciosItems[i].Numero_de_Dia == dia) {
+                    EjerciciosItem = EjerciciosItem + "<div class='col-lg-12 m-ejercicio'>" +
+                        "<div class='ejerciciocontenedor' data-aos='fade-up'>" +
+                        "<div class='container'>" +
+                        "<div class='row'>" +
+                        "<div class='col-lg-4 video-box'>" +
+                        "<img src='" + urlWebApi2 + "/MVCdrm/Images/ejercicio-img.png' class='img-fluid' alt=''>" +
+                        "<a href='https://www.youtube.com/watch?v=MY_gyv3ZDLE' class='venobox reproducir mb-4' data-vbtype='video' data-autoplay='true'></a>" +
+                        "</div>" +
+                        "<div class='col-lg-8 d-flex flex-column justify-content-center p-padd'>" +
+                        "<div class='detalleejercicio'>" +
+                        "<h4 class='tituloejercicio'>" + Detalle_Planes_de_Rutinas_EjerciciosItems[i].Secuencia_del_Ejercicio + " - " + Detalle_Planes_de_Rutinas_EjerciciosItems[i].EjercicioNombre_del_Ejercicio + "</h4>" +
+                        "<p class='detalle-ejercicio'>" + GetDetalle_EjerciciosItems_Descripcion(Detalle_Planes_de_Rutinas_EjerciciosItems[i].Ejercicio) + "</p>";
+
+                    if (Detalle_Planes_de_Rutinas_EjerciciosItems[i].Realizado == true)
+                        EjerciciosItem = EjerciciosItem + "<a href='#' class='btn btn-elegir-disabled'>Terminado</a>";
+                    else
+                        EjerciciosItem = EjerciciosItem + "<a href='#' id='" + "bEj" + Detalle_Planes_de_Rutinas_EjerciciosItems[i].Folio +  "' onclick='Terminado(" + Detalle_Planes_de_Rutinas_EjerciciosItems[i].Folio + ")' class='btn btn-elegir'>Por Realizar</a>";
+
+                    EjerciciosItem = EjerciciosItem + "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>";
+                }
+            }
+            EjerciciosItem = EjerciciosItem + "</div>";
+            console.log(EjerciciosItem);
+            ActiveBoton(dia);
+            $("#EjerciciosRutinaDetalle").html(EjerciciosItem);
+            $("#EjerciciosRutina").css("display", "block");
+            $("#PlanesRutinas").css("display", "none");
+        }
+
+        function GenerarRutina(fecha_inicio, usuario, nivel) {
+            var query = "sp_Ins_Plan_Rutina_Semanal_Auto " + usuario + ",'" + fecha_inicio + "'," + nivel;
+            var res = '';
+            var data = {
+                query: query
+            }
+            $.ajax({
+                url: url_content + "Frontal/General/ExecuteQuery",
+                type: 'POST',
+                cache: false,
+                dataType: "json",
+                async: false,
+                data: data,
+                success: function (result) {
+                    console.log(result);
+                    if (result == '' || result == "[]")
+                        return;
+
+                    idFolioRutina = parseInt(result);
+                    switch (idFolioRutina) {
+                        case -1:
+                            alert("Es necesario actualizar su suscripcionSu suscripción ha expirado");
+                            break;
+                        case -2:
+                            alert("Ya cuenta con rutina de ejercicios para la fecha indicada");
+                            break;
+                        case -3:
+                            alert("No existe configuración de Plan de Rutina hable con el Administrador");
+                        case 0:
+                            alert("La rutina no se pudo generar hable con el Administrador");
+                    }
+
+                },
+                error: function (result) {
+                    showNotification("Error ejecutando query", "error");
+                }
+            });
+        }
+
+        function setFechaFin() {
+             var nextDayDate = $('#Fecha_inicio_del_Plan').datepicker('getDate', '+1d');
+             nextDayDate.setDate(nextDayDate.getDate() + 7);
+             $('#Fecha_fin_del_Plan'). datepicker('setDate', nextDayDate);
+        }
+    </script>

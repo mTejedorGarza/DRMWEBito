@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Configuracion_de_Rutinas" value="Configuración de Rutinas"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Fecha_de_Registro" value="Fecha de Registro"></resource>
+  <resource culture="en-US" name="Hora_de_Registro" value="Hora de Registro"></resource>
+  <resource culture="en-US" name="Usuario_que_Registra" value="Usuario que Registra"></resource>
+  <resource culture="en-US" name="Tipo_de_Rutina" value="Tipo de Rutina"></resource>
+  <resource culture="en-US" name="Nivel_de_Dificultad" value="Nivel de Dificultad"></resource>
+  <resource culture="en-US" name="Sexo" value="Sexo"></resource>
+  <resource culture="en-US" name="Cantidad_de_ejercicios" value="Cantidad de ejercicios"></resource>
+  <resource culture="en-US" name="Cantidad_de_series" value="Cantidad de series"></resource>
+  <resource culture="en-US" name="Cantidad_de_repeticiones" value="Cantidad de repeticiones"></resource>
+  <resource culture="en-US" name="Descanso_segundos" value="Descanso (segundos)"></resource>
+  <resource culture="en-US" name="Texto_Ejercicios" value="Texto Ejercicios"></resource>
+  <resource culture="en-US" name="Lleva_Calentamiento" value="Lleva Calentamiento"></resource>
+  <resource culture="en-US" name="Lleva_Enfriamiento" value="Lleva Enfriamiento"></resource>
+  <resource culture="en-US" name="Estatus" value="Estatus"></resource>
+  <resource culture="en-US" name="Secuencia_de_Ejercicios" value="Secuencia de Ejercicios"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

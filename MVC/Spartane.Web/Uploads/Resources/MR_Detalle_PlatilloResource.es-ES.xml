@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="MR_Detalle_Platillo" value="MR Detalle Platillo"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Ingrediente" value="Ingrediente"></resource>
+  <resource culture="es-es" name="Cantidad" value="Cantidad"></resource>
+  <resource culture="es-es" name="Cantidad_en_Fraccion" value="Cantidad con decimales"></resource>
+  <resource culture="es-es" name="Unidad" value="Unidad"></resource>
+  <resource culture="es-es" name="Cantidad_a_mostrar" value="Cantidad a mostrar"></resource>
+  <resource culture="es-es" name="Ingrediente_a_mostrar" value="Ingrediente a mostrar"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

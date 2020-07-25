@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Detalle_Planes_de_Rutinas" value="Detalle Planes de Rutinas"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Numero_de_Dia" value="Número de Día"></resource>
+  <resource culture="es-es" name="Fecha" value="Fecha"></resource>
+  <resource culture="es-es" name="Orden_de_Realizacion" value="Orden de Realización"></resource>
+  <resource culture="es-es" name="Secuencia_del_Ejercicio" value="Secuencia del Ejercicio"></resource>
+  <resource culture="es-es" name="Enfoque_del_Ejercicio" value="Enfoque del Ejercicio"></resource>
+  <resource culture="es-es" name="Ejercicio" value="Ejercicio"></resource>
+  <resource culture="es-es" name="Realizado" value="Realizado"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

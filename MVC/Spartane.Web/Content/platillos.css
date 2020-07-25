@@ -1,0 +1,602 @@
+@font-face {
+  font-family: "corporative";
+  src: url("lib/font/corporative/CorporativeAltBold.otf");
+}
+
+
+
+
+body{
+    background:#fff;
+    
+  }
+  
+  html {
+      overflow: scroll;
+      overflow-x: hidden;
+  }
+  ::-webkit-scrollbar {
+      width: 0px;  /* remove scrollbar space */
+      background: transparent;  /* optional: just make scrollbar invisible */
+  }
+  /* optional: show position indicator */
+  /*::-webkit-scrollbar-thumb {
+      background: #37d3ae;
+  }*/
+  
+  #wrapper-carrusel{
+    max-width:100%;
+    padding:50px 75px 50px 45px;
+    position:relative;
+  }
+  
+  button:focus {outline:0 !important;}
+  
+  .left-controls{
+    
+    position:absolute;
+    top:0;
+    left:0;
+    width:4%;
+    height:1000px;
+    z-index:40;
+    background:#fff;
+    opacity:1;
+    cursor:pointer;
+    text-align:center;
+    justify-content:center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display:-ms-flexbox;
+    display:flex;
+    color:#37d3ae;
+  
+  }
+  
+  .fa-chevron-left-extra
+  {
+    align-self:center;
+    position:relative;
+    height:auto;
+    top:-250px;
+    transform-origin: 55% 50%;
+    font-style:normal;
+    font-weight:400;
+    line-height:1;
+    font-variant:normal;
+    text-transform:none;
+    font-size:2.5vw;
+    transition:transform .1s ease-out 0s;
+    transition-property: transform;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-out;
+    transition-delay: 0s;
+    color:#37d3ae;
+    opacity:.5;
+  }
+  
+  
+  .right-controls{
+    position:absolute;
+    top:0;
+    right:0;
+    width:4%;
+    height:1000px;
+    z-index:40;
+    background:#fff;
+    opacity:1;
+    cursor:pointer;
+    text-align:center;
+    justify-content:center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display:-ms-flexbox;
+    display:flex;
+    color:#37d3ae;
+  }
+  
+  .fa-chevron-right-extra
+  {
+    align-self:center;
+    position:relative;
+    height:auto;
+    top:-250px;
+   transform-origin: 55% 50%;
+    font-style:normal;
+    font-weight:400;
+    line-height:1;
+    font-variant:normal;
+    text-transform:none;
+    font-size:2.5vw;
+    transition:transform .1s ease-out 0s;
+    transition-property: transform;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-out;
+    transition-delay: 0s;
+    color:#37d3ae;
+    opacity: .5;
+  }
+  
+
+.tituloplan{
+  font-family: 'Poppins', sans-serif;
+}
+
+  .title{
+    color:#000;
+    font-family: "corporative";
+  }
+
+.bordecolorverde {
+    border-color: #37d3ae;
+    background-color: white !important;
+}
+  .module-section{
+    max-width: 100%;
+    overflow: hidden;
+    overflow-x:scroll;
+    border-left:1px solid #fff;
+    border-right:1px solid #fff;
+    
+  }
+  
+  /*/ul{
+  width:600em;
+  list-style-type:none;
+  padding:50px 0 50px 0; 
+  }*/
+  
+  .contentcarrusel{
+    position:relative;
+  }
+  
+  /* controles flecha */
+  .arrow-guides, .arrow-guides:hover{
+  
+  font-size:29px;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  float:left;
+  position:relative;
+  top:80px;
+  left:-10px;
+  padding: 10px 5px 5px 2px;
+  background:#999;
+  color:#fff;
+  }
+  */
+  
+  
+  .arrow-guides-right, .arrow-guides-right:hover{
+  
+  font-size:29px;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  float:right;
+  position:relative;
+  bottom:185px;
+  right:-40px;
+  padding: 10px 2px 5px 5px;
+  background:#999;
+  color:#fff;
+  }
+  
+  /* controles flecha */
+  
+  .imgcard{
+    vertical-align: middle;
+    background-size: contain;
+    height: 150px;
+    width: 100%;
+    border-radius: 10px 10px 0px 0px;
+  }
+  
+  
+  .card{
+    width: 20em;
+    height:250px;
+    background:#fff;
+    float:left;
+    margin-right:10px;
+    margin-bottom:50px;
+    cursor:pointer;
+    transform: scale(1);
+    visibility:visible;
+    border: 1px solid #efefef;
+    border-radius: 10px;
+    
+  }
+  
+  .card:hover{
+    cursor:pointer;
+    transform: scale(1);
+    visibility:visible;
+    transition: all .2s ease-in-out;
+    transform: scale(1.1); 
+    z-index:100;
+    position:relative;
+    transition-timing-function:cubic-bezier(0.5, 0, 0.1, 1);
+    transition-duration:400ms;
+   
+    
+  }
+
+  .card-contend{
+    padding: 10px 20px;
+  }
+ 
+  .nombreplatillo{
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .descrip{
+    color: #999;
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    text-align: justify;
+  }
+
+  .iconocambio{
+    color:#67f3d2; 
+    margin-right: 5px;
+  }
+
+
+  .btn-elegir{
+    border: 1px solid #37d3ae;
+    border-radius: 25px;
+    background: #fff;
+    color: #111147;
+  }
+
+  .btn-elegir:hover{
+    border: 1px solid #37d3ae;
+    border-radius: 25px;
+    background: #37d3ae;
+    color: #111147;
+  }
+
+  .btn-elegir:active{
+    border: 1px solid #37d3ae;
+    border-radius: 25px;
+    background: #37d3ae;
+    color: #111147;
+  }
+  .btn-elegir:focus{
+    border: 1px solid #37d3ae;
+    border-radius: 25px;
+    background: #37d3ae;
+    color: #111147;
+  }
+
+   .inside-top{
+    width:100%;
+    height:150px;
+    background:#fff;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:100;
+  }
+  
+  
+  
+  .clearfix {
+    overflow: auto;
+    zoom: 1;
+  }
+  
+  .titulomodalcomida{
+    color: #111147;
+    font-size: 18px;
+  }
+
+  .imgcambiomodal{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .contenedormodal{
+    width: 90%; 
+    margin-left: auto; 
+    margin-right: auto;
+  }
+
+  .iconcolormodal{
+    color: #fff;
+  }
+
+  .btn-tuplatillo{
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    color: #000;
+    background-color: #60D156;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 5px;
+    border:1px solid #60D156;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    margin-right: 0;
+    margin-left: 35%;
+  }
+  .nombreplatillomodal{
+    font-family: 'Poppins', sans-serif;
+    font-weight: normal;
+    color: #000;
+    font-size: 28px;
+  }
+
+  .ingredientestitulo{
+    color: #40BC8A;
+    text-align: left;
+    font-family: "corporative";
+    font-size: 16px;
+  }
+
+  .ingredientesp{
+    text-align: justify;
+    color: #666;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .preguntacambio{
+    text-align: center;
+    color: #000;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+  }
+
+  .decripcambio{
+    text-align: center;
+    color: #4D4D4D;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .masplatillos{
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    color: #000;
+    background-color: #60D156;
+    border-radius: 5px;
+    border:1px solid #60D156;
+  }
+
+  .masplatillos:hover{
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    background-color: #60D156;
+    border-radius: 5px;
+    border:1px solid #60D156;
+  }
+
+  .cerrarplatillo{
+    font-weight: normal;
+    font-family: 'Poppins', sans-serif;
+    color: #000;
+    border-radius: 5px;
+  }
+  
+  
+  @font-face {
+	font-family: "corporative";
+	src: url("/font/corporative/CorporativeAltBold.otf");
+}
+
+.cuerpo {
+	background: #fff;
+	color: #000;
+	font-family: 'Poppins', sans-serif;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+}
+
+.contenedor {
+	max-width: 1200px;
+	width: 90%;
+	margin: auto;
+}
+
+/* --- --- CONTENEDOR PRINCIPAL --- --- */
+
+.contenido-principal {
+	margin-bottom: 50px;
+	padding-top: 20px;
+	align-items: center;
+}
+
+.tituloplan{
+	font-size: 24px;
+}
+
+.bordecolorverde{
+	border-color: #37D3AE !important;
+}
+
+/* --- --- CAROUSEL --- --- */
+.carousel__contenedor {
+	position: relative;
+}
+
+.carousel__anterior,
+.carousel__siguiente {
+	position: absolute;
+	display: block;
+	width: 30px;
+	height: 30px;
+	border: none;
+	top: calc(50% - 35px);
+	cursor: pointer;
+	line-height: 30px;
+	text-align: center;
+	background: none;
+	color: #37d3ae;
+	opacity: .5;
+}
+
+.carousel__anterior:hover,
+.carousel__siguiente:hover {
+	opacity: 100%;
+}
+
+.carousel__anterior {
+	left: -30px;
+}
+
+.carousel__siguiente {
+	right: -30px;
+}
+
+.carousel__lista {
+	overflow: hidden;
+}
+
+.carousel__elemento {
+	text-align: center;
+}
+
+.carousel__indicadores .glider-dot {
+	display: block;
+	width: 30px;
+	height: 4px;
+	background: #40BC8A;
+	opacity: .2;
+	border-radius: 0;
+}
+
+.carousel__indicadores .glider-dot:hover {
+	opacity: .5;
+}
+
+.carousel__indicadores .glider-dot.active {
+	opacity: 1;
+}
+
+@media screen and (max-width: 800px) {
+	body {
+		padding: 40px 0;
+	}
+
+	.contenido-principal {
+		flex-direction: column;
+	}
+
+	.contenido-principal > * {
+		width: 100%;
+	}
+}
+
+.titulo-tiempo-comida{
+	font-family: "corporative";
+	color:#000;
+	font-size: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.tituloplatillo{
+	text-align: center;
+	font-size: 18px;
+	color: #000;
+}
+
+.descriptitulo{
+	text-align: center;
+	font-size: 12px;
+	color: #969696;
+}
+
+.btn-cambiar{
+	text-align: center;
+	font-size: 12px;
+	padding: 5px 10px;
+	background: #37D3AE;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+}
+
+.btn-cambiar:hover{
+	text-align: center;
+	font-size: 12px;
+	padding: 5px 10px;
+	background: #29c4a0;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+}
+
+.icono-blanco{
+	color: #fff;
+}
+
+.btn-actual-platillo{
+	color:#000;
+	background: #60D156;
+	border:2px solid #60D156;
+	padding: 5px 10px;
+	font-size: 12px;
+	border-radius: 5px;
+}
+
+.btn-actual-platillo:hover{
+	background: #71e067;
+	border: 2px solid #37d3ae;
+}
+
+.btn-cambiar-platillo{
+	color:#000;
+	background: #60D156;
+	border:2px solid #60D156;
+	padding: 5px 10px;
+	font-size: 12px;
+	border-radius: 5px;
+}
+
+.btn-cambiar-platillo:hover{
+	background: #71e067;
+	border:2px solid #37d3ae;
+}
+
+.linea-gris{
+	background: #dadada;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.ingrediente{
+	color: #40BC8A;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.descripplatillo{
+	text-align: justify;
+	font-size: 12px;
+	color: #969696;
+}
+
+.margencard{
+	padding: 5px 15px;
+}
+.textopregunta-titulo{
+	text-align: center;
+	color: #000;
+	font-size: 23px;
+}
+
+.textodescrip-titulo{
+	text-align: center;
+	color: #aaaaaa;
+	font-size: 16px;
+}

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Solicitud_de_Pago_de_Facturas" value="Solicitud de Pago de Facturas"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Fecha_de_Registro" value="Fecha de Registro"></resource>
+  <resource culture="en-US" name="Hora_de_Registro" value="Hora de Registro"></resource>
+  <resource culture="en-US" name="Usuario_que_Registra" value="Usuario que Registra"></resource>
+  <resource culture="en-US" name="Mes_Facturado" value="Mes Facturado"></resource>
+  <resource culture="en-US" name="Fecha_inicio_del_periodo_facturado" value="Fecha inicio del periodo facturado"></resource>
+  <resource culture="en-US" name="Fecha_fin_del_periodo_facturado" value="Fecha fin del periodo facturado"></resource>
+  <resource culture="en-US" name="Archivo_XML" value="Archivo XML"></resource>
+  <resource culture="en-US" name="Archivo_PDF" value="Archivo PDF"></resource>
+  <resource culture="en-US" name="Recibo_de_Solicitud_de_Pago" value="Recibo de Solicitud de Pago"></resource>
+  <resource culture="en-US" name="Total" value="Total"></resource>
+  <resource culture="en-US" name="Estatus" value="Estatus"></resource>
+  <resource culture="en-US" name="Fecha_de_autorizacion" value="Fecha de autorización"></resource>
+  <resource culture="en-US" name="Hora_de_autorizacion" value="Hora de autorización"></resource>
+  <resource culture="en-US" name="Usuario_que_autoriza" value="Usuario que autoriza"></resource>
+  <resource culture="en-US" name="Resultado_de_la_Revision" value="Resultado de la Revisión"></resource>
+  <resource culture="en-US" name="Observaciones" value="Observaciones"></resource>
+  <resource culture="en-US" name="Fecha_de_programacion" value="Fecha de programación"></resource>
+  <resource culture="en-US" name="Hora_de_programacion" value="Hora de programación"></resource>
+  <resource culture="en-US" name="Usuario_que_programa" value="Usuario que programa"></resource>
+  <resource culture="en-US" name="Fecha_programada_de_Pago" value="Fecha programada de Pago"></resource>
+  <resource culture="en-US" name="Estatus_de_Pago" value="Estatus de Pago"></resource>
+  <resource culture="en-US" name="Fecha_de_actualizacion" value="Fecha de actualización"></resource>
+  <resource culture="en-US" name="Hora_de_actualizacion" value="Hora de actualización"></resource>
+  <resource culture="en-US" name="Usuario_que_actualiza" value="Usuario que actualiza"></resource>
+  <resource culture="en-US" name="Fecha_de_Pago" value="Fecha de Pago"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+<resource culture="en-US" name="TabAutorizacion" value="Autorización"></resource>
+<resource culture="en-US" name="TabProgramacion_de_Pago" value="Programación de Pago"></resource>
+<resource culture="en-US" name="TabPago" value="Pago"></resource>
+
+</resources>

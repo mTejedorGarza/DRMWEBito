@@ -1,0 +1,1317 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.RutinasModel
+@{
+
+/*
+    string Fecha_de_Registro = "";
+    if (Model.Fecha_de_Registro == "")
+    { Model.Fecha_de_Registro = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+
+*/
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina = null;
+    if (ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Rutina != null)
+    { varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina = (List<SelectListItem>)ViewBag.Tipo_de_Ejercicio_Rutinas_Tipo_de_Rutina; }
+    List<SelectListItem> varNivel_de_dificultad_Nivel_de_dificultad = null;
+    if (ViewBag.Nivel_de_dificultads_Nivel_de_dificultad != null)
+    { varNivel_de_dificultad_Nivel_de_dificultad = (List<SelectListItem>)ViewBag.Nivel_de_dificultads_Nivel_de_dificultad; }
+    List<SelectListItem> varSexo_Sexo = null;
+    if (ViewBag.Sexos_Sexo != null)
+    { varSexo_Sexo = (List<SelectListItem>)ViewBag.Sexos_Sexo; }
+    List<SelectListItem> varEstatus_Estatus = null;
+    if (ViewBag.Estatuss_Estatus != null)
+    { varEstatus_Estatus = (List<SelectListItem>)ViewBag.Estatuss_Estatus; }
+
+    Permission permissionDetalle_Ejercicios_Rutinas = ViewBag.PermissionDetalle_Ejercicios_Rutinas;
+
+    Permission permission = ViewBag.Permission;
+	
+	if (ViewBag.IsPartial)
+   { 
+       Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+   }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.RutinasResources.Rutinas
+                <button onclick="RutinasGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#RutinasBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                @if (Session["PhaseName"] != null)
+                {
+                    <strong>@Session["PhaseName"].ToString()</strong>
+                }
+                else
+                {
+                    <strong>@Resources.RutinasResources.Rutinas</strong>
+                }
+                
+            </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+            @{
+                if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+                {
+                    <h2>&nbsp;</h2>
+                    <button onclick="RutinasDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </button>
+
+                    <div aria-hidden="true" class="modal fade in RutinasPropertyBusinessModal" id="RutinasPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">
+                                          @Resources.Resources.titleBussinesRules
+                                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">@Resources.Resources.Close</span></button>
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">@Resources.Resources.Property</a>
+                                        </div>
+                                        <div class="clearfix col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#RutinasBusinessRule-form" onclick="RutinasGetBusinessRule()">Business Rule</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div aria-hidden="true" data-backdrop="static" class="modal fade in PropertyModal" id="PropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+					<div aria-hidden="true" data-backdrop="static" class="modal fade in RutinasBusinessRuleModal" id="RutinasBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+
+
+                }
+            }
+                    <div aria-hidden="true" class="modal fade in AddDetalle_Ejercicios_RutinasModal" id="AddDetalle_Ejercicios_Rutinas-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+
+        </div>
+    </div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @using (Html.BeginForm("Post", "Rutinas", FormMethod.Post, new { id = "CreateRutinas", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+            {
+                                <input type="hidden" id="hdnIsNew" name="hdnIsNew" value="@ViewBag.IsNew.ToString()" />
+                <span id="popupNotification"></span>
+                <div class="container-fluid RutinasCreateForm" id="viewmodeledit">
+				 <div class="alert alert-warning" id="controlsRequerid" style="display:none">
+                        <a href="#" class="close" onclick="$('#controlsRequerid').hide();">&times;</a>
+                        <span id="textRequired"></span>
+                 </div>
+			<div class="tabs-container">
+                        	<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#tabDatos_Generales"> @Resources.RutinasResources.TabDatos_Generales</a></li>
+
+                        	</ul>
+	                	<div class="tab-content">
+                            <div id="tabDatos_Generales" class="tab-pane active">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="259796" data-field-name="@Resources.RutinasResources.Folio">
+                                    <label class="form-control" for="Folio" id="lblFolio">
+                                    @if (Model.Folio== 0)
+                                        {
+                                            <text>@Resources.Resources.ClaveDefault</text>
+                                        }
+                                        else
+                                        { 
+                                            <text>@Model.Folio</text>
+                                        }
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divFecha_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Fecha_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Registro" data-attribute="259797" data-field-name="@Resources.RutinasResources.Fecha_de_Registro">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_de_Registro"  name="Fecha_de_Registro" type="text" value="@Model.Fecha_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Hora_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_Registro" data-attribute="259798" data-field-name="@Resources.RutinasResources.Hora_de_Registro">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Hora_de_Registro"  name="Hora_de_Registro" type="text" data-autoclose="true" value="@Model.Hora_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_Registra">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Usuario_que_Registra</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_Registra" data-attribute="259799" data-field-name="@Resources.RutinasResources.Usuario_que_Registra">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Usuario que Registra must be a number." data-val-required="The Usuario que Registra field is required." id="Usuario_que_Registra" name="Usuario_que_Registra">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_Registra != null){ 
+                                            foreach (var itemUsuario_que_Registra in varSpartan_User_Usuario_que_Registra)
+                                            {
+                                                if (itemUsuario_que_Registra.Value == Convert.ToString(Model.Usuario_que_Registra))
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value" selected>@itemUsuario_que_Registra.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value">@itemUsuario_que_Registra.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_Registra" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 259799).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_Registra');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divTipo_de_Rutina">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Tipo_de_Rutina</label>
+                                <div class="col-sm-8" data-field-id="Tipo_de_Rutina" data-attribute="260150" data-field-name="@Resources.RutinasResources.Tipo_de_Rutina">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Tipo de Rutina must be a number." data-val-required="The Tipo de Rutina field is required." id="Tipo_de_Rutina" name="Tipo_de_Rutina">
+                                        <option value=""></option>
+                                        @if (varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina != null){ 
+                                            foreach (var itemTipo_de_Rutina in varTipo_de_Ejercicio_Rutina_Tipo_de_Rutina)
+                                            {
+                                                if (itemTipo_de_Rutina.Value == Convert.ToString(Model.Tipo_de_Rutina))
+                                                {
+                                                    <option value="@itemTipo_de_Rutina.Value" selected>@itemTipo_de_Rutina.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemTipo_de_Rutina.Value">@itemTipo_de_Rutina.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Tipo_de_Rutina" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 260150).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Tipo_de_Ejercicio_Rutina', 'Tipo_de_Rutina');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divNivel_de_dificultad">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Nivel_de_dificultad</label>
+                                <div class="col-sm-8" data-field-id="Nivel_de_dificultad" data-attribute="259804" data-field-name="@Resources.RutinasResources.Nivel_de_dificultad">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Nivel de dificultad must be a number." data-val-required="The Nivel de dificultad field is required." id="Nivel_de_dificultad" name="Nivel_de_dificultad">
+                                        <option value=""></option>
+                                        @if (varNivel_de_dificultad_Nivel_de_dificultad != null){ 
+                                            foreach (var itemNivel_de_dificultad in varNivel_de_dificultad_Nivel_de_dificultad)
+                                            {
+                                                if (itemNivel_de_dificultad.Value == Convert.ToString(Model.Nivel_de_dificultad))
+                                                {
+                                                    <option value="@itemNivel_de_dificultad.Value" selected>@itemNivel_de_dificultad.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemNivel_de_dificultad.Value">@itemNivel_de_dificultad.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Nivel_de_dificultad" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 259804).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Nivel_de_dificultad', 'Nivel_de_dificultad');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divSexo">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Sexo</label>
+                                <div class="col-sm-8" data-field-id="Sexo" data-attribute="259807" data-field-name="@Resources.RutinasResources.Sexo">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Sexo must be a number." data-val-required="The Sexo field is required." id="Sexo" name="Sexo">
+                                        <option value=""></option>
+                                        @if (varSexo_Sexo != null){ 
+                                            foreach (var itemSexo in varSexo_Sexo)
+                                            {
+                                                if (itemSexo.Value == Convert.ToString(Model.Sexo))
+                                                {
+                                                    <option value="@itemSexo.Value" selected>@itemSexo.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemSexo.Value">@itemSexo.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Sexo" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 259807).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Sexo', 'Sexo');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divNombre_de_la_Rutina">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Nombre_de_la_Rutina</label>
+                                <div class="col-sm-8" data-field-id="Nombre_de_la_Rutina" data-attribute="259800" data-field-name="@Resources.RutinasResources.Nombre_de_la_Rutina">
+                                    <input class="form-control Datos_Generales" id="Nombre_de_la_Rutina" name="Nombre_de_la_Rutina" type="text" value="@Model.Nombre_de_la_Rutina">
+                                    @*<span class="field-validation-valid" data-valmsg-for="Nombre_de_la_Rutina" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            <div class="form-group" id="divDescripcion">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Descripcion</label>
+                                <div class="col-sm-8" data-field-id="Descripcion" data-attribute="259801" data-field-name="@Resources.RutinasResources.Descripcion">
+                                    <textarea id="Descripcion" name="Descripcion" class="form-control Datos_Generales" rows="4" cols="50">@Model.Descripcion</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Descripcion" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEquipamiento">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Equipamiento</label>
+                                <div class="col-sm-8" data-field-id="Equipamiento" data-attribute="259802" data-field-name="@Resources.RutinasResources.Equipamiento">
+                                    <textarea id="Equipamiento" name="Equipamiento" class="form-control Datos_Generales" rows="4" cols="50">@Model.Equipamiento</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Equipamiento" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEquipamiento_alterno">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Equipamiento_alterno</label>
+                                <div class="col-sm-8" data-field-id="Equipamiento_alterno" data-attribute="259803" data-field-name="@Resources.RutinasResources.Equipamiento_alterno">
+                                    <textarea id="Equipamiento_alterno" name="Equipamiento_alterno" class="form-control Datos_Generales" rows="4" cols="50">@Model.Equipamiento_alterno</textarea>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Equipamiento_alterno" data-valmsg-replace="true"></span>*@
+                                </div>
+                            </div>
+                            <div class="form-group" id="divEstatus">
+                                <label class="col-sm-2 control-label">@Resources.RutinasResources.Estatus</label>
+                                <div class="col-sm-8" data-field-id="Estatus" data-attribute="259808" data-field-name="@Resources.RutinasResources.Estatus">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Estatus must be a number." data-val-required="The Estatus field is required." id="Estatus" name="Estatus">
+                                        <option value=""></option>
+                                        @if (varEstatus_Estatus != null){ 
+                                            foreach (var itemEstatus in varEstatus_Estatus)
+                                            {
+                                                if (itemEstatus.Value == Convert.ToString(Model.Estatus))
+                                                {
+                                                    <option value="@itemEstatus.Value" selected>@itemEstatus.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemEstatus.Value">@itemEstatus.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Estatus" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 259808).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Estatus', 'Estatus');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div id="divEjercicios">
+                            <div class="ibox-title">
+                                <h5>@Resources.RutinasResources.Ejercicios</h5>
+                                <div class="ibox-tools">
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="">
+									@if (permissionDetalle_Ejercicios_Rutinas.New && !ViewBag.Consult)
+                                    {
+                                        <a onclick="Detalle_Ejercicios_RutinasfnClickAddRow();" href="javascript:void(0);" title="@Resources.Resources.AddNewRow" class="Detalle_Ejercicios_RutinasAddRow btn btn-primary">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </a>
+                                    }
+                                    <button onclick="RutinasGetBusinessRule('', 'Al Guardar o al Eliminar una Row', '259839')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#RutinasBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToCreateGrid">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>
+									@if (permissionDetalle_Ejercicios_Rutinas.New && !ViewBag.Consult)
+                                    {
+                                        <a onclick="Detalle_Ejercicios_RutinasfnOpenAddRowPopUp();" data-toggle="modal" title="@Resources.Resources.AddNewRow" data-target="#AddDetalle_Ejercicios_Rutinas-form" data-backdrop="static" data-keyboard="false" class="btn_mrpopup btn btn-primary">
+                                            <i class="glyphicon glyphicon-new-window"></i>
+                                        </a>
+                                    }  
+                                </div>
+
+                                <br />
+
+                                <div style='overflow-x: auto;'>
+                                    <table class="table table-striped table-bordered table-hover childValidateTable" id="Detalle_Ejercicios_RutinasGrid">
+                                        <thead>
+                                            <tr>
+                                                <th class="ActionHeader"><span>@Resources.Resources.Actions</span></th>
+
+
+                                                <th class="Orden_de_realizacionHeader"><span>
+<button type="button" data-attribute="259815" data-field-id="Detalle_Ejercicios_RutinasOrden_de_realizacion" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Orden_de_realizacion" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Orden_de_realizacion">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.Detalle_Ejercicios_RutinasResources.Orden_de_realizacion</span></th>
+                                                <th class="SecuenciaHeader"><span>
+<button type="button" data-attribute="260153" data-field-id="Detalle_Ejercicios_RutinasSecuencia" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Secuencia" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Secuencia">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.Detalle_Ejercicios_RutinasResources.Secuencia</span></th>
+                                                <th class="Enfoque_del_EjercicioHeader"><span>
+<button type="button" data-attribute="260152" data-field-id="Detalle_Ejercicios_RutinasEnfoque_del_Ejercicio" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Enfoque_del_Ejercicio" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Enfoque_del_Ejercicio">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.Detalle_Ejercicios_RutinasResources.Enfoque_del_Ejercicio</span></th>
+                                                <th class="EjercicioHeader"><span>
+<button type="button" data-attribute="259817" data-field-id="Detalle_Ejercicios_RutinasEjercicio" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Ejercicio" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Ejercicio">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.Detalle_Ejercicios_RutinasResources.Ejercicio</span></th>
+                                                <th class="Cantidad_de_seriesHeader"><span>
+<button type="button" data-attribute="259816" data-field-id="Detalle_Ejercicios_RutinasCantidad_de_series" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_series" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_series">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_series</span></th>
+                                                <th class="Cantidad_de_repeticionesHeader"><span>
+<button type="button" data-attribute="259818" data-field-id="Detalle_Ejercicios_RutinasCantidad_de_repeticiones" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_repeticiones" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_repeticiones">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.Detalle_Ejercicios_RutinasResources.Cantidad_de_repeticiones</span></th>
+                                                <th class="Descanso_en_segundosHeader"><span>
+<button type="button" data-attribute="260151" data-field-id="Detalle_Ejercicios_RutinasDescanso_en_segundos" data-field-name="@Resources.Detalle_Ejercicios_RutinasResources.Descanso_en_segundos" data-toggle="modal" data-target="#RutinasBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.Detalle_Ejercicios_RutinasResources.Descanso_en_segundos">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.Detalle_Ejercicios_RutinasResources.Descanso_en_segundos</span></th>
+
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                                </div>
+
+				</div>	
+                    <br />
+                            <div class="form-actions fluid">
+                                <input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+                                <input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+                                <input type="hidden" value="@ViewBag.Operation" name="Operation" id="Operation" />
+                                @if (!ViewBag.Consult)
+                                {
+                                    <input type="button" value="@Resources.Resources.Guardar" id="RutinasGuardar" class="btn btn-w-m btn-primary btn_save" onclick="return checkClientValidate('RutinasCreateForm');"  />
+									<button onclick="RutinasGetBusinessRule('', 'Al Guardar o al Cerrar la Pantalla', '2')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#RutinasBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleBeforeSave">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>                                    
+
+                                    <input type="button" value="@Resources.Resources.GuardarNuevo" id="RutinasGuardarYNuevo" onclick="return checkClientValidate('RutinasCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandnew"  />
+                                    <input type="button" value="@Resources.Resources.GuardarCopia" id="RutinasGuardarYCopia" onclick="return checkClientValidate('RutinasCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandcopy"  />
+                                    if (permission.Configure)
+                                    {
+                                        <a title="@Resources.Resources.Configure" id="ConfigureSave" name="ConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success btn-configure">@Resources.Resources.Configure</a>
+                                    }
+                                }
+
+                                <input type="hidden" id="hdnConfigureType" />
+								<input type="hidden" id="hdnRutinasBusinessRuleFieldId" />
+                                <input type="hidden" id="hdnRutinasBusinessRuleFieldName" />
+                                <input type="hidden" id="hdnRutinasBusinessRuleAttribute" />
+
+                                <input type="button" value="@Resources.Resources.Cancelar" id="RutinasCancelar" name="RutinasCancelar" class="btn btn-danger noConsult btn_cancelar" data-bind="click: cancel" tabindex="16" />
+
+                                <button onclick="RutinasGetBusinessRule('', 'Al Cancelar', '4')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#RutinasBusinessRule-form">
+                                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                                        <i class="fa fa-cogs fa-spin"></i>
+                                    </a>
+                                </button>
+                            </div>
+						</div>
+					</div>
+                }
+        </div>
+    </div>
+</div>
+<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        /*i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }*/
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Rutinas.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/RutinasGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/RutinasCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+@section Scripts {
+
+
+    <script type="text/javascript">
+        
+
+
+	function GetTraduction(text) {
+         switch (text.toLowerCase()) {
+            case 'edit':
+                return "@Resources.Resources.Edit";          
+            case 'delete':
+                return "@Resources.Resources.Delete";               
+            case 'required':
+                return "@Resources.Resources.Required";              
+            case 'notrequired':
+                return "@Resources.Resources.NotRequired";           
+            case 'enabled':
+                return "@Resources.Resources.Enabled";         
+            case 'disabled':
+                return "@Resources.Resources.Disabled";           
+            case 'visible':
+                return "@Resources.Resources.Visible";            
+            case 'botvisible':
+                return "@Resources.Resources.InVisible";
+            case 'messagednoinvisible':
+                return "@Resources.Resources.messagedNoInVisible";
+            case 'messagednoreadonly':
+                return "@Resources.Resources.messagedNoReadOnly";
+            case 'defaultvalue':
+                return "@Resources.Resources.DefaultValue";
+            case 'helptext':
+                return "@Resources.Resources.HelpText";                     
+            default:
+                return "";
+        }
+    }
+	
+	    var isPartial = ('@ViewBag.IsPartial' == 'True');
+        var isMR = ('@ViewBag.isMR' == 'True');
+        var nameMR = '@ViewBag.nameMR';
+		var nameAttribute = '@ViewBag.nameAttribute';
+		var Tab_Datos_Generales = true;
+
+
+        $(document).ready(function () {
+            $('#ObjectId').val('44572');
+		                 
+
+
+            GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioItem();
+            GetDetalle_Ejercicios_Rutinas_EjerciciosItem();
+
+
+
+           
+              showDetalle_Ejercicios_RutinasGrid(null);
+
+		   
+			
+             @if(ViewBag.IsNew)
+            { 
+                <text>$('input:checkbox').prop('checked', false);</text>
+            }
+			else
+            {
+                <text>
+				if (Tab_Datos_Generales)
+					Fill_Datos_Generales();
+
+
+                </text>
+             }
+             EjecutarValidacionesAlComienzo();
+                         $('#Fecha_de_Registro').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_Registro').clockpicker();
+
+
+            initiateUIControls();
+			$('a').tooltip();
+			$('.loading').css('display', 'none');
+			
+
+        });
+
+        var Detalle_Ejercicios_RutinasinsertRowCurrentIndex = -1;
+        var Detalle_Ejercicios_RutinasDataDataTable;
+        function getDetalle_Ejercicios_RutinasData() {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Rutinas/GetDetalle_Ejercicios_Rutinas")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                    Detalle_Ejercicios_RutinasDataDataTable = result.data;
+                    showDetalle_Ejercicios_RutinasGrid(result.data);
+                    $('#Detalle_Ejercicios_RutinasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#Detalle_Ejercicios_RutinasGrid .gridDatePicker').attr("readonly", "");
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+        function Detalle_Ejercicios_RutinasGetUpdateRowControls(data, nameOfTable, rowIndex) {
+
+            var columnData = [];
+            var counter = 0;
+            var inputData = "<input type='text' class='fullWidth form-control' />";
+
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Orden_de_realizacion)).addClass('Orden_de_realizacion inputNumber').attr('id', nameOfTable + 'Orden_de_realizacion' + rowIndex).attr('data-field', 'Orden_de_realizacion');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Secuencia)).addClass('Secuencia').attr('id', nameOfTable + 'Secuencia' + rowIndex).attr('data-field', 'Secuencia');
+           columnData[counter++] = $($(GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioDropDown()).val(data.Enfoque_del_Ejercicio)).addClass('Enfoque_del_Ejercicio inputNumber').attr('id', nameOfTable + 'Enfoque_del_Ejercicio' + rowIndex).attr('data-field', 'Enfoque_del_Ejercicio').after($.parseHTML(addNew('Detalle_Ejercicios_Rutinas', 'Tipo_de_Enfoque_del_Ejercicio','Enfoque_del_Ejercicio', 260152)));
+           columnData[counter++] = $($(GetDetalle_Ejercicios_Rutinas_EjerciciosDropDown()).val(data.Ejercicio)).addClass('Ejercicio inputNumber').attr('id', nameOfTable + 'Ejercicio' + rowIndex).attr('data-field', 'Ejercicio').after($.parseHTML(addNew('Detalle_Ejercicios_Rutinas', 'Ejercicios','Ejercicio', 259817)));
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Cantidad_de_series)).addClass('Cantidad_de_series inputNumber').attr('id', nameOfTable + 'Cantidad_de_series' + rowIndex).attr('data-field', 'Cantidad_de_series');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Cantidad_de_repeticiones)).addClass('Cantidad_de_repeticiones inputNumber').attr('id', nameOfTable + 'Cantidad_de_repeticiones' + rowIndex).attr('data-field', 'Cantidad_de_repeticiones');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Descanso_en_segundos)).addClass('Descanso_en_segundos inputNumber').attr('id', nameOfTable + 'Descanso_en_segundos' + rowIndex).attr('data-field', 'Descanso_en_segundos');
+
+            return columnData;
+        }
+
+
+
+        function GetFileInfo(fileData, fileUploadData) {
+
+            var $div = $("<div>");
+            if (fileUploadData != null && fileUploadData.files.length > 0) {
+
+                $div.append("<label>" + fileUploadData.files[0].name + "</label>");
+                //<i class="fa fa-times-circle" id='removeFileAttachment'>
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+
+            } else if (fileUploadData != null) {
+                return $.parseHTML(GetFileUploader());
+            } else {
+                $div.append("<label>" + fileData.FileName + "</label>");
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+            }
+        }
+
+        var removedDetalle_Ejercicios_RutinasData = [];
+        function Detalle_Ejercicios_RutinasDeleteRow(rowIndex, row) {
+            var rowIndexTable = Detalle_Ejercicios_RutinasTable.fnGetPosition($(row).parent().parent()[0]);
+            var permission = {            
+                 Delete: '@permissionDetalle_Ejercicios_Rutinas.Delete' == 'True'
+            };
+            if (!permission.Delete || isConsultMode)
+                return;            
+            if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+              if (EjecutarValidacionesAlEliminarMRDetalle_Ejercicios_Rutinas('Detalle_Ejercicios_Rutinas_', '_' + rowIndex)) {
+                var prevData = Detalle_Ejercicios_RutinasTable.fnGetData(rowIndexTable );
+                removedDetalle_Ejercicios_RutinasData.push(prevData);
+                Detalle_Ejercicios_RutinasTable.fnDeleteRow(rowIndexTable );
+				showDetalle_Ejercicios_RutinasGrid(Detalle_Ejercicios_RutinasTable.fnGetData());
+              }
+            }
+			initiateUIControls();
+        }
+
+        function Detalle_Ejercicios_RutinasrowCreationGrid(row, data, index) {
+            var permission =  {            
+                 Edit: '@permissionDetalle_Ejercicios_Rutinas.Edit' == 'True',
+                 Delete: '@permissionDetalle_Ejercicios_Rutinas.Delete' == 'True'
+            };
+            setDetalle_Ejercicios_RutinasValidation();
+            var Detalle_Ejercicios_RutinasRowElement = "Detalle_Ejercicios_Rutinas_" + index.toString();
+            $(row).addClass(Detalle_Ejercicios_RutinasRowElement);
+            var nameOfTable='Detalle_Ejercicios_Rutinas_';
+            var rowIndex = '_' + index;
+            Detalle_Ejercicios_RutinasinsertRowCurrentIndex = index;
+
+            row.innerHTML = "";
+
+            if (data.IsInsertRow) {
+
+                if (row.childNodes.length != 0) {
+                    for (var i = 0; i < row.childNodes.length; i++) {
+                        row.childNodes[i].remove();
+                    }
+                }
+                var controls = GetInsertDetalle_Ejercicios_RutinasRowControls(index);
+                var actionColInsert = $('<td>');
+
+                var abc = "if(dynamicFieldValidation('" + Detalle_Ejercicios_RutinasRowElement + "')){ Detalle_Ejercicios_RutinasInsertRow(" + index + "); }";
+                var insertRowHTML = '<a  data-toggle="tooltip" title="Confirmar Registro" onclick="' + abc + '">';
+                $('<i class="fa fa-check">').appendTo($(insertRowHTML).appendTo(actionColInsert));
+				$('<i class="fa fa-times">').appendTo($("<a data-toggle='tooltip' title='Cancelar Registro' onclick='Detalle_Ejercicios_RutinasCancelRow(" + index + ")'>").appendTo(actionColInsert));
+                actionColInsert.appendTo(row);
+
+                for (i = 0; i < controls.length; i++) {
+					var idHeader = $(controls[i]).data('field') + 'Header';
+					if($(controls[i]).length > 1){
+						idHeader = $($(controls[i])[1]).data('field') + 'Header';
+					}					
+
+					var classe = ($('#Detalle_Ejercicios_RutinasGrid .' + idHeader).hasClass('dt-right') ? "dt-right" : "") + $('#Detalle_Ejercicios_RutinasGrid .' + idHeader ).css('display') == 'none' ? " hide" : "";
+				   
+					if ($(controls[i]).next().length > 0) {
+					    var div = $(controls[i]).next();
+					    $('<td class="' + classe + '">').append($(controls[i])).append(div).appendTo(row);
+					}else
+					    $(controls[i]).appendTo($('<td class="' + classe + '">').appendTo(row));
+					
+                }
+                $('#Detalle_Ejercicios_RutinasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('#Detalle_Ejercicios_RutinasGrid .gridDatePicker').attr("readonly", "");
+                return;
+            }
+
+            var actionCol = $('<td>');
+			var edit = "<a title='@Resources.Resources.Edit' class='edit-MR' onclick='Detalle_Ejercicios_RutinasEditRow(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                edit = "";
+            var editPopUp = "<a title='@Resources.Resources.Edit' class='edit-popup-MR' data-toggle='modal' data-target='#AddDetalle_Ejercicios_Rutinas-form' onclick='Detalle_Ejercicios_RutinasEditRowPopup(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                editPopUp = "";
+            var eliminar = "<a title='@Resources.Resources.Delete' class='eliminar-MR' onclick='Detalle_Ejercicios_RutinasDeleteRow(" + index + ", this)'>";
+            if (!permission.Delete || isConsultMode)
+                eliminar = "";
+            $('<i class="fa fa-pencil">').appendTo($(edit).appendTo(actionCol));
+            //$('<i class="fa fa-edit">').appendTo($(editPopUp).appendTo(actionCol));
+            $('<i class="fa fa-trash-o">').appendTo($(eliminar).appendTo(actionCol));
+			if ($('.Action' + 'Header').css('display') != 'none')
+				actionCol.appendTo(row);
+
+            if ($('.Orden_de_realizacion' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Orden_de_realizacion'+rowIndex+'">').text(data.Orden_de_realizacion).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Orden_de_realizacion'+rowIndex+'">').text(data.Orden_de_realizacion).appendTo(row);
+            if ($('.Secuencia' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Secuencia'+rowIndex+'">').text(data.Secuencia).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Secuencia'+rowIndex+'">').text(data.Secuencia).appendTo(row);
+            if ($('.Enfoque_del_Ejercicio' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Enfoque_del_Ejercicio'+rowIndex+'">').text(GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioName(data.Enfoque_del_Ejercicio)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Enfoque_del_Ejercicio'+rowIndex+'">').text(GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioName(data.Enfoque_del_Ejercicio)).appendTo(row);
+            if ($('.Ejercicio' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Ejercicio'+rowIndex+'">').text(GetDetalle_Ejercicios_Rutinas_EjerciciosName(data.Ejercicio)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Ejercicio'+rowIndex+'">').text(GetDetalle_Ejercicios_Rutinas_EjerciciosName(data.Ejercicio)).appendTo(row);
+            if ($('.Cantidad_de_series' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Cantidad_de_series'+rowIndex+'">').text(data.Cantidad_de_series).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Cantidad_de_series'+rowIndex+'">').text(data.Cantidad_de_series).appendTo(row);
+            if ($('.Cantidad_de_repeticiones' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Cantidad_de_repeticiones'+rowIndex+'">').text(data.Cantidad_de_repeticiones).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Cantidad_de_repeticiones'+rowIndex+'">').text(data.Cantidad_de_repeticiones).appendTo(row);
+            if ($('.Descanso_en_segundos' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Descanso_en_segundos'+rowIndex+'">').text(data.Descanso_en_segundos).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Descanso_en_segundos'+rowIndex+'">').text(data.Descanso_en_segundos).appendTo(row);
+
+        }
+
+        var Detalle_Ejercicios_RutinasTable;
+        function showDetalle_Ejercicios_RutinasGrid(dataSet) {
+            //removedDetalle_Ejercicios_RutinasData = [];
+            Detalle_Ejercicios_RutinasTable = $('#Detalle_Ejercicios_RutinasGrid').dataTable({
+                dom: '<"html5buttons"B>lTgitp',
+                buttons: [
+                ],
+                "createdRow": Detalle_Ejercicios_RutinasrowCreationGrid,
+                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "All"]],
+                data: dataSet,
+                "columns": [
+                    { "data": null, 'visible': true, "orderable": false },
+
+                    { "data": "Orden_de_realizacion", "className": "dt-right", "orderable": false },
+                    { "data": "Secuencia", "orderable": false },
+                    { "data": "Enfoque_del_Ejercicio", "orderable": false },
+                    { "data": "Ejercicio", "orderable": false },
+                    { "data": "Cantidad_de_series", "className": "dt-right", "orderable": false },
+                    { "data": "Cantidad_de_repeticiones", "className": "dt-right", "orderable": false },
+                    { "data": "Descanso_en_segundos", "className": "dt-right", "orderable": false },
+
+                ],
+                "order": [[0, "asc"]],
+                "language": {
+                    "lengthMenu": "@Resources.Resources.Display" + " _MENU_ " + "@Resources.Resources.RecordsPerPage",
+                    "zeroRecords": "@Resources.Resources.NothingFound",
+                    "info": "@Resources.Resources.ShowingPages" + " _PAGE_ " + "@Resources.Resources.of" + " _PAGES_",
+                    "infoEmpty": "@Resources.Resources.NoRecords",
+                    "infoFiltered": "(" + "@Resources.Resources.FilteredFrom" + " _MAX_ " + "@Resources.Resources.TotalRecords" + ")",
+                    "sSearch": "@Resources.Resources.Search",
+                    "paginate": {
+                        "previous": "@Resources.Resources.Previous",
+                        "next": "@Resources.Resources.Next"
+                    }
+                },
+				"bDestroy": true,
+                "fnDrawCallback": function (settings) {
+                    setDetalle_Ejercicios_RutinasValidation();
+                }
+            }).on('init.dt', function (e, data) {
+                $('a').tooltip();
+            }).on('draw.dt', function () {
+                $('#Detalle_Ejercicios_RutinasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('.gridDatePicker').inputmask("99-99-9999", { "placeholder": "dd-mm-yyyy" });
+            });
+        }
+
+
+
+
+    var Detalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioItems;
+        function GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioItem() {
+            Detalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Rutinas/GetDetalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Detalle_Ejercicios_Rutinas_Tipo_de_Enfoque_del_EjercicioItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+    var Detalle_Ejercicios_Rutinas_EjerciciosItems;
+        function GetDetalle_Ejercicios_Rutinas_EjerciciosItem() {
+            Detalle_Ejercicios_Rutinas_EjerciciosItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Rutinas/GetDetalle_Ejercicios_Rutinas_EjerciciosAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    Detalle_Ejercicios_Rutinas_EjerciciosItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+
+
+
+        var Detalle_Ejercicios_RutinasData = [];
+        var Detalle_Ejercicios_RutinasdeletedItem = [];
+        var Detalle_Ejercicios_RutinasDataMain = [];
+        var Detalle_Ejercicios_RutinasDataMainPages = [];
+        var Detalle_Ejercicios_RutinasnewItemCount = 0;
+        var Detalle_Ejercicios_RutinasmaxItemIndex = 0;
+        var Detalle_Ejercicios_RutinasDataMainInitialized = false;
+
+        function SendDetalle_Ejercicios_Rutinas(callBack, FolioId) {
+            Detalle_Ejercicios_RutinasData = GetDetalle_Ejercicios_RutinasFromDataTable();
+
+            if (Detalle_Ejercicios_RutinasData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Rutinas/PostDetalle_Ejercicios_Rutinas?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetDetalle_Ejercicios_Rutinas(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function GetAddDetalle_Ejercicios_RutinasPopup(currentRowIndex, mode, id) {
+
+            $.ajax({
+                url: "@Url.Action("AddDetalle_Ejercicios_Rutinas", "Detalle_Ejercicios_Rutinas")",
+                type: "GET",
+                async: false,
+                data: { rowIndex: currentRowIndex, functionMode: mode, id: id },
+                success: function (data) {
+                    $(".AddDetalle_Ejercicios_RutinasModal").html(data);
+                },
+                error: function () {
+
+                }
+            });
+
+            @*$.get('@Url.Action("AddDetalle_Ejercicios_Rutinas", "Detalle_Ejercicios_Rutinas")', { rowIndex: currentRowIndex }, function (data) {
+                $(".AddDetalle_Ejercicios_RutinasModal").html(data);
+            });*@
+        }
+
+        function ShowMessagePendingRowDetalle_Ejercicios_Rutinas()
+        {
+            //alert('@Html.Raw(string.Format(Resources.Resources.PendingRow, "Ejercicios"))')
+	    showNotification('@Html.Raw(string.Format(Resources.Resources.PendingRow, "Ejercicios"))', "warning");
+        }
+
+
+        function initiateUIControls() {
+             $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+            $('.inputMoney').inputmask("currency", { greedy: false, prefix: "", rightAlign: false });
+			$('td.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+			$('td input.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+
+
+
+
+
+
+
+
+
+
+        }
+
+    </script>
+
+<script type="text/javascript">
+
+
+   function GetCatalogPopup(catalog, nameAttribute, isMR, nameMR) {
+        if (!isMR)
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, nameAttribute = "AttributoNombre" })";
+        else
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, isMR = true, nameMR = "Multirenglon",nameAttribute= "AttributoNombre" })";
+
+        url = url.replace("Catalog", catalog).replace("Multirenglon", nameMR).replace("AttributoNombre", nameAttribute);
+
+        window.open(htmlDecode(url), '_blank', 'left=200,top=100,width=850,height=550,toolbar=0,resizable=0');
+    }
+
+    function RefreshCatalog(catalog, control) {
+
+	 if ($('#' + control).hasClass('AutoComplete'))   {
+		   if ($('#' + control).attr("data-isfilter") == "true") {
+				eval(GetReglaFilter(control, $('#ObjectId').val()));
+				return;
+			}
+		}
+			
+			var url = '@Url.Content("~/Frontal/Rutinas/GetCatalogAll")';
+			url = url.replace(/Catalog/g, catalog);
+
+			$.ajax({
+				url: url,
+				async: true,
+				success:function(result)
+				{
+					addItemsToSelect($('#' + control), result);
+				},
+				error: function (result)
+				{
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				}
+			});
+		
+    }
+
+
+        function SendRutinasData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateRutinas").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateRutinas")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+			var id = $("#ReferenceFolio").val();
+            var isNew = $('#hdnIsNew').val();
+           
+			if (Tab_Datos_Generales && !checkClientValidate('RutinasCreateForm', 'Datos_Generales')) {
+				return false;
+			}						
+
+
+			
+			if (isNew == "True")
+            {
+                id = CreateID();
+            }
+			
+			
+			if (Tab_Datos_Generales)
+				Save_Datos_Generales(id);
+
+
+			showNotification("@Resources.Resources.SaveSuccess", "success");
+			callBack(id);
+            return true;
+        };
+		function CreateID()
+		{
+			var newId = 0;
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Rutinas/CreateID")',
+				type: 'GET',
+				async: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "error");
+					} else {
+						newId = result;
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+			return newId;
+		}
+		
+		function OpenRules()
+		{
+			$.get('@Url.Action("Index", "Business_Rule_Creation")', {}, function (data) {
+				$(".RutinasBusinessRuleModal").html(data);
+			});
+		}
+                function RutinasGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+			        $('#FieldId').val(FieldId);
+				$('#FieldName').val(FieldName);
+				$('#Attribute').val(Attribute);
+			}
+			$('#ObjectId').val('44572');
+			$('#Screen').val('Rutinas');
+			OpenRules();
+               }
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function RutinasBackToGrid() {
+        		if (isPartial)
+			window.close('', '_parent', '');
+        else
+			location.href = "@Url.Content("~/Frontal/Rutinas/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Rutinas/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Rutinas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Rutinas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Rutinas/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+							var mainElementAttributes = '<div class="col-sm-2">';
+							mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "@Resources.Resources.Required" : "@Resources.Resources.NotRequired") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "@Resources.Resources.Visible" : "@Resources.Resources.InVisible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "@Resources.Resources.Disabled" : "@Resources.Resources.Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+							mainElementAttributes += '</div>';
+							$('#' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+							$('#' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                  }
+					 if (childElementObject != null) {
+                        for (var j = 0; j < childElementObject.length; j++) {
+                            var table = childElementObject[j].table.trim();
+                            var grid = '#' + table + 'Grid';
+                            $(grid).find("thead").find("tr").find("th").each(function () {
+                                for (var i = 0; i < childElementObject[j].elements.length; i++) {
+                                    if ($(this).hasClass(childElementObject[j].elements[i].inputId + 'Header')) {
+                                        $(this).show();
+                                        $(this).parent().show();
+                                        $(this).append(returnAttributeHTML(childElementObject[j].elements[i], table, i));
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                     $('#ConfigureSave').text('@Html.Raw(Resources.Resources.Save  +" "+ Resources.Resources.Settings)');
+                    $('#hdnConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateRutinas').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#FieldId').val(fieldId);
+			$('#FieldName').val(fieldName);
+			$('#Attribute').val(attribute);
+                        RutinasGetBusinessRule();
+		});
+		//Initialize HTML Editors            
+  var filebrowserBrowseUrl = '../../ckfinder/ckfinder.html';
+  var filebrowserImageBrowseUrl = '../../ckfinder/ckfinder.html?type=Images';
+  var filebrowserUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Files';
+  var filebrowserImageUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Images';
+		
+		
+		function Fill_Datos_Generales()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Rutinas/Get_Datos_Generales")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_Registro').val(result.data.Fecha_de_Registro);
+                    $('#Hora_de_Registro').val(result.data.Hora_de_Registro);
+                    $('#Usuario_que_Registra').val(result.data.Usuario_que_Registra);
+                    $('#Tipo_de_Rutina').val(result.data.Tipo_de_Rutina);
+                    $('#Nivel_de_dificultad').val(result.data.Nivel_de_dificultad);
+                    $('#Sexo').val(result.data.Sexo);
+                    $('#Nombre_de_la_Rutina').val(result.data.Nombre_de_la_Rutina);
+                    $('#Descripcion').val(result.data.Descripcion);
+                    $('#Equipamiento').val(result.data.Equipamiento);
+                    $('#Equipamiento_alterno').val(result.data.Equipamiento_alterno);
+                    $('#Estatus').val(result.data.Estatus);
+                    Detalle_Ejercicios_RutinasDataDataTable = result.Ejercicios;
+                    showDetalle_Ejercicios_RutinasGrid(result.Ejercicios);
+                    $('#Detalle_Ejercicios_RutinasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#Detalle_Ejercicios_RutinasGrid .gridDatePicker').attr("readonly", "");
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Datos_Generales(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_Registro', $('#Fecha_de_Registro').val());
+                data.append('Hora_de_Registro', $('#Hora_de_Registro').val());
+                data.append('Usuario_que_Registra', $('#Usuario_que_Registra').val());
+                data.append('Tipo_de_Rutina', $('#Tipo_de_Rutina').val());
+                data.append('Nivel_de_dificultad', $('#Nivel_de_dificultad').val());
+                data.append('Sexo', $('#Sexo').val());
+                data.append('Nombre_de_la_Rutina', $('#Nombre_de_la_Rutina').val());
+                data.append('Descripcion', $('#Descripcion').val());
+                data.append('Equipamiento', $('#Equipamiento').val());
+                data.append('Equipamiento_alterno', $('#Equipamiento_alterno').val());
+                data.append('Estatus', $('#Estatus').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Rutinas/Post_Datos_Generales")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Datos_Generales");
+					} else {
+						newId = result;
+                    					    SendDetalle_Ejercicios_Rutinas(null, newId);
+
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Datos_Generales");
+				},
+				cache: false
+			});
+		}
+
+
+    </script>
+}
+    <input type="hidden" id="FieldId" name="FieldId" value="" />
+    <input type="hidden" id="FieldName" name="FieldName" value="" />
+    <input type="hidden" id="ObjectId" name="ObjectId" value="" />
+    <input type="hidden" id="Attribute" name="Attribute" value="" />
+    <input type="hidden" id="Screen" name="Screen" value="" />
+     <input type="hidden" id="Rutinas_cmbLabelSelect" name="Rutinas_cmbLabelSelect" value="@Resources.Resources.CmbSelect" />
+

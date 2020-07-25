@@ -1,0 +1,501 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.MR_TarjetasModel
+@{
+
+
+    List<SelectListItem> varTipo_de_Tarjeta_Tipo_de_Tarjeta = null;
+    if (ViewBag.Tipo_de_Tarjetas_Tipo_de_Tarjeta != null)
+    { varTipo_de_Tarjeta_Tipo_de_Tarjeta = (List<SelectListItem>)ViewBag.Tipo_de_Tarjetas_Tipo_de_Tarjeta; }
+    List<SelectListItem> varEstatus_Estatus = null;
+    if (ViewBag.Estatuss_Estatus != null)
+    { varEstatus_Estatus = (List<SelectListItem>)ViewBag.Estatuss_Estatus; }
+
+
+    Permission permission = ViewBag.Permission;
+}
+<div class="modal-dialog" style="width:95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Add MR Tarjetas
+                <button data-dismiss="modal" class="close" type="button" onclick="@(ViewBag.functionMode == 0 ? "MR_TarjetasRemoveAddRow("+ ViewBag.currentRowIndex +")" : "")"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            </h4>
+        </div>
+        <div class="modal-body scroll_content">
+            <div class="form-horizontal MR_TarjetasPop_@ViewBag.currentRowIndex">
+				<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" id="lblAttributeType">Value</label>
+									<div class="col-sm-7">
+										<input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+									</div>
+									<div class="col-sm-2">
+										<a class="btn btn-primary" onclick="SaveValue()">Submit</a>
+									</div>
+									<input type="hidden" id="hdnAttributType" />
+									<input type="hidden" id="hdnAttributElement" />
+									<input type="hidden" id="hdnAttributNumber" />
+									<input type="hidden" id="hdnElementType" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row wrapper border-bottom white-bg page-heading">
+
+					<div class="row">
+						<div class="col-lg-10">
+							<h2>
+								MR Tarjetas
+								<button onclick="MR_TarjetasGetBusinessRule('', 'Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MR_TarjetasBusinessRule-form">
+									<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+										<i class="fa fa-cogs fa-spin"></i>
+									</a>
+								</button>
+							</h2>
+							<ol class="breadcrumb">
+								<li>
+									<a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+								</li>
+								<li class="">
+									<label>@Resources.MR_TarjetasResources.MR_Tarjetas</label>
+								</li>
+								<li class="active">
+									<strong>@Resources.Resources.Create</strong>
+								</li>
+							</ol>
+						</div>
+						<div class="col-lg-2">
+
+							@{
+								if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+								{
+									<h2>&nbsp;</h2>
+									<button onclick="MR_TarjetasDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+										<i class="fa fa-cogs fa-spin"></i>
+									</button>
+
+									<div aria-hidden="true" class="modal fade in MR_TarjetasPropertyBusinessModal" id="MR_TarjetasPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">
+														Property & Business Rules
+														<button class="close" type="button" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">Properties</a>
+														</div>
+														<div class="clearfix col-sm-12">&nbsp;</div>
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#MR_TarjetasBusinessRule-form" onclick="MR_TarjetasGetBusinessRule()">Business Rule</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									 <div aria-hidden="true" data-backdrop="static" class="modal fade in MR_TarjetasPropertyModal" id="MR_TarjetasPropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+									<div aria-hidden="true" data-backdrop="static" class="modal fade in MR_TarjetasBusinessRuleModal" id="MR_TarjetasBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+                                    <div aria-hidden="true" data-backdrop="static" class="modal fade in MR_TarjetasAddBusinessRuleModal" id="MR_TarjetasAddBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                                    </div>
+
+				
+								}
+							}
+						</div>
+					</div>
+
+				<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							@using (Html.BeginForm("Post", "MR_Tarjetas", FormMethod.Post, new { id = "CreateMR_Tarjetas", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+							{
+								<span id="popupNotification"></span>
+								<div class="container-fluid MR_TarjetasCreateForm" id="viewmodeledit">
+							<div class="tabs-container">
+											<ul class="nav nav-tabs">
+				@@groupers@@
+											</ul>
+										<div class="tab-content">
+				<div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="261285" data-field-name="@Resources.MR_TarjetasResources.Folio">
+                                    <label class="form-control" for="MR_TarjetasFolio" id="MR_TarjetasFolio">@Model.Folio</label>
+                                </div>
+                            </div>
+<div class="form-group" id="divTipo_de_Tarjeta">
+	<label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Tipo_de_Tarjeta</label>
+	<div class="col-sm-8" data-field-id="Tipo_de_Tarjeta" data-attribute="261287" data-field-name="@Resources.MR_TarjetasResources.Tipo_de_Tarjeta">
+		<select class="form-control" data-val="true" data-val-number="The field Tipo de Tarjeta must be a number." data-val-required="The Tipo de Tarjeta field is required." id="MR_TarjetasTipo_de_Tarjeta" name="MR_TarjetasTipo_de_Tarjeta">
+			<option value=""></option>
+			@if (varTipo_de_Tarjeta_Tipo_de_Tarjeta != null){ 
+				foreach (var itemTipo_de_Tarjeta in varTipo_de_Tarjeta_Tipo_de_Tarjeta)
+				{
+					if (itemTipo_de_Tarjeta.Value == Convert.ToString(Model.Tipo_de_Tarjeta))
+					{
+						<option value="@itemTipo_de_Tarjeta.Value" selected>@itemTipo_de_Tarjeta.Text</option>
+					}
+					else
+					{
+						<option value="@itemTipo_de_Tarjeta.Value">@itemTipo_de_Tarjeta.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+<div class="form-group" id="divNumero_de_Tarjeta">
+                                <label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Numero_de_Tarjeta</label>
+                                <div class="col-sm-8" data-field-id="Numero_de_Tarjeta" data-attribute="261288" data-field-name="@Resources.MR_TarjetasResources.Numero_de_Tarjeta">
+                                    <input class="form-control" id="MR_TarjetasNumero_de_Tarjeta" name="MR_TarjetasNumero_de_Tarjeta" type="text" value="@Model.Numero_de_Tarjeta">
+                                </div>
+                            </div>
+<div class="form-group" id="divNombre_del_Titular">
+                                <label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Nombre_del_Titular</label>
+                                <div class="col-sm-8" data-field-id="Nombre_del_Titular" data-attribute="261289" data-field-name="@Resources.MR_TarjetasResources.Nombre_del_Titular">
+                                    <input class="form-control" id="MR_TarjetasNombre_del_Titular" name="MR_TarjetasNombre_del_Titular" type="text" value="@Model.Nombre_del_Titular">
+                                </div>
+                            </div>
+<div class="form-group" id="divAno_de_vigencia">
+	<label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Ano_de_vigencia</label>
+	<div class="col-sm-8" data-field-id="Ano_de_vigencia" data-attribute="261290" data-field-name="@Resources.MR_TarjetasResources.Ano_de_vigencia">
+		<input class="form-control inputNumber" id="MR_TarjetasAno_de_vigencia" name="MR_TarjetasAno_de_vigencia" type="text" value="@Model.Ano_de_vigencia">
+	</div>
+</div>
+<div class="form-group" id="divMes_de_vigencia">
+	<label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Mes_de_vigencia</label>
+	<div class="col-sm-8" data-field-id="Mes_de_vigencia" data-attribute="261291" data-field-name="@Resources.MR_TarjetasResources.Mes_de_vigencia">
+		<input class="form-control inputNumber" id="MR_TarjetasMes_de_vigencia" name="MR_TarjetasMes_de_vigencia" type="text" value="@Model.Mes_de_vigencia">
+	</div>
+</div>
+<div class="form-group" id="divAlias_de_la_Tarjeta">
+                                <label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Alias_de_la_Tarjeta</label>
+                                <div class="col-sm-8" data-field-id="Alias_de_la_Tarjeta" data-attribute="261292" data-field-name="@Resources.MR_TarjetasResources.Alias_de_la_Tarjeta">
+                                    <input class="form-control" id="MR_TarjetasAlias_de_la_Tarjeta" name="MR_TarjetasAlias_de_la_Tarjeta" type="text" value="@Model.Alias_de_la_Tarjeta">
+                                </div>
+                            </div>
+<div class="form-group" id="divEstatus">
+	<label class="col-sm-2 control-label">@Resources.MR_TarjetasResources.Estatus</label>
+	<div class="col-sm-8" data-field-id="Estatus" data-attribute="261293" data-field-name="@Resources.MR_TarjetasResources.Estatus">
+		<select class="form-control" data-val="true" data-val-number="The field Estatus  must be a number." data-val-required="The Estatus  field is required." id="MR_TarjetasEstatus" name="MR_TarjetasEstatus">
+			<option value=""></option>
+			@if (varEstatus_Estatus != null){ 
+				foreach (var itemEstatus in varEstatus_Estatus)
+				{
+					if (itemEstatus.Value == Convert.ToString(Model.Estatus))
+					{
+						<option value="@itemEstatus.Value" selected>@itemEstatus.Text</option>
+					}
+					else
+					{
+						<option value="@itemEstatus.Value">@itemEstatus.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+
+								</div>	
+							</div>
+									<br />
+											<div class="form-actions fluid">
+												<input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+												<input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+												@if (!ViewBag.Consult)
+												{
+													<div id="dvSaveJob" style="display:inline-block"></div>
+
+													<button type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton">
+														<i class="fa fa-cogs fa-spin"></i>
+													</button>
+													<a title="@Resources.Resources.Configure" id="MR_TarjetasConfigureSave" name="MR_TarjetasConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success">@Resources.Resources.Configure</a>
+												}
+
+												<input type="hidden" id="hdnMR_TarjetasConfigureType" />
+												<input type="hidden" id="hdnMR_TarjetasBusinessRuleFieldId" />
+												<input type="hidden" id="hdnMR_TarjetasBusinessRuleFieldName" />
+												<input type="hidden" id="hdnMR_TarjetasBusinessRuleAttribute" />
+
+												<input data-dismiss="modal" type="button" value="@Resources.Resources.Cancelar" class="btn btn-danger noConsult" data-bind="click: cancel" tabindex="16" />
+
+												<button onclick="MR_TarjetasGetBusinessRule('', 'Al Cancelar', '3')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#MR_TarjetasBusinessRule-form">
+													<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+														<i class="fa fa-cogs fa-spin"></i>
+													</a>
+												</button>
+											</div>
+										</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+					<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+				</div>
+			</div>
+		</div>
+</div>
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/MR_Tarjetas.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/MR_TarjetasGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/MR_TarjetasCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Metodos_de_Pago_PacienteCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        
+
+
+
+        $(document).ready(function () {
+			var currentIndex = @ViewBag.currentRowIndex
+
+            var MR_TarjetasRowElement = "MR_TarjetasPop_" + currentIndex.toString();
+            var abc = "if(dynamicFieldValidation('" + MR_TarjetasRowElement + "')){ MR_TarjetasInsertRowFromPopup(" + currentIndex + "); }";
+            var insertRowHTML = '<a class="btn btn-primary m-b" onclick="' + abc + '">Save</a>';
+            $('#dvSaveJob').html(insertRowHTML);
+			
+
+
+            initiateUIControls();
+            EjecutarValidacionesAlComienzo();
+			$('a').tooltip();
+        });
+
+
+
+        function initiateUIControls() {
+            $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+
+        }
+		
+		function SendMR_TarjetasData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateMR_Tarjetas").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateMR_Tarjetas")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+
+            var isNew = $('#hdnIsNew').val();
+           
+            if (checkClientValidate('MR_TarjetasCreateForm')) {
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/MR_Tarjetas/Post?IsNew=")' + isNew,
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+                    success: function (result) {
+                        if (result < 0) {
+                            showNotification("@Resources.Resources.ErrorSave", "error");
+                        } else {
+
+                            showNotification("@Resources.Resources.SaveSuccess", "success");
+                            callBack(result);
+                        }
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            return false;
+        };
+		
+        function GetPropertyBag() {
+            $.get('@Url.Action("MR_TarjetasPropertyBag", "MR_Tarjetas")', function (data) {
+                $(".PropertyModal").html(data);
+            });
+        }
+        function MR_TarjetasGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+				$('#hdnMR_TarjetasBusinessRuleFieldId').val(FieldId);
+				$('#hdnMR_TarjetasBusinessRuleFieldName').val(FieldName);
+				$('#hdnMR_TarjetasBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("BusinessRule", "BussinessRule")', { FieldId: $('#hdnMR_TarjetasBusinessRuleFieldId').val(), FieldName: $('#hdnMR_TarjetasBusinessRuleFieldName').val(), ObjectId: '44790', Attribute: $('#hdnMR_TarjetasBusinessRuleAttribute').val(), Screen: 'MR_Tarjetas' }, function (data) {
+                $(".MR_TarjetasBusinessRuleModal").html(data);
+            });
+        }
+        function MR_TarjetasGetAddBusinessRule(RuleId, FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null) {
+				$('#hdnMR_TarjetasBusinessRuleFieldId').val(FieldId);
+				$('#hdnMR_TarjetasBusinessRuleFieldName').val(FieldName);
+				$('#hdnMR_TarjetasBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("AddBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMR_TarjetasBusinessRuleFieldId').val(), FieldName: $('#hdnMR_TarjetasBusinessRuleFieldName').val(), ObjectId: '44790', Attribute: $('#hdnMR_TarjetasBusinessRuleAttribute').val(), Screen: 'MR_Tarjetas' }, function (data) {
+                $(".MR_TarjetasAddBusinessRuleModal").html(data);
+                $(".datatable").DataTable();
+            });
+        }
+		function RemoveBusinessRule(RuleId) {
+			$.get('@Url.Action("RemoveBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnMR_TarjetasBusinessRuleFieldId').val(), FieldName: $('#hdnMR_TarjetasBusinessRuleFieldName').val(), ObjectId: '44790', Attribute: $('#hdnMR_TarjetasBusinessRuleAttribute').val(), Screen: 'MR_Tarjetas' }, function (data) {
+				$(".MR_TarjetasBusinessRuleModal").html(data);
+			});
+		}
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function BackToGrid() {
+        location.href = "@Url.Content("~/Frontal/MR_Tarjetas/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/MR_Tarjetas/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/MR_Tarjetas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnMR_TarjetasConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnMR_TarjetasConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/MR_Tarjetas/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnMR_TarjetasConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/MR_Tarjetas/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+                        var mainElementAttributes = '<div class="col-sm-2">';
+                        mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "Required" : "Not Required") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "Visible" : "In Visible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "Disabled" : "Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '</div>';
+                        $('#MR_Tarjetas' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+                        $('#MR_Tarjetas' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                    }
+					if (childElementObject != null) {
+						for (var i = 0; i < childElementObject.length; i++) {
+							$('.' + childElementObject[i].inputId + 'Header').show();
+							$('.' + childElementObject[i].inputId).parent().show();
+							$('.' + childElementObject[i].inputId + 'Header').append(returnAttributeHTML(i));
+						}
+					}
+                    $('#MR_TarjetasConfigureSave').text('Save Settings');
+                    $('#hdnMR_TarjetasConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateMR_Tarjetas').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#hdnMR_TarjetasBusinessRuleFieldId').val(fieldId);
+			$('#hdnMR_TarjetasBusinessRuleFieldName').val(fieldName);
+			$('#hdnMR_TarjetasBusinessRuleAttribute').val(attribute);
+		});
+		//Initialize HTML Editors
+		
+    </script>

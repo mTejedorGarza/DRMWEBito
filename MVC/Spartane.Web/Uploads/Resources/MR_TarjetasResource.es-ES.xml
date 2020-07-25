@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="MR_Tarjetas" value="MR Tarjetas"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Tipo_de_Tarjeta" value="Tipo de Tarjeta"></resource>
+  <resource culture="es-es" name="Numero_de_Tarjeta" value="Número de Tarjeta"></resource>
+  <resource culture="es-es" name="Nombre_del_Titular" value="Nombre del Titular"></resource>
+  <resource culture="es-es" name="Ano_de_vigencia" value="Año de vigencia"></resource>
+  <resource culture="es-es" name="Mes_de_vigencia" value="Mes de vigencia"></resource>
+  <resource culture="es-es" name="Alias_de_la_Tarjeta" value="Alias de la Tarjeta"></resource>
+  <resource culture="es-es" name="Estatus" value="Estatus "></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

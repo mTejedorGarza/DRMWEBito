@@ -1,0 +1,1191 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Metodos_de_Pago_PacienteModel
+@{
+
+/*
+    string Fecha_de_Registro = "";
+    if (Model.Fecha_de_Registro == "")
+    { Model.Fecha_de_Registro = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+
+*/
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varSpartan_User_Paciente = null;
+    if (ViewBag.Spartan_Users_Paciente != null)
+    { varSpartan_User_Paciente = (List<SelectListItem>)ViewBag.Spartan_Users_Paciente; }
+
+    Permission permissionMR_Tarjetas = ViewBag.PermissionMR_Tarjetas;
+
+    Permission permission = ViewBag.Permission;
+	
+	if (ViewBag.IsPartial || ViewBag.viewInEframe)
+   { 
+       Layout = "~/Areas/Frontal/Views/Shared/_LayoutPopup.cshtml";
+   }
+}
+<div class="loading style-2"><div class="loading-wheel"></div></div>
+<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" id="lblAttributeType">@Resources.Resources.Value</label>
+                    <div class="col-sm-7">
+                        <input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+                    </div>
+                    <div class="col-sm-2">
+                        <a class="btn btn-primary" onclick="SaveValue()">@Resources.Resources.Submit</a>
+                    </div>
+                    <input type="hidden" id="hdnAttributType" />
+                    <input type="hidden" id="hdnAttributElement" />
+                    <input type="hidden" id="hdnAttributNumber" />
+                    <input type="hidden" id="hdnElementType" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row wrapper border-bottom white-bg page-heading">
+
+    <div class="row">
+        <div class="col-lg-10">
+            <h2>
+                @Resources.Metodos_de_Pago_PacienteResources.Metodos_de_Pago_Paciente
+                <button onclick="Metodos_de_Pago_PacienteGetBusinessRule('', 'Al Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form">
+                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </a>
+                </button>
+            </h2>
+            <ol class="breadcrumb">
+                <li>
+                    <a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+                </li>
+                <li class="active">
+                @if (Session["PhaseName"] != null)
+                {
+                    <strong>@Session["PhaseName"].ToString()</strong>
+                }
+                else
+                {
+                    <strong>@Resources.Metodos_de_Pago_PacienteResources.Metodos_de_Pago_Paciente</strong>
+                }
+                
+            </li>
+                <li class="active">
+                    <strong>@Resources.Resources.Create</strong>
+                </li>
+            </ol>
+        </div>
+        <div class="col-lg-2">
+
+            @{
+                if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+                {
+                    <h2>&nbsp;</h2>
+                    <button onclick="Metodos_de_Pago_PacienteDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+                        <i class="fa fa-cogs fa-spin"></i>
+                    </button>
+
+                    <div aria-hidden="true" class="modal fade in Metodos_de_Pago_PacientePropertyBusinessModal" id="Metodos_de_Pago_PacientePropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">
+                                          @Resources.Resources.titleBussinesRules
+                                        <button data-dismiss="modal" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">@Resources.Resources.Close</span></button>
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">@Resources.Resources.Property</a>
+                                        </div>
+                                        <div class="clearfix col-sm-12">&nbsp;</div>
+                                        <div class="col-sm-12">
+                                            <a class="btn btn-primary full-width" data-dismiss="modal" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" onclick="Metodos_de_Pago_PacienteGetBusinessRule()">Business Rule</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                     <div aria-hidden="true" data-backdrop="static" class="modal fade in PropertyModal" id="PropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+					<div aria-hidden="true" data-backdrop="static" class="modal fade in Metodos_de_Pago_PacienteBusinessRuleModal" id="Metodos_de_Pago_PacienteBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+					</div>
+
+
+                }
+            }
+                    <div aria-hidden="true" class="modal fade in AddMR_TarjetasModal" id="AddMR_Tarjetas-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                    </div>
+
+
+        </div>
+    </div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @using (Html.BeginForm("Post", "Metodos_de_Pago_Paciente", FormMethod.Post, new { id = "CreateMetodos_de_Pago_Paciente", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+            {
+                                <input type="hidden" id="hdnIsNew" name="hdnIsNew" value="@ViewBag.IsNew.ToString()" />
+                <span id="popupNotification"></span>
+                <div class="container-fluid Metodos_de_Pago_PacienteCreateForm" id="viewmodeledit">
+				 <div class="alert alert-warning" id="controlsRequerid" style="display:none">
+                        <a href="#" class="close" onclick="$('#controlsRequerid').hide();">&times;</a>
+                        <span id="textRequired"></span>
+                 </div>
+			<div class="tabs-container">
+                        	<ul class="nav nav-tabs">
+<li class="active"><a data-toggle="tab" href="#tabDatos_Generales"> @Resources.Metodos_de_Pago_PacienteResources.TabDatos_Generales</a></li>
+
+                        	</ul>
+	                	<div class="tab-content">
+                            <div id="tabDatos_Generales" class="tab-pane active">
+                                <div class="panel-body">
+                            <div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.Metodos_de_Pago_PacienteResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="261278" data-field-name="@Resources.Metodos_de_Pago_PacienteResources.Folio">
+                                    <label class="form-control" for="Folio" id="lblFolio">
+                                    @if (Model.Folio== 0)
+                                        {
+                                            <text>@Resources.Resources.ClaveDefault</text>
+                                        }
+                                        else
+                                        { 
+                                            <text>@Model.Folio</text>
+                                        }
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divFecha_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.Metodos_de_Pago_PacienteResources.Fecha_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Registro" data-attribute="261279" data-field-name="@Resources.Metodos_de_Pago_PacienteResources.Fecha_de_Registro">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Fecha_de_Registro"  name="Fecha_de_Registro" type="text" value="@Model.Fecha_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divHora_de_Registro">
+                                <label class="col-sm-2 control-label">@Resources.Metodos_de_Pago_PacienteResources.Hora_de_Registro</label>
+                                <div class="col-sm-8" data-field-id="Hora_de_Registro" data-attribute="261280" data-field-name="@Resources.Metodos_de_Pago_PacienteResources.Hora_de_Registro">
+                                    <div class='input-group date' id='timePicker'>
+                                        <input class="form-control col-md-12 Datos_Generales" id="Hora_de_Registro"  name="Hora_de_Registro" type="text" data-autoclose="true" value="@Model.Hora_de_Registro">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-time"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" id="divUsuario_que_Registra">
+                                <label class="col-sm-2 control-label">@Resources.Metodos_de_Pago_PacienteResources.Usuario_que_Registra</label>
+                                <div class="col-sm-8" data-field-id="Usuario_que_Registra" data-attribute="261281" data-field-name="@Resources.Metodos_de_Pago_PacienteResources.Usuario_que_Registra">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Usuario que Registra must be a number." data-val-required="The Usuario que Registra field is required." id="Usuario_que_Registra" name="Usuario_que_Registra">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Usuario_que_Registra != null){ 
+                                            foreach (var itemUsuario_que_Registra in varSpartan_User_Usuario_que_Registra)
+                                            {
+                                                if (itemUsuario_que_Registra.Value == Convert.ToString(Model.Usuario_que_Registra))
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value" selected>@itemUsuario_que_Registra.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemUsuario_que_Registra.Value">@itemUsuario_que_Registra.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Usuario_que_Registra" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 261281).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Usuario_que_Registra');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div class="form-group" id="divPaciente">
+                                <label class="col-sm-2 control-label">@Resources.Metodos_de_Pago_PacienteResources.Paciente</label>
+                                <div class="col-sm-8" data-field-id="Paciente" data-attribute="261282" data-field-name="@Resources.Metodos_de_Pago_PacienteResources.Paciente">
+                                    <select class="form-control Datos_Generales" data-val="true" data-val-number="The field Paciente  must be a number." data-val-required="The Paciente  field is required." id="Paciente" name="Paciente">
+                                        <option value=""></option>
+                                        @if (varSpartan_User_Paciente != null){ 
+                                            foreach (var itemPaciente in varSpartan_User_Paciente)
+                                            {
+                                                if (itemPaciente.Value == Convert.ToString(Model.Paciente))
+                                                {
+                                                    <option value="@itemPaciente.Value" selected>@itemPaciente.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@itemPaciente.Value">@itemPaciente.Text</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                    @*<span class="field-validation-valid" data-valmsg-for="Paciente" data-valmsg-replace="true"></span>*@
+                                </div>
+								@if (PermissionHelper.GetRoleObjectPermission(Convert.ToInt32(Spartane.Web.SessionHelper.Role), 0, 0, 261282).New)
+                                {                        
+                                <div class="col-sm-1 abm-icons">
+                                    <a id="Estado_New" onclick="GetCatalogPopup('Spartan_User', 'Paciente');" href="#"><i class="glyphicon glyphicon-plus"></i></a>
+                                </div>
+                                }
+                            </div>
+                            <div id="divMR_Tarjetas">
+                            <div class="ibox-title">
+                                <h5>@Resources.Metodos_de_Pago_PacienteResources.MR_Tarjetas</h5>
+                                <div class="ibox-tools">
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div class="">
+									@if (permissionMR_Tarjetas.New && !ViewBag.Consult)
+                                    {
+                                        <a onclick="MR_TarjetasfnClickAddRow();" href="javascript:void(0);" title="@Resources.Resources.AddNewRow" class="MR_TarjetasAddRow btn btn-primary">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </a>
+                                    }
+                                    <button onclick="Metodos_de_Pago_PacienteGetBusinessRule('', 'Al Guardar o al Eliminar una Row', '261294')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToCreateGrid">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>
+									@if (permissionMR_Tarjetas.New && !ViewBag.Consult)
+                                    {
+                                        <a onclick="MR_TarjetasfnOpenAddRowPopUp();" data-toggle="modal" title="@Resources.Resources.AddNewRow" data-target="#AddMR_Tarjetas-form" data-backdrop="static" data-keyboard="false" class="btn_mrpopup btn btn-primary">
+                                            <i class="glyphicon glyphicon-new-window"></i>
+                                        </a>
+                                    }  
+                                </div>
+
+                                <br />
+
+                                <div style='overflow-x: auto;'>
+                                    <table class="table table-striped table-bordered table-hover childValidateTable" id="MR_TarjetasGrid">
+                                        <thead>
+                                            <tr>
+                                                <th class="ActionHeader"><span>@Resources.Resources.Actions</span></th>
+
+
+                                                <th class="Tipo_de_TarjetaHeader"><span>
+<button type="button" data-attribute="261287" data-field-id="MR_TarjetasTipo_de_Tarjeta" data-field-name="@Resources.MR_TarjetasResources.Tipo_de_Tarjeta" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Tipo_de_Tarjeta">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_TarjetasResources.Tipo_de_Tarjeta</span></th>
+                                                <th class="Numero_de_TarjetaHeader"><span>
+<button type="button" data-attribute="261288" data-field-id="MR_TarjetasNumero_de_Tarjeta" data-field-name="@Resources.MR_TarjetasResources.Numero_de_Tarjeta" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Numero_de_Tarjeta">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_TarjetasResources.Numero_de_Tarjeta</span></th>
+                                                <th class="Nombre_del_TitularHeader"><span>
+<button type="button" data-attribute="261289" data-field-id="MR_TarjetasNombre_del_Titular" data-field-name="@Resources.MR_TarjetasResources.Nombre_del_Titular" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Nombre_del_Titular">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_TarjetasResources.Nombre_del_Titular</span></th>
+                                                <th class="Ano_de_vigenciaHeader"><span>
+<button type="button" data-attribute="261290" data-field-id="MR_TarjetasAno_de_vigencia" data-field-name="@Resources.MR_TarjetasResources.Ano_de_vigencia" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Ano_de_vigencia">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.MR_TarjetasResources.Ano_de_vigencia</span></th>
+                                                <th class="Mes_de_vigenciaHeader"><span>
+<button type="button" data-attribute="261291" data-field-id="MR_TarjetasMes_de_vigencia" data-field-name="@Resources.MR_TarjetasResources.Mes_de_vigencia" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Mes_de_vigencia">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>
+@Resources.MR_TarjetasResources.Mes_de_vigencia</span></th>
+                                                <th class="Alias_de_la_TarjetaHeader"><span>
+<button type="button" data-attribute="261292" data-field-id="MR_TarjetasAlias_de_la_Tarjeta" data-field-name="@Resources.MR_TarjetasResources.Alias_de_la_Tarjeta" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Alias_de_la_Tarjeta">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_TarjetasResources.Alias_de_la_Tarjeta</span></th>
+                                                <th class="EstatusHeader"><span>
+<button type="button" data-attribute="261293" data-field-id="MR_TarjetasEstatus" data-field-name="@Resources.MR_TarjetasResources.Estatus" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton btnPopupBusinessRules">
+                                                            <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleFor@Resources.MR_TarjetasResources.Estatus">
+                                                                <i class="fa fa-cogs fa-spin"></i>
+                                                            </a>
+                                                        </button>@Resources.MR_TarjetasResources.Estatus</span></th>
+
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                                </div>
+
+				</div>	
+                    <br />
+                            <div class="form-actions fluid">
+                                <input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+                                <input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+                                <input type="hidden" value="@ViewBag.Operation" name="Operation" id="Operation" />
+                                @if (!ViewBag.Consult)
+                                {
+                                    <input type="button" value="@Resources.Resources.Guardar" id="Metodos_de_Pago_PacienteGuardar" class="btn btn-w-m btn-primary btn_save" onclick="return checkClientValidate('Metodos_de_Pago_PacienteCreateForm');"  />
+									<button onclick="Metodos_de_Pago_PacienteGetBusinessRule('', 'Al Guardar o al Cerrar la Pantalla', '2')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form">
+                                        <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleBeforeSave">
+                                            <i class="fa fa-cogs fa-spin"></i>
+                                        </a>
+                                    </button>                                    
+
+                                    <input type="button" value="@Resources.Resources.GuardarNuevo" id="Metodos_de_Pago_PacienteGuardarYNuevo" onclick="return checkClientValidate('Metodos_de_Pago_PacienteCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandnew"  />
+                                    <input type="button" value="@Resources.Resources.GuardarCopia" id="Metodos_de_Pago_PacienteGuardarYCopia" onclick="return checkClientValidate('Metodos_de_Pago_PacienteCreateForm');" data-bind="    click: saveAndNew" class="btn btn-w-m btn-success btn_saveandcopy"  />
+                                    if (permission.Configure)
+                                    {
+                                        <a title="@Resources.Resources.Configure" id="ConfigureSave" name="ConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success btn-configure">@Resources.Resources.Configure</a>
+                                    }
+                                }
+
+                                <input type="hidden" id="hdnConfigureType" />
+								<input type="hidden" id="hdnMetodos_de_Pago_PacienteBusinessRuleFieldId" />
+                                <input type="hidden" id="hdnMetodos_de_Pago_PacienteBusinessRuleFieldName" />
+                                <input type="hidden" id="hdnMetodos_de_Pago_PacienteBusinessRuleAttribute" />
+
+                                <input type="button" value="@Resources.Resources.Cancelar" id="Metodos_de_Pago_PacienteCancelar" name="Metodos_de_Pago_PacienteCancelar" class="btn btn-danger noConsult btn_cancelar" data-bind="click: cancel" tabindex="16" />
+
+                                <button onclick="Metodos_de_Pago_PacienteGetBusinessRule('', 'Al Cancelar', '4')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Metodos_de_Pago_PacienteBusinessRule-form">
+                                    <a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+                                        <i class="fa fa-cogs fa-spin"></i>
+                                    </a>
+                                </button>
+                            </div>
+						</div>
+					</div>
+                }
+        </div>
+    </div>
+</div>
+<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        /*i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }*/
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Metodos_de_Pago_Paciente.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/Metodos_de_Pago_PacienteGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Metodos_de_Pago_PacienteCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+@section Scripts {
+
+
+    <script type="text/javascript">
+        
+
+
+	function GetTraduction(text) {
+         switch (text.toLowerCase()) {
+            case 'edit':
+                return "@Resources.Resources.Edit";          
+            case 'delete':
+                return "@Resources.Resources.Delete";               
+            case 'required':
+                return "@Resources.Resources.Required";              
+            case 'notrequired':
+                return "@Resources.Resources.NotRequired";           
+            case 'enabled':
+                return "@Resources.Resources.Enabled";         
+            case 'disabled':
+                return "@Resources.Resources.Disabled";           
+            case 'visible':
+                return "@Resources.Resources.Visible";            
+            case 'botvisible':
+                return "@Resources.Resources.InVisible";
+            case 'messagednoinvisible':
+                return "@Resources.Resources.messagedNoInVisible";
+            case 'messagednoreadonly':
+                return "@Resources.Resources.messagedNoReadOnly";
+            case 'defaultvalue':
+                return "@Resources.Resources.DefaultValue";
+            case 'helptext':
+                return "@Resources.Resources.HelpText";                     
+            default:
+                return "";
+        }
+    }
+	
+	    var viewInEframe =  ('@ViewBag.viewInEframe' == 'True');
+	    var isPartial = ('@ViewBag.IsPartial' == 'True');
+        var isMR = ('@ViewBag.isMR' == 'True');
+        var nameMR = '@ViewBag.nameMR';
+		var nameAttribute = '@ViewBag.nameAttribute';
+		var Tab_Datos_Generales = true;
+
+
+        $(document).ready(function () {
+            $('#ObjectId').val('44788');
+		                 
+            GetMR_Tarjetas_Tipo_de_TarjetaItem();
+
+
+
+
+
+            GetMR_Tarjetas_EstatusItem();
+           
+              showMR_TarjetasGrid(null);
+
+		   
+			
+             @if(ViewBag.IsNew)
+            { 
+                <text>$('input:checkbox').prop('checked', false);</text>
+            }
+			else
+            {
+                <text>
+				if (Tab_Datos_Generales)
+					Fill_Datos_Generales();
+
+
+                </text>
+             }
+             EjecutarValidacionesAlComienzo();
+                         $('#Fecha_de_Registro').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            $('#Hora_de_Registro').clockpicker();
+
+
+            initiateUIControls();
+			$('a').tooltip();
+			$('.loading').css('display', 'none');
+			
+			 if (viewInEframe) {             
+                $('#Metodos_de_Pago_PacienteGuardarYNuevo').hide();
+                $('#Metodos_de_Pago_PacienteGuardarYCopia').hide();
+                $('#Metodos_de_Pago_PacienteCancelar').hide(); 
+                $('#ConfigureSave').hide();
+                $('#Metodos_de_Pago_PacienteGuardar').val('Actualizar Seccion ' + '@Resources.Metodos_de_Pago_PacienteResources.Metodos_de_Pago_Paciente' )
+            }
+
+			
+			
+
+        });
+
+        var MR_TarjetasinsertRowCurrentIndex = -1;
+        var MR_TarjetasDataDataTable;
+        function getMR_TarjetasData() {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/GetMR_Tarjetas")" + "?draw=1&start=1&length=2147483647" + ($("#ReferenceFolio").val() != "" ? "&RelationId=" + $("#ReferenceFolio").val() : ""),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                    MR_TarjetasDataDataTable = result.data;
+                    showMR_TarjetasGrid(result.data);
+                    $('#MR_TarjetasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#MR_TarjetasGrid .gridDatePicker').attr("readonly", "");
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+        function MR_TarjetasGetUpdateRowControls(data, nameOfTable, rowIndex) {
+
+            var columnData = [];
+            var counter = 0;
+            var inputData = "<input type='text' class='fullWidth form-control' />";
+
+           columnData[counter++] = $($(GetMR_Tarjetas_Tipo_de_TarjetaDropDown()).val(data.Tipo_de_Tarjeta)).addClass('Tipo_de_Tarjeta inputNumber').attr('id', nameOfTable + 'Tipo_de_Tarjeta' + rowIndex).attr('data-field', 'Tipo_de_Tarjeta').after($.parseHTML(addNew('MR_Tarjetas', 'Tipo_de_Tarjeta','Tipo_de_Tarjeta', 261287)));
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Numero_de_Tarjeta)).addClass('Numero_de_Tarjeta').attr('id', nameOfTable + 'Numero_de_Tarjeta' + rowIndex).attr('data-field', 'Numero_de_Tarjeta');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Nombre_del_Titular)).addClass('Nombre_del_Titular').attr('id', nameOfTable + 'Nombre_del_Titular' + rowIndex).attr('data-field', 'Nombre_del_Titular');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Ano_de_vigencia)).addClass('Ano_de_vigencia inputNumber').attr('id', nameOfTable + 'Ano_de_vigencia' + rowIndex).attr('data-field', 'Ano_de_vigencia');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Mes_de_vigencia)).addClass('Mes_de_vigencia inputNumber').attr('id', nameOfTable + 'Mes_de_vigencia' + rowIndex).attr('data-field', 'Mes_de_vigencia');
+            columnData[counter++] = $($($.parseHTML(inputData)).val(data.Alias_de_la_Tarjeta)).addClass('Alias_de_la_Tarjeta').attr('id', nameOfTable + 'Alias_de_la_Tarjeta' + rowIndex).attr('data-field', 'Alias_de_la_Tarjeta');
+           columnData[counter++] = $($(GetMR_Tarjetas_EstatusDropDown()).val(data.Estatus)).addClass('Estatus inputNumber').attr('id', nameOfTable + 'Estatus' + rowIndex).attr('data-field', 'Estatus').after($.parseHTML(addNew('MR_Tarjetas', 'Estatus','Estatus', 261293)));
+
+            return columnData;
+        }
+
+
+
+        function GetFileInfo(fileData, fileUploadData) {
+
+            var $div = $("<div>");
+            if (fileUploadData != null && fileUploadData.files.length > 0) {
+
+                $div.append("<label>" + fileUploadData.files[0].name + "</label>");
+                //<i class="fa fa-times-circle" id='removeFileAttachment'>
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+
+            } else if (fileUploadData != null) {
+                return $.parseHTML(GetFileUploader());
+            } else {
+                $div.append("<label>" + fileData.FileName + "</label>");
+                $div.append($("<i class='fa fa-times-circle' id='removeFileAttachment'>").click(function () {
+                    if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+                        var parent = $(this).parent().parent();
+                        parent.empty();
+                        parent.append("<input type='file'>");
+                    }
+                }));
+                return $div;
+            }
+        }
+
+        var removedMR_TarjetasData = [];
+        function MR_TarjetasDeleteRow(rowIndex, row) {
+            var rowIndexTable = MR_TarjetasTable.fnGetPosition($(row).parent().parent()[0]);
+            var permission = {            
+                 Delete: '@permissionMR_Tarjetas.Delete' == 'True'
+            };
+            if (!permission.Delete || isConsultMode)
+                return;            
+            if (confirm(htmlDecode("@Resources.Resources.DeleteConfirm"))) {
+              if (EjecutarValidacionesAlEliminarMRMR_Tarjetas('MR_Tarjetas_', '_' + rowIndex)) {
+                var prevData = MR_TarjetasTable.fnGetData(rowIndexTable );
+                removedMR_TarjetasData.push(prevData);
+                MR_TarjetasTable.fnDeleteRow(rowIndexTable );
+				showMR_TarjetasGrid(MR_TarjetasTable.fnGetData());
+              }
+            }
+			initiateUIControls();
+        }
+
+        function MR_TarjetasrowCreationGrid(row, data, index) {
+            var permission =  {            
+                 Edit: '@permissionMR_Tarjetas.Edit' == 'True',
+                 Delete: '@permissionMR_Tarjetas.Delete' == 'True'
+            };
+            setMR_TarjetasValidation();
+            var MR_TarjetasRowElement = "MR_Tarjetas_" + index.toString();
+            $(row).addClass(MR_TarjetasRowElement);
+            var nameOfTable='MR_Tarjetas_';
+            var rowIndex = '_' + index;
+            MR_TarjetasinsertRowCurrentIndex = index;
+
+            row.innerHTML = "";
+
+            if (data.IsInsertRow) {
+
+                if (row.childNodes.length != 0) {
+                    for (var i = 0; i < row.childNodes.length; i++) {
+                        row.childNodes[i].remove();
+                    }
+                }
+                var controls = GetInsertMR_TarjetasRowControls(index);
+                var actionColInsert = $('<td>');
+
+                var abc = "if(dynamicFieldValidation('" + MR_TarjetasRowElement + "')){ MR_TarjetasInsertRow(" + index + "); }";
+                var insertRowHTML = '<a  data-toggle="tooltip" title="Confirmar Registro" onclick="' + abc + '">';
+                $('<i class="fa fa-check">').appendTo($(insertRowHTML).appendTo(actionColInsert));
+				$('<i class="fa fa-times">').appendTo($("<a data-toggle='tooltip' title='Cancelar Registro' onclick='MR_TarjetasCancelRow(" + index + ")'>").appendTo(actionColInsert));
+                actionColInsert.appendTo(row);
+
+                for (i = 0; i < controls.length; i++) {
+					var idHeader = $(controls[i]).data('field') + 'Header';
+					if($(controls[i]).length > 1){
+						idHeader = $($(controls[i])[1]).data('field') + 'Header';
+					}					
+
+					var classe = ($('#MR_TarjetasGrid .' + idHeader).hasClass('dt-right') ? "dt-right" : "") + $('#MR_TarjetasGrid .' + idHeader ).css('display') == 'none' ? " hide" : "";
+				   
+					if ($(controls[i]).next().length > 0) {
+					    var div = $(controls[i]).next();
+					    $('<td class="' + classe + '">').append($(controls[i])).append(div).appendTo(row);
+					}else
+					    $(controls[i]).appendTo($('<td class="' + classe + '">').appendTo(row));
+					
+                }
+                $('#MR_TarjetasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('#MR_TarjetasGrid .gridDatePicker').attr("readonly", "");
+                return;
+            }
+
+            var actionCol = $('<td>');
+			var edit = "<a title='@Resources.Resources.Edit' class='edit-MR' onclick='MR_TarjetasEditRow(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                edit = "";
+            var editPopUp = "<a title='@Resources.Resources.Edit' class='edit-popup-MR' data-toggle='modal' data-target='#AddMR_Tarjetas-form' onclick='MR_TarjetasEditRowPopup(" + index + ", this)'>";
+            if (!permission.Edit || isConsultMode)
+                editPopUp = "";
+            var eliminar = "<a title='@Resources.Resources.Delete' class='eliminar-MR' onclick='MR_TarjetasDeleteRow(" + index + ", this)'>";
+            if (!permission.Delete || isConsultMode)
+                eliminar = "";
+            $('<i class="fa fa-pencil">').appendTo($(edit).appendTo(actionCol));
+            //$('<i class="fa fa-edit">').appendTo($(editPopUp).appendTo(actionCol));
+            $('<i class="fa fa-trash-o">').appendTo($(eliminar).appendTo(actionCol));
+			if ($('.Action' + 'Header').css('display') != 'none')
+				actionCol.appendTo(row);
+
+            if ($('.Tipo_de_Tarjeta' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Tipo_de_Tarjeta'+rowIndex+'">').text(GetMR_Tarjetas_Tipo_de_TarjetaName(data.Tipo_de_Tarjeta)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Tipo_de_Tarjeta'+rowIndex+'">').text(GetMR_Tarjetas_Tipo_de_TarjetaName(data.Tipo_de_Tarjeta)).appendTo(row);
+            if ($('.Numero_de_Tarjeta' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Numero_de_Tarjeta'+rowIndex+'">').text(data.Numero_de_Tarjeta).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Numero_de_Tarjeta'+rowIndex+'">').text(data.Numero_de_Tarjeta).appendTo(row);
+            if ($('.Nombre_del_Titular' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Nombre_del_Titular'+rowIndex+'">').text(data.Nombre_del_Titular).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Nombre_del_Titular'+rowIndex+'">').text(data.Nombre_del_Titular).appendTo(row);
+            if ($('.Ano_de_vigencia' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Ano_de_vigencia'+rowIndex+'">').text(data.Ano_de_vigencia).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Ano_de_vigencia'+rowIndex+'">').text(data.Ano_de_vigencia).appendTo(row);
+            if ($('.Mes_de_vigencia' + 'Header').css('display') != 'none')
+                $('<td class="dt-right"  id="'+nameOfTable+'Mes_de_vigencia'+rowIndex+'">').text(data.Mes_de_vigencia).appendTo(row);
+            else 
+                 $('<td class="dt-right" style="display:none;"  id="'+nameOfTable+'Mes_de_vigencia'+rowIndex+'">').text(data.Mes_de_vigencia).appendTo(row);
+            if ($('.Alias_de_la_Tarjeta' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Alias_de_la_Tarjeta'+rowIndex+'">').text(data.Alias_de_la_Tarjeta).appendTo(row);
+            else 
+                $('<td style="display:none;" id="'+nameOfTable+'Alias_de_la_Tarjeta'+rowIndex+'">').text(data.Alias_de_la_Tarjeta).appendTo(row);
+            if ($('.Estatus' + 'Header').css('display') != 'none')
+                $('<td id="'+nameOfTable+'Estatus'+rowIndex+'">').text(GetMR_Tarjetas_EstatusName(data.Estatus)).appendTo(row);
+	    else 
+		$('<td style="display:none;" id="'+nameOfTable+'Estatus'+rowIndex+'">').text(GetMR_Tarjetas_EstatusName(data.Estatus)).appendTo(row);
+
+        }
+
+        var MR_TarjetasTable;
+        function showMR_TarjetasGrid(dataSet) {
+            //removedMR_TarjetasData = [];
+            MR_TarjetasTable = $('#MR_TarjetasGrid').dataTable({
+                dom: '<"html5buttons"B>lTgitp',
+                buttons: [
+                ],
+                "createdRow": MR_TarjetasrowCreationGrid,
+                "lengthMenu": [[5, 10, 20, 50, -1], [5, 10, 20, 50, "All"]],
+                data: dataSet,
+                "columns": [
+                    { "data": null, 'visible': true, "orderable": false },
+
+                    { "data": "Tipo_de_Tarjeta", "orderable": false },
+                    { "data": "Numero_de_Tarjeta", "orderable": false },
+                    { "data": "Nombre_del_Titular", "orderable": false },
+                    { "data": "Ano_de_vigencia", "className": "dt-right", "orderable": false },
+                    { "data": "Mes_de_vigencia", "className": "dt-right", "orderable": false },
+                    { "data": "Alias_de_la_Tarjeta", "orderable": false },
+                    { "data": "Estatus", "orderable": false },
+
+                ],
+                "order": [[0, "asc"]],
+                "language": {
+                    "lengthMenu": "@Resources.Resources.Display" + " _MENU_ " + "@Resources.Resources.RecordsPerPage",
+                    "zeroRecords": "@Resources.Resources.NothingFound",
+                    "info": "@Resources.Resources.ShowingPages" + " _PAGE_ " + "@Resources.Resources.of" + " _PAGES_",
+                    "infoEmpty": "@Resources.Resources.NoRecords",
+                    "infoFiltered": "(" + "@Resources.Resources.FilteredFrom" + " _MAX_ " + "@Resources.Resources.TotalRecords" + ")",
+                    "sSearch": "@Resources.Resources.Search",
+                    "paginate": {
+                        "previous": "@Resources.Resources.Previous",
+                        "next": "@Resources.Resources.Next"
+                    }
+                },
+				"bDestroy": true,
+                "fnDrawCallback": function (settings) {
+                    setMR_TarjetasValidation();
+                }
+            }).on('init.dt', function (e, data) {
+                $('a').tooltip();
+            }).on('draw.dt', function () {
+                $('#MR_TarjetasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                $('.gridDatePicker').inputmask("99-99-9999", { "placeholder": "dd-mm-yyyy" });
+            });
+        }
+
+
+    var MR_Tarjetas_Tipo_de_TarjetaItems;
+        function GetMR_Tarjetas_Tipo_de_TarjetaItem() {
+            MR_Tarjetas_Tipo_de_TarjetaItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/GetMR_Tarjetas_Tipo_de_TarjetaAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    MR_Tarjetas_Tipo_de_TarjetaItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+
+
+
+
+    var MR_Tarjetas_EstatusItems;
+        function GetMR_Tarjetas_EstatusItem() {
+            MR_Tarjetas_EstatusItems = null;
+            var ajaxUrl = "@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/GetMR_Tarjetas_EstatusAll")";
+            $.ajax({
+                url: ajaxUrl,
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                global: false,
+                success: function (result) {
+                    MR_Tarjetas_EstatusItems = result;
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+
+        var MR_TarjetasData = [];
+        var MR_TarjetasdeletedItem = [];
+        var MR_TarjetasDataMain = [];
+        var MR_TarjetasDataMainPages = [];
+        var MR_TarjetasnewItemCount = 0;
+        var MR_TarjetasmaxItemIndex = 0;
+        var MR_TarjetasDataMainInitialized = false;
+
+        function SendMR_Tarjetas(callBack, FolioId) {
+            MR_TarjetasData = GetMR_TarjetasFromDataTable();
+
+            if (MR_TarjetasData.length > 0 || $("#ReferenceFolio").val() != FolioId) {
+                if ($("#ReferenceFolio").val() != "0" && FolioId ==null)
+                    FolioId = $("#ReferenceFolio").val();                
+                if ($("#ReferenceFolio").val() == '')
+                    $("#ReferenceFolio").val('0');
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/PostMR_Tarjetas?MasterId=")' + FolioId + "&referenceId=" + $("#ReferenceFolio").val(),
+                    type: 'POST',
+                    data: GetMR_Tarjetas(),
+                    async: true,
+                    success: function (result) {
+
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            } else {
+                //showNotification("@Resources.Resources.SaveSuccess", "success");
+                //callBack(FolioId);
+            }
+            return true;
+        }
+
+        function GetAddMR_TarjetasPopup(currentRowIndex, mode, id) {
+
+            $.ajax({
+                url: "@Url.Action("AddMR_Tarjetas", "MR_Tarjetas")",
+                type: "GET",
+                async: false,
+                data: { rowIndex: currentRowIndex, functionMode: mode, id: id },
+                success: function (data) {
+                    $(".AddMR_TarjetasModal").html(data);
+                },
+                error: function () {
+
+                }
+            });
+
+            @*$.get('@Url.Action("AddMR_Tarjetas", "MR_Tarjetas")', { rowIndex: currentRowIndex }, function (data) {
+                $(".AddMR_TarjetasModal").html(data);
+            });*@
+        }
+
+        function ShowMessagePendingRowMR_Tarjetas()
+        {
+            //alert('@Html.Raw(string.Format(Resources.Resources.PendingRow, "MR Tarjetas"))')
+	    showNotification('@Html.Raw(string.Format(Resources.Resources.PendingRow, "MR Tarjetas"))', "warning");
+        }
+
+
+        function initiateUIControls() {
+             $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+            $('.inputMoney').inputmask("currency", { greedy: false, prefix: "", rightAlign: false });
+			$('td.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+			$('td input.inputMoney').inputmask("currency", { greedy: false, prefix: "$ ", rightAlign: false });
+
+
+
+
+
+
+
+
+
+
+        }
+
+    </script>
+
+<script type="text/javascript">
+
+
+   function GetCatalogPopup(catalog, nameAttribute, isMR, nameMR) {
+        if (!isMR)
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, nameAttribute = "AttributoNombre" })";
+        else
+            var url = "@Url.Action("Create", "Catalog", new { Module_Id = "1", isPartial = true, isMR = true, nameMR = "Multirenglon",nameAttribute= "AttributoNombre" })";
+
+        url = url.replace("Catalog", catalog).replace("Multirenglon", nameMR).replace("AttributoNombre", nameAttribute);
+
+        window.open(htmlDecode(url), '_blank', 'left=200,top=100,width=850,height=550,toolbar=0,resizable=0');
+    }
+
+    function RefreshCatalog(catalog, control) {
+
+	 if ($('#' + control).hasClass('AutoComplete'))   {
+		   if ($('#' + control).attr("data-isfilter") == "true") {
+				eval(GetReglaFilter(control, $('#ObjectId').val()));
+				return;
+			}
+		}
+			
+			var url = '@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/GetCatalogAll")';
+			url = url.replace(/Catalog/g, catalog);
+
+			$.ajax({
+				url: url,
+				async: true,
+				success:function(result)
+				{
+					addItemsToSelect($('#' + control), result);
+				},
+				error: function (result)
+				{
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				}
+			});
+		
+    }
+
+
+        function SendMetodos_de_Pago_PacienteData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateMetodos_de_Pago_Paciente").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateMetodos_de_Pago_Paciente")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+			var id = $("#ReferenceFolio").val();
+            var isNew = $('#hdnIsNew').val();
+           
+			if (Tab_Datos_Generales && !checkClientValidate('Metodos_de_Pago_PacienteCreateForm', 'Datos_Generales')) {
+				return false;
+			}						
+
+
+			
+			if (isNew == "True")
+            {
+                id = CreateID();
+            }
+			
+			
+			if (Tab_Datos_Generales)
+				Save_Datos_Generales(id);
+
+
+			showNotification("@Resources.Resources.SaveSuccess", "success");
+			callBack(id);
+            return true;
+        };
+		function CreateID()
+		{
+			var newId = 0;
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/CreateID")',
+				type: 'GET',
+				async: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "error");
+					} else {
+						newId = result;
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "error");
+				},
+				cache: false,
+				contentType: false,
+				processData: false
+			});
+			return newId;
+		}
+		
+		function OpenRules()
+		{
+			$.get('@Url.Action("Index", "Business_Rule_Creation")', {}, function (data) {
+				$(".Metodos_de_Pago_PacienteBusinessRuleModal").html(data);
+			});
+		}
+                function Metodos_de_Pago_PacienteGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+			        $('#FieldId').val(FieldId);
+				$('#FieldName').val(FieldName);
+				$('#Attribute').val(Attribute);
+			}
+			$('#ObjectId').val('44788');
+			$('#Screen').val('Metodos_de_Pago_Paciente');
+			OpenRules();
+               }
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function Metodos_de_Pago_PacienteBackToGrid() {
+        		if (isPartial)
+			window.close('', '_parent', '');
+        else
+			location.href = "@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+							var mainElementAttributes = '<div class="col-sm-2">';
+							mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "@Resources.Resources.Required" : "@Resources.Resources.NotRequired") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "@Resources.Resources.Visible" : "@Resources.Resources.InVisible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "@Resources.Resources.Disabled" : "@Resources.Resources.Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+							mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+							mainElementAttributes += '</div>';
+							$('#' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+							$('#' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                  }
+					 if (childElementObject != null) {
+                        for (var j = 0; j < childElementObject.length; j++) {
+                            var table = childElementObject[j].table.trim();
+                            var grid = '#' + table + 'Grid';
+                            $(grid).find("thead").find("tr").find("th").each(function () {
+                                for (var i = 0; i < childElementObject[j].elements.length; i++) {
+                                    if ($(this).hasClass(childElementObject[j].elements[i].inputId + 'Header')) {
+                                        $(this).show();
+                                        $(this).parent().show();
+                                        $(this).append(returnAttributeHTML(childElementObject[j].elements[i], table, i));
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                     $('#ConfigureSave').text('@Html.Raw(Resources.Resources.Save  +" "+ Resources.Resources.Settings)');
+                    $('#hdnConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateMetodos_de_Pago_Paciente').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#FieldId').val(fieldId);
+			$('#FieldName').val(fieldName);
+			$('#Attribute').val(attribute);
+                        Metodos_de_Pago_PacienteGetBusinessRule();
+		});
+		//Initialize HTML Editors            
+  var filebrowserBrowseUrl = '../../ckfinder/ckfinder.html';
+  var filebrowserImageBrowseUrl = '../../ckfinder/ckfinder.html?type=Images';
+  var filebrowserUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Files';
+  var filebrowserImageUploadUrl = '../../ckfinder/connector?command=QuickUpload&type=Images';
+		
+		
+		function Fill_Datos_Generales()
+        {
+            $.ajax({
+                url: "@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/Get_Datos_Generales")?Id=" + $("#ReferenceFolio").val(),
+                type: 'GET',
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                                        $('#Folio').val(result.data.Folio);
+                    $('#Fecha_de_Registro').val(result.data.Fecha_de_Registro);
+                    $('#Hora_de_Registro').val(result.data.Hora_de_Registro);
+                    $('#Usuario_que_Registra').val(result.data.Usuario_que_Registra);
+                    $('#Paciente').val(result.data.Paciente);
+                    MR_TarjetasDataDataTable = result.MR_Tarjetas;
+                    showMR_TarjetasGrid(result.MR_Tarjetas);
+                    $('#MR_TarjetasGrid .inputMoney').inputmask("currency", { prefix: "$", rightAlign: false });
+                    $('#MR_TarjetasGrid .gridDatePicker').attr("readonly", "");
+
+                },
+                error: function (result) {
+                    showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                }
+            });
+        }
+		
+		function Save_Datos_Generales(newId) {
+			var data = new FormData();
+			data.append('Folio', newId);
+			                data.append('Fecha_de_Registro', $('#Fecha_de_Registro').val());
+                data.append('Hora_de_Registro', $('#Hora_de_Registro').val());
+                data.append('Usuario_que_Registra', $('#Usuario_que_Registra').val());
+                data.append('Paciente', $('#Paciente').val());
+
+			$.ajax({
+				url: '@Url.Content("~/Frontal/Metodos_de_Pago_Paciente/Post_Datos_Generales")',
+				type: 'POST',
+				data: data,
+				async: false,
+				dataType: "json",
+				contentType: false,
+				processData: false,
+				success: function (result) {
+					if (result < 0) {
+						showNotification("@Resources.Resources.ErrorSave", "Error al guardar Datos_Generales");
+					} else {
+						newId = result;
+                    					    SendMR_Tarjetas(null, newId);
+
+					}
+				},
+				error: function (result) {
+					showNotification("@Resources.Resources.ErrorContactingServer", "Error al guardar Datos_Generales");
+				},
+				cache: false
+			});
+		}
+
+
+    </script>
+}
+    <input type="hidden" id="FieldId" name="FieldId" value="" />
+    <input type="hidden" id="FieldName" name="FieldName" value="" />
+    <input type="hidden" id="ObjectId" name="ObjectId" value="" />
+    <input type="hidden" id="Attribute" name="Attribute" value="" />
+    <input type="hidden" id="Screen" name="Screen" value="" />
+     <input type="hidden" id="Metodos_de_Pago_Paciente_cmbLabelSelect" name="Metodos_de_Pago_Paciente_cmbLabelSelect" value="@Resources.Resources.CmbSelect" />
+

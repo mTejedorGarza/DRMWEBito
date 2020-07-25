@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="Nombre_del_campo_en_MS" value="Campos para Notificación"></resource>
+  <resource culture="en-US" name="Clave" value="Clave"></resource>
+  <resource culture="en-US" name="Descripcion" value="Descripción"></resource>
+  <resource culture="en-US" name="Nombre_Fisico_del_Campo" value="Nombre Físico del Campo"></resource>
+  <resource culture="en-US" name="Nombre_Fisico_de_la_Tabla" value="Nombre Físico de la Tabla"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="en-us" name="MR_Referenciados_Codigo_de_Descuento" value="MR Referenciados Código de Descuento"></resource>
+  <resource culture="en-US" name="Folio" value="Folio"></resource>
+  <resource culture="en-US" name="Tipo_de_usuario" value="Tipo de usuario"></resource>
+  <resource culture="en-US" name="Usuario" value="Usuario"></resource>
+  <resource culture="en-US" name="Fecha_de_aplicacion" value="Fecha de aplicación"></resource>
+  <resource culture="en-US" name="Descuento_Total" value="Descuento Total"></resource>
+
+<resource culture="en-US" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

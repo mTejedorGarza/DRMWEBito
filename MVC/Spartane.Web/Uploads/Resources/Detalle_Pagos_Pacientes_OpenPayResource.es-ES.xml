@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" standalone="yes"?>
+<resources>
+  <resource culture="es-es" name="Detalle_Pagos_Pacientes_OpenPay" value="Detalle Pagos Pacientes OpenPay"></resource>
+  <resource culture="es-es" name="Folio" value="Folio"></resource>
+  <resource culture="es-es" name="Usuario_que_Registra" value="Usuario que Registra"></resource>
+  <resource culture="es-es" name="Fecha_de_Pago" value="Fecha de Pago"></resource>
+  <resource culture="es-es" name="Hora_de_Pago" value="Hora de Pago"></resource>
+  <resource culture="es-es" name="TokenID" value="TokenID"></resource>
+  <resource culture="es-es" name="Importe" value="Importe"></resource>
+  <resource culture="es-es" name="Concepto" value="Concepto"></resource>
+  <resource culture="es-es" name="Forma_de_pago" value="Forma de pago"></resource>
+  <resource culture="es-es" name="Autorizacion" value="Autorización"></resource>
+  <resource culture="es-es" name="Nombre" value="Nombre"></resource>
+  <resource culture="es-es" name="Apellidos" value="Apellidos"></resource>
+  <resource culture="es-es" name="Telefono" value="Teléfono"></resource>
+  <resource culture="es-es" name="Email" value="Email"></resource>
+  <resource culture="es-es" name="DeviceID" value="DeviceID"></resource>
+  <resource culture="es-es" name="UsaPuntos" value="UsaPuntos"></resource>
+  <resource culture="es-es" name="PuntosID" value="PuntosID"></resource>
+  <resource culture="es-es" name="Estatus" value="Estatus"></resource>
+
+<resource culture="es-es" name="TabDatos_Generales" value="Datos Generales"></resource>
+
+</resources>

@@ -1,0 +1,961 @@
+﻿@using System.Collections.Generic
+@using Spartane.Web.Areas.Frontal.Models
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Solicitud_de_Pago_de_FacturasAdvanceSearchModel
+@{
+    List<SelectListItem> varSpartan_User_Usuario_que_Registra = null;
+    if (ViewBag.Spartan_Users_Usuario_que_Registra != null)
+    { varSpartan_User_Usuario_que_Registra = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_Registra; }
+    List<SelectListItem> varMeses_Mes_Facturado = null;
+    if (ViewBag.Mesess_Mes_Facturado != null)
+    { varMeses_Mes_Facturado = (List<SelectListItem>)ViewBag.Mesess_Mes_Facturado; }
+    List<SelectListItem> varEstatus_Facturas_Estatus = null;
+    if (ViewBag.Estatus_Facturass_Estatus != null)
+    { varEstatus_Facturas_Estatus = (List<SelectListItem>)ViewBag.Estatus_Facturass_Estatus; }
+    List<SelectListItem> varSpartan_User_Usuario_que_autoriza = null;
+    if (ViewBag.Spartan_Users_Usuario_que_autoriza != null)
+    { varSpartan_User_Usuario_que_autoriza = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_autoriza; }
+    List<SelectListItem> varResultados_de_Revision_Resultado_de_la_Revision = null;
+    if (ViewBag.Resultados_de_Revisions_Resultado_de_la_Revision != null)
+    { varResultados_de_Revision_Resultado_de_la_Revision = (List<SelectListItem>)ViewBag.Resultados_de_Revisions_Resultado_de_la_Revision; }
+    List<SelectListItem> varSpartan_User_Usuario_que_programa = null;
+    if (ViewBag.Spartan_Users_Usuario_que_programa != null)
+    { varSpartan_User_Usuario_que_programa = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_programa; }
+    List<SelectListItem> varEstatus_de_Pago_de_Facturas_Estatus_de_Pago = null;
+    if (ViewBag.Estatus_de_Pago_de_Facturass_Estatus_de_Pago != null)
+    { varEstatus_de_Pago_de_Facturas_Estatus_de_Pago = (List<SelectListItem>)ViewBag.Estatus_de_Pago_de_Facturass_Estatus_de_Pago; }
+    List<SelectListItem> varSpartan_User_Usuario_que_actualiza = null;
+    if (ViewBag.Spartan_Users_Usuario_que_actualiza != null)
+    { varSpartan_User_Usuario_que_actualiza = (List<SelectListItem>)ViewBag.Spartan_Users_Usuario_que_actualiza; }
+
+    var filters = (List<SelectListItem>)ViewBag.Filter;
+}
+<style>
+    .input-validation-error {
+        background: rgb(251, 227, 228);
+        border: 1px solid #fbc2c4;
+        color: #8a1f11;
+    }
+
+    .MarginBottom {
+        margin-bottom: 1%;
+    }
+
+    #divAdvanceSearch input {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch button {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch select {
+        margin-right: 2%;
+    }
+
+    #divAdvanceSearch h3 {
+        margin-top: 2%;
+    }
+
+</style>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins" id="divAdvanceSearch">
+        <div class="ibox-content">
+            @using (Html.BeginForm("ShowAdvanceFilter", "Solicitud_de_Pago_de_Facturas", FormMethod.Post, new { @id = "frmAdvanceSearch", @role = "form" }))
+            {
+				<input type="hidden" value="-1" name="idFilter" id="idFilter" />
+                <div class="MarginBottom ">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Folio</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromFolio, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.FromFolio)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToFolio, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isNumberKey(this, event);", @id = "txtAdvanceToFolio", @data_min = "txtAdvanceFromFolio" })
+                    @Html.ValidationMessageFor(m => m.ToFolio)
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_Registro" name="FromFecha_de_Registro" type="text" value="@Model.FromFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_Registro" name="ToFecha_de_Registro" type="text" value="@Model.ToFecha_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_Registro</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_Registro" name="FromHora_de_Registro" type="text" value="@Model.FromHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_Registro" name="ToHora_de_Registro" type="text" value="@Model.ToHora_de_Registro" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_Registra</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_RegistraFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_RegistraFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_Registra, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_Registra" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_Registra!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_RegistraMultiple, varSpartan_User_Usuario_que_Registra,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_Registra"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Mes_Facturado</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Mes_FacturadoFilter, filters, new { @class = "form-control", @id = "ddlMes_FacturadoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceMes_Facturado, new { @class = "form-control", @type = "text", @id = "txtAdvanceMes_Facturado" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varMeses_Mes_Facturado!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceMes_FacturadoMultiple, varMeses_Mes_Facturado,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceMes_Facturado"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_inicio_del_periodo_facturado</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_inicio_del_periodo_facturado" name="FromFecha_inicio_del_periodo_facturado" type="text" value="@Model.FromFecha_inicio_del_periodo_facturado" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_inicio_del_periodo_facturado" name="ToFecha_inicio_del_periodo_facturado" type="text" value="@Model.ToFecha_inicio_del_periodo_facturado" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_fin_del_periodo_facturado</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_fin_del_periodo_facturado" name="FromFecha_fin_del_periodo_facturado" type="text" value="@Model.FromFecha_fin_del_periodo_facturado" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_fin_del_periodo_facturado" name="ToFecha_fin_del_periodo_facturado" type="text" value="@Model.ToFecha_fin_del_periodo_facturado" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom ">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Total</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.From:</label>
+                    @Html.TextBoxFor(m => m.FromTotal, new { @class = "form-control greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceFromTotal" })
+                    @Html.ValidationMessageFor(m => m.FromTotal)
+                    <label class="">@Resources.Resources.To: </label>
+                    @Html.TextBoxFor(m => m.ToTotal, new { @class = "form-control greaterThan greaterThanZero", @type = "text", @onkeypress = "return isDecimalKey(this, event);", @id = "txtAdvanceToTotal", @data_min = "txtAdvanceFromTotal" })
+                    @Html.ValidationMessageFor(m => m.ToTotal)
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.EstatusFilter, filters, new { @class = "form-control", @id = "ddlEstatusFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEstatus, new { @class = "form-control", @type = "text", @id = "txtAdvanceEstatus" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varEstatus_Facturas_Estatus!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEstatusMultiple, varEstatus_Facturas_Estatus,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEstatus"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_autorizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_autorizacion" name="FromFecha_de_autorizacion" type="text" value="@Model.FromFecha_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_autorizacion" name="ToFecha_de_autorizacion" type="text" value="@Model.ToFecha_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_autorizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_autorizacion" name="FromHora_de_autorizacion" type="text" value="@Model.FromHora_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_autorizacion" name="ToHora_de_autorizacion" type="text" value="@Model.ToHora_de_autorizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_autoriza</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_autorizaFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_autorizaFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_autoriza, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_autoriza" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_autoriza!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_autorizaMultiple, varSpartan_User_Usuario_que_autoriza,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_autoriza"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Resultado_de_la_Revision</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Resultado_de_la_RevisionFilter, filters, new { @class = "form-control", @id = "ddlResultado_de_la_RevisionFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceResultado_de_la_Revision, new { @class = "form-control", @type = "text", @id = "txtAdvanceResultado_de_la_Revision" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varResultados_de_Revision_Resultado_de_la_Revision!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceResultado_de_la_RevisionMultiple, varResultados_de_Revision_Resultado_de_la_Revision,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceResultado_de_la_Revision"
+                        });
+                    }
+                </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Observaciones</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.ObservacionesFilter, filters, new { @class = "form-control", @id = "ddlObservacionesFilter" })
+                    @Html.TextBoxFor(m => m.Observaciones, new { @class = "form-control", @type = "text", @id = "txtObservaciones" })
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_programacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_programacion" name="FromFecha_de_programacion" type="text" value="@Model.FromFecha_de_programacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_programacion" name="ToFecha_de_programacion" type="text" value="@Model.ToFecha_de_programacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_programacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_programacion" name="FromHora_de_programacion" type="text" value="@Model.FromHora_de_programacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_programacion" name="ToHora_de_programacion" type="text" value="@Model.ToHora_de_programacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_programa</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_programaFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_programaFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_programa, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_programa" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_programa!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_programaMultiple, varSpartan_User_Usuario_que_programa,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_programa"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_programada_de_Pago</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_programada_de_Pago" name="FromFecha_programada_de_Pago" type="text" value="@Model.FromFecha_programada_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_programada_de_Pago" name="ToFecha_programada_de_Pago" type="text" value="@Model.ToFecha_programada_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Estatus_de_Pago</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Estatus_de_PagoFilter, filters, new { @class = "form-control", @id = "ddlEstatus_de_PagoFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceEstatus_de_Pago, new { @class = "form-control", @type = "text", @id = "txtAdvanceEstatus_de_Pago" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varEstatus_de_Pago_de_Facturas_Estatus_de_Pago!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceEstatus_de_PagoMultiple, varEstatus_de_Pago_de_Facturas_Estatus_de_Pago,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceEstatus_de_Pago"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_actualizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_actualizacion" name="FromFecha_de_actualizacion" type="text" value="@Model.FromFecha_de_actualizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_actualizacion" name="ToFecha_de_actualizacion" type="text" value="@Model.ToFecha_de_actualizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Hora_de_actualizacion</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceFromHora_de_actualizacion" name="FromHora_de_actualizacion" type="text" value="@Model.FromHora_de_actualizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group clock" data-autoclose="true">
+                <input class="form-control" id="txtAdvanceToHora_de_actualizacion" name="ToHora_de_actualizacion" type="text" value="@Model.ToHora_de_actualizacion" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-time"></span>
+                </span>
+            </div>
+        </div>
+                <div class="MarginBottom">
+                    <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Usuario_que_actualiza</h3>
+                </div>
+                <div class="MarginBottom form-inline">
+                    <label class="">@Resources.Resources.Filter:</label>
+                    @Html.DropDownListFor(m => m.Usuario_que_actualizaFilter, filters, new { @class = "form-control", @id = "ddlUsuario_que_actualizaFilter" })
+                    @Html.TextBoxFor(m => m.AdvanceUsuario_que_actualiza, new { @class = "form-control", @type = "text", @id = "txtAdvanceUsuario_que_actualiza" })
+                    <label class="">@Resources.Resources.OrSelect </label>
+                    @if (varSpartan_User_Usuario_que_actualiza!=null)
+                    {
+                        @Html.ListBoxFor(m => m.AdvanceUsuario_que_actualizaMultiple, varSpartan_User_Usuario_que_actualiza,
+                        new
+                        {
+                            @class = "form-control chosen-select",
+                            @multiple = "multiple",
+                            @data_placeholder = "",
+                            @style = "width: 350px;",
+                            @id = "ddlAdvanceUsuario_que_actualiza"
+                        });
+                    }
+                </div>
+        <div class="MarginBottom ">
+            <h3>@Resources.Solicitud_de_Pago_de_FacturasResources.Fecha_de_Pago</h3>
+        </div>
+        <div class="MarginBottom form-inline">
+            <label class="">@Resources.Resources.From:</label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceFromFecha_de_Pago" name="FromFecha_de_Pago" type="text" value="@Model.FromFecha_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+            <label class="">@Resources.Resources.To: </label>
+            <div class="input-group date">
+                <input class="form-control" id="txtAdvanceToFecha_de_Pago" name="ToFecha_de_Pago" type="text" value="@Model.ToFecha_de_Pago" />
+                <span class="form-inline input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+
+                <div class="MarginBottom form-inline">
+                    <input type="submit" class="btn btn-primary" value="@Resources.Resources.Search"><a class="btn btn-primary" href="@Url.Content("~/Frontal/Solicitud_de_Pago_de_Facturas/")" value=" ">@Resources.Resources.Cancelar</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    function InitiateAdvanceSearch() {
+        var advanceSearch = {}, hasParameter = false;
+        if ($("#txtAdvanceFromFolio").val() != "" || $("#txtAdvanceToFolio").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFolioFrom = $("#txtAdvanceFromFolio").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFolioTo = $("#txtAdvanceToFolio").val();
+        }
+        if ($("#txtAdvanceFromFecha_de_Registro").val() != "" || $("#txtAdvanceToFecha_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_RegistroFrom = $("#txtAdvanceFromFecha_de_Registro").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_RegistroTo = $("#txtAdvanceToFecha_de_Registro").val();
+        }
+        if ($("#txtAdvanceHora_de_Registro").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_Registro = $("#txtAdvanceHora_de_Registro").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_RegistroSearchType = $("#ddlAdvanceHora_de_RegistroFilter").val();
+        }
+        advanceSearch.Usuario_que_RegistraSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_Registra').val().length > 0 || $("#txtAdvanceUsuario_que_Registra").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Usuario_que_RegistraName = $("#txtAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraNameSearchType = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_RegistraToSearch = $("#ddlAdvanceUsuario_que_Registra").val();
+                advanceSearch.Usuario_que_RegistraSearchType = 2;
+            }
+        }
+        advanceSearch.Mes_FacturadoSearchType = 0;
+        if ($('#ddlAdvanceMes_Facturado').val().length > 0 || $("#txtAdvanceMes_Facturado").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Mes_FacturadoName = $("#txtAdvanceMes_Facturado").val();
+                advanceSearch.Mes_FacturadoNameSearchType = $("#ddlAdvanceMes_Facturado").val();
+                advanceSearch.Mes_FacturadoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Mes_FacturadoToSearch = $("#ddlAdvanceMes_Facturado").val();
+                advanceSearch.Mes_FacturadoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_inicio_del_periodo_facturado").val() != "" || $("#txtAdvanceToFecha_inicio_del_periodo_facturado").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_inicio_del_periodo_facturadoFrom = $("#txtAdvanceFromFecha_inicio_del_periodo_facturado").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_inicio_del_periodo_facturadoTo = $("#txtAdvanceToFecha_inicio_del_periodo_facturado").val();
+        }
+        if ($("#txtAdvanceFromFecha_fin_del_periodo_facturado").val() != "" || $("#txtAdvanceToFecha_fin_del_periodo_facturado").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_fin_del_periodo_facturadoFrom = $("#txtAdvanceFromFecha_fin_del_periodo_facturado").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_fin_del_periodo_facturadoTo = $("#txtAdvanceToFecha_fin_del_periodo_facturado").val();
+        }
+        advanceSearch.Archivo_XMLSearchType = 0;
+        if ($('#ddlAdvanceArchivo_XML').val().length > 0 || $("#txtAdvanceArchivo_XML").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Archivo_XMLName = $("#txtAdvanceArchivo_XML").val();
+                advanceSearch.Archivo_XMLNameSearchType = $("#ddlAdvanceArchivo_XML").val();
+                advanceSearch.Archivo_XMLSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Archivo_XMLToSearch = $("#ddlAdvanceArchivo_XML").val();
+                advanceSearch.Archivo_XMLSearchType = 2;
+            }
+        }
+        advanceSearch.Archivo_PDFSearchType = 0;
+        if ($('#ddlAdvanceArchivo_PDF').val().length > 0 || $("#txtAdvanceArchivo_PDF").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Archivo_PDFName = $("#txtAdvanceArchivo_PDF").val();
+                advanceSearch.Archivo_PDFNameSearchType = $("#ddlAdvanceArchivo_PDF").val();
+                advanceSearch.Archivo_PDFSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Archivo_PDFToSearch = $("#ddlAdvanceArchivo_PDF").val();
+                advanceSearch.Archivo_PDFSearchType = 2;
+            }
+        }
+        advanceSearch.Recibo_de_Solicitud_de_PagoSearchType = 0;
+        if ($('#ddlAdvanceRecibo_de_Solicitud_de_Pago').val().length > 0 || $("#txtAdvanceRecibo_de_Solicitud_de_Pago").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Recibo_de_Solicitud_de_PagoName = $("#txtAdvanceRecibo_de_Solicitud_de_Pago").val();
+                advanceSearch.Recibo_de_Solicitud_de_PagoNameSearchType = $("#ddlAdvanceRecibo_de_Solicitud_de_Pago").val();
+                advanceSearch.Recibo_de_Solicitud_de_PagoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Recibo_de_Solicitud_de_PagoToSearch = $("#ddlAdvanceRecibo_de_Solicitud_de_Pago").val();
+                advanceSearch.Recibo_de_Solicitud_de_PagoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromTotal").val() != "" || $("#txtAdvanceToTotal").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasTotalFrom = $("#txtAdvanceFromTotal").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasTotalTo = $("#txtAdvanceToTotal").val();
+        }
+        advanceSearch.EstatusSearchType = 0;
+        if ($('#ddlAdvanceEstatus').val().length > 0 || $("#txtAdvanceEstatus").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.EstatusName = $("#txtAdvanceEstatus").val();
+                advanceSearch.EstatusNameSearchType = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 1;
+            }
+            else {
+
+                advanceSearch.EstatusToSearch = $("#ddlAdvanceEstatus").val();
+                advanceSearch.EstatusSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_de_autorizacion").val() != "" || $("#txtAdvanceToFecha_de_autorizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_autorizacionFrom = $("#txtAdvanceFromFecha_de_autorizacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_autorizacionTo = $("#txtAdvanceToFecha_de_autorizacion").val();
+        }
+        if ($("#txtAdvanceHora_de_autorizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_autorizacion = $("#txtAdvanceHora_de_autorizacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_autorizacionSearchType = $("#ddlAdvanceHora_de_autorizacionFilter").val();
+        }
+        advanceSearch.Usuario_que_autorizaSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_autoriza').val().length > 0 || $("#txtAdvanceUsuario_que_autoriza").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Usuario_que_autorizaName = $("#txtAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaNameSearchType = $("#ddlAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_autorizaToSearch = $("#ddlAdvanceUsuario_que_autoriza").val();
+                advanceSearch.Usuario_que_autorizaSearchType = 2;
+            }
+        }
+        advanceSearch.Resultado_de_la_RevisionSearchType = 0;
+        if ($('#ddlAdvanceResultado_de_la_Revision').val().length > 0 || $("#txtAdvanceResultado_de_la_Revision").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Resultado_de_la_RevisionName = $("#txtAdvanceResultado_de_la_Revision").val();
+                advanceSearch.Resultado_de_la_RevisionNameSearchType = $("#ddlAdvanceResultado_de_la_Revision").val();
+                advanceSearch.Resultado_de_la_RevisionSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Resultado_de_la_RevisionToSearch = $("#ddlAdvanceResultado_de_la_Revision").val();
+                advanceSearch.Resultado_de_la_RevisionSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceObservaciones").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasObservaciones = $("#txtAdvanceObservaciones").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasObservacionesSearchType = $("#ddlAdvanceObservacionesFilter").val();
+        }
+        if ($("#txtAdvanceFromFecha_de_programacion").val() != "" || $("#txtAdvanceToFecha_de_programacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_programacionFrom = $("#txtAdvanceFromFecha_de_programacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_programacionTo = $("#txtAdvanceToFecha_de_programacion").val();
+        }
+        if ($("#txtAdvanceHora_de_programacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_programacion = $("#txtAdvanceHora_de_programacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_programacionSearchType = $("#ddlAdvanceHora_de_programacionFilter").val();
+        }
+        advanceSearch.Usuario_que_programaSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_programa').val().length > 0 || $("#txtAdvanceUsuario_que_programa").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Usuario_que_programaName = $("#txtAdvanceUsuario_que_programa").val();
+                advanceSearch.Usuario_que_programaNameSearchType = $("#ddlAdvanceUsuario_que_programa").val();
+                advanceSearch.Usuario_que_programaSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_programaToSearch = $("#ddlAdvanceUsuario_que_programa").val();
+                advanceSearch.Usuario_que_programaSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_programada_de_Pago").val() != "" || $("#txtAdvanceToFecha_programada_de_Pago").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_programada_de_PagoFrom = $("#txtAdvanceFromFecha_programada_de_Pago").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_programada_de_PagoTo = $("#txtAdvanceToFecha_programada_de_Pago").val();
+        }
+        advanceSearch.Estatus_de_PagoSearchType = 0;
+        if ($('#ddlAdvanceEstatus_de_Pago').val().length > 0 || $("#txtAdvanceEstatus_de_Pago").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Estatus_de_PagoName = $("#txtAdvanceEstatus_de_Pago").val();
+                advanceSearch.Estatus_de_PagoNameSearchType = $("#ddlAdvanceEstatus_de_Pago").val();
+                advanceSearch.Estatus_de_PagoSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Estatus_de_PagoToSearch = $("#ddlAdvanceEstatus_de_Pago").val();
+                advanceSearch.Estatus_de_PagoSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_de_actualizacion").val() != "" || $("#txtAdvanceToFecha_de_actualizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_actualizacionFrom = $("#txtAdvanceFromFecha_de_actualizacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_actualizacionTo = $("#txtAdvanceToFecha_de_actualizacion").val();
+        }
+        if ($("#txtAdvanceHora_de_actualizacion").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_actualizacion = $("#txtAdvanceHora_de_actualizacion").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasHora_de_actualizacionSearchType = $("#ddlAdvanceHora_de_actualizacionFilter").val();
+        }
+        advanceSearch.Usuario_que_actualizaSearchType = 0;
+        if ($('#ddlAdvanceUsuario_que_actualiza').val().length > 0 || $("#txtAdvanceUsuario_que_actualiza").val() == "") {
+
+
+            if (isSolicitud_de_Pago_de_FacturasTextSearch) {
+                advanceSearch.Usuario_que_actualizaName = $("#txtAdvanceUsuario_que_actualiza").val();
+                advanceSearch.Usuario_que_actualizaNameSearchType = $("#ddlAdvanceUsuario_que_actualiza").val();
+                advanceSearch.Usuario_que_actualizaSearchType = 1;
+            }
+            else {
+
+                advanceSearch.Usuario_que_actualizaToSearch = $("#ddlAdvanceUsuario_que_actualiza").val();
+                advanceSearch.Usuario_que_actualizaSearchType = 2;
+            }
+        }
+        if ($("#txtAdvanceFromFecha_de_Pago").val() != "" || $("#txtAdvanceToFecha_de_Pago").val() != "") {
+            hasParameter = true;
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_PagoFrom = $("#txtAdvanceFromFecha_de_Pago").val();
+            advanceSearch.Solicitud_de_Pago_de_FacturasFecha_de_PagoTo = $("#txtAdvanceToFecha_de_Pago").val();
+        }
+
+        advanceSearchQuery = hasParameter ? JSON.stringify(advanceSearch) : "";
+        $('#tblSolicitud_de_Pago_de_Facturas').DataTable().draw();
+        return false;
+    }
+
+    var advanceSearchQuery = "", isSolicitud_de_Pago_de_FacturasTextSearch = true;
+
+    $(document).ready(function () {
+        $('.clock').clockpicker();
+		$('.date').datepicker({
+			todayBtn: "linked",
+			keyboardNavigation: false,
+			forceParse: false,
+			calendarWeeks: true,
+			autoclose: true,
+			format: "@ConfigurationProperty.DateFormatDatePicker"
+		});
+        $("#txtAdvanceUsuario_que_Registra").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceUsuario_que_Registra").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_Registra").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceUsuario_que_Registra").val('');
+        });
+        $("#txtAdvanceMes_Facturado").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceMes_Facturado").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceMes_Facturado").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceMes_Facturado").val('');
+        });
+        $("#txtAdvanceEstatus").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceEstatus").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEstatus").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceEstatus").val('');
+        });
+        $("#txtAdvanceUsuario_que_autoriza").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceUsuario_que_autoriza").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_autoriza").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceUsuario_que_autoriza").val('');
+        });
+        $("#txtAdvanceResultado_de_la_Revision").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceResultado_de_la_Revision").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceResultado_de_la_Revision").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceResultado_de_la_Revision").val('');
+        });
+        $("#txtAdvanceUsuario_que_programa").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceUsuario_que_programa").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_programa").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceUsuario_que_programa").val('');
+        });
+        $("#txtAdvanceEstatus_de_Pago").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceEstatus_de_Pago").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceEstatus_de_Pago").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceEstatus_de_Pago").val('');
+        });
+        $("#txtAdvanceUsuario_que_actualiza").keypress(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = true;
+            $("#ddlAdvanceUsuario_que_actualiza").val('').trigger("chosen:updated");
+        });
+
+        $("#ddlAdvanceUsuario_que_actualiza").change(function () {
+            isSolicitud_de_Pago_de_FacturasTextSearch = false;
+            $("#txtAdvanceUsuario_que_actualiza").val('');
+        });
+
+    });
+</script>
+
+
+@section Styles {
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/plugins/chosen")
+    @Scripts.Render("~/plugins/dataPicker")
+    @Scripts.Render("~/plugins/clockpicker")
+
+
+    <script>
+        //Adding Rules
+        jQuery.validator.unobtrusive
+      .adapters.addSingleVal("isnumberafter", "propertyname");
+        jQuery.validator.unobtrusive
+    .adapters.addSingleVal("isdateafter", "propertyname");
+
+        //Number after method
+        jQuery.validator.addMethod("isnumberafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+                //if (Date.parse(val) <= Date.parse(otherVal)) {
+                if (Number(val) < Number(otherVal)) {
+                    return false;
+                }
+                        }
+            return true;
+        });
+
+        //Date after after method
+        jQuery.validator.addMethod("isdateafter", function (val, element, other) {
+            var modelPrefix = element.name.substr(
+                0, element.name.lastIndexOf(".") + 1);
+            var otherVal = $("[name=" + modelPrefix + other + "]").val();
+            if (val && otherVal) {
+
+                if (GetDateObject(val) < GetDateObject(otherVal)) {
+
+                    return false;
+                    }
+                }
+            return true;
+            });
+
+
+        function GetDateObject(value) {
+            var delimiter = GetDelimiter(dateFormat);
+            var dateCollection = value.split(delimiter);
+            var formatCollection = dateFormat.split(delimiter);
+            var dateModel = GetDateModel(dateCollection, formatCollection);
+            return new Date(dateModel.Year, dateModel.Month - 1, dateModel.Day);
+        }
+        //Used to get the date model by parsing the date and the format
+        function GetDateModel(dateCollection,formatCollection) {
+            var day, month, year;
+            for (var i = 0; i < formatCollection.length; i++) {
+                switch (formatCollection[i][0].toUpperCase()) {
+                
+                    case "D":
+                        day = dateCollection[i];
+                        break;
+
+                    case "Y":
+                        year = dateCollection[i];
+                        break;
+
+                    case "M":
+                        month = dateCollection[i];
+                        break;
+                }
+            }
+
+            return {
+                Day:day,
+                Month:month,
+                Year:year
+            };
+        }
+
+        function GetDelimiter(format) {
+
+            for (var i = 0; i < format.length; i++) {
+                if (/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/g.test(format[i])) {
+                    return format[i];
+                }
+            }
+            return null;
+        }
+
+        var dateFormat = "@ConfigurationProperty.DateFormatDatePicker";
+
+        $(document).ready(function () {
+            $('.input-daterange').datepicker({
+                keyboardNavigation: false,
+                forceParse: false,
+                autoclose: true,
+                format: dateFormat,
+                message: 'The date is not a valid'
+            });
+
+            $(".chosen-select").chosen({ width: "22%", no_results_text: "Oops, nothing found!" });
+			if ($('#IsFilterModal').val() == 'true') {
+                $('.ShowAdvanceFilter #right-sidebar').css('display', 'none');
+                $('.ShowAdvanceFilter .navbar-default').css('display', 'none');
+                $('.ShowAdvanceFilter .border-bottom').css('display', 'none');
+                $('.ShowAdvanceFilter #page-wrapper').css('margin', '0 auto');
+                $('.ShowAdvanceFilter .btn-save').val('@Resources.Resources.Filter');
+                $('.ShowAdvanceFilter .btn-cancelar').attr('data-dismiss', 'modal');
+                $('.ShowAdvanceFilter .btn-cancelar').removeAttr('href');
+                $('#idFilter').val($('#IdReport').val());
+            }
+        });
+
+    </script>
+}
+

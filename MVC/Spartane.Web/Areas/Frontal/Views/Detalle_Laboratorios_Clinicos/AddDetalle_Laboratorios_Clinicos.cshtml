@@ -1,0 +1,517 @@
+﻿@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Spartane.Core.Domain.Permission
+@using Spartane.Core.Domain.Spartane_File
+@using Spartane.Web.Helpers
+@model Spartane.Web.Areas.Frontal.Models.Detalle_Laboratorios_ClinicosModel
+@{
+
+    string Fecha_de_Resultado = "";
+    if (Model.Fecha_de_Resultado == "")
+    { Model.Fecha_de_Resultado = DateTime.Now.ToString(ConfigurationProperty.DateFormat); }
+
+    List<SelectListItem> varIndicadores_Laboratorio_Indicador = null;
+    if (ViewBag.Indicadores_Laboratorios_Indicador != null)
+    { varIndicadores_Laboratorio_Indicador = (List<SelectListItem>)ViewBag.Indicadores_Laboratorios_Indicador; }
+
+
+    Permission permission = ViewBag.Permission;
+}
+<div class="modal-dialog" style="width:95%;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">
+                Add Detalle Laboratorios Clínicos
+                <button data-dismiss="modal" class="close" type="button" onclick="@(ViewBag.functionMode == 0 ? "Detalle_Laboratorios_ClinicosRemoveAddRow("+ ViewBag.currentRowIndex +")" : "")"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+            </h4>
+        </div>
+        <div class="modal-body scroll_content">
+            <div class="form-horizontal Detalle_Laboratorios_ClinicosPop_@ViewBag.currentRowIndex">
+				<div class="modal fade in" id="dvAttributeValue" style="background-color:rgba(0, 0, 0, 0.7);">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-body">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" id="lblAttributeType">Value</label>
+									<div class="col-sm-7">
+										<input type="text" title="Value" class="form-control" id="txtAttributeValue" />
+									</div>
+									<div class="col-sm-2">
+										<a class="btn btn-primary" onclick="SaveValue()">Submit</a>
+									</div>
+									<input type="hidden" id="hdnAttributType" />
+									<input type="hidden" id="hdnAttributElement" />
+									<input type="hidden" id="hdnAttributNumber" />
+									<input type="hidden" id="hdnElementType" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row wrapper border-bottom white-bg page-heading">
+
+					<div class="row">
+						<div class="col-lg-10">
+							<h2>
+								Detalle Laboratorios Clínicos
+								<button onclick="Detalle_Laboratorios_ClinicosGetBusinessRule('', 'Abrir Pantalla', '0')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Detalle_Laboratorios_ClinicosBusinessRule-form">
+									<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+										<i class="fa fa-cogs fa-spin"></i>
+									</a>
+								</button>
+							</h2>
+							<ol class="breadcrumb">
+								<li>
+									<a href="@Url.Action("Index", "Home")">@Resources.Resources.Home</a>
+								</li>
+								<li class="">
+									<label>@Resources.Detalle_Laboratorios_ClinicosResources.Detalle_Laboratorios_Clinicos</label>
+								</li>
+								<li class="active">
+									<strong>@Resources.Resources.Create</strong>
+								</li>
+							</ol>
+						</div>
+						<div class="col-lg-2">
+
+							@{
+								if (Convert.ToInt32(Spartane.Web.SessionHelper.Role) == (int)Spartane.Core.Enums.SpartanRoleEnum.Admin)
+								{
+									<h2>&nbsp;</h2>
+									<button onclick="Detalle_Laboratorios_ClinicosDisplayBusinessRule()" type="button" class="btn btn-info btn-lg displayBusinessProperyButton">
+										<i class="fa fa-cogs fa-spin"></i>
+									</button>
+
+									<div aria-hidden="true" class="modal fade in Detalle_Laboratorios_ClinicosPropertyBusinessModal" id="Detalle_Laboratorios_ClinicosPropertyBusinessModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">
+														Property & Business Rules
+														<button class="close" type="button" onclick="$(this).parent().parent().parent().parent().parent().modal('hide');"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+													</h4>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#PropertyModal-form" onclick="GetPropertyBag()">Properties</a>
+														</div>
+														<div class="clearfix col-sm-12">&nbsp;</div>
+														<div class="col-sm-12">
+															<a class="btn btn-primary full-width" data-toggle="modal" data-target="#Detalle_Laboratorios_ClinicosBusinessRule-form" onclick="Detalle_Laboratorios_ClinicosGetBusinessRule()">Business Rule</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									 <div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Laboratorios_ClinicosPropertyModal" id="Detalle_Laboratorios_ClinicosPropertyModal-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+									<div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Laboratorios_ClinicosBusinessRuleModal" id="Detalle_Laboratorios_ClinicosBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+									</div>
+                                    <div aria-hidden="true" data-backdrop="static" class="modal fade in Detalle_Laboratorios_ClinicosAddBusinessRuleModal" id="Detalle_Laboratorios_ClinicosAddBusinessRule-form" style="display: none; background-color:rgba(0, 0, 0, 0.7);">
+                                    </div>
+
+				
+								}
+							}
+						</div>
+					</div>
+
+				<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							@using (Html.BeginForm("Post", "Detalle_Laboratorios_Clinicos", FormMethod.Post, new { id = "CreateDetalle_Laboratorios_Clinicos", @readonly = "true", @class = "form-horizontal", enctype = "multipart/form-data" }))
+							{
+								<span id="popupNotification"></span>
+								<div class="container-fluid Detalle_Laboratorios_ClinicosCreateForm" id="viewmodeledit">
+							<div class="tabs-container">
+											<ul class="nav nav-tabs">
+				@@groupers@@
+											</ul>
+										<div class="tab-content">
+				<div class="form-group" id="divFolio">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Folio</label>
+                                <div class="col-sm-8" data-field-id="Folio" data-attribute="261264" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Folio">
+                                    <label class="form-control" for="Detalle_Laboratorios_ClinicosFolio" id="Detalle_Laboratorios_ClinicosFolio">@Model.Folio</label>
+                                </div>
+                            </div>
+<div class="form-group" id="divNumero_de_Empleado_Titular">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Numero_de_Empleado_Titular</label>
+                                <div class="col-sm-8" data-field-id="Numero_de_Empleado_Titular" data-attribute="261266" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Numero_de_Empleado_Titular">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosNumero_de_Empleado_Titular" name="Detalle_Laboratorios_ClinicosNumero_de_Empleado_Titular" type="text" value="@Model.Numero_de_Empleado_Titular">
+                                </div>
+                            </div>
+<div class="form-group" id="divNombre_Completo">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Nombre_Completo</label>
+                                <div class="col-sm-8" data-field-id="Nombre_Completo" data-attribute="261267" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Nombre_Completo">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosNombre_Completo" name="Detalle_Laboratorios_ClinicosNombre_Completo" type="text" value="@Model.Nombre_Completo">
+                                </div>
+                            </div>
+<div class="form-group" id="divFamiliar_del_Empleado">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Familiar_del_Empleado</label>
+                                <div class="col-sm-8" data-field-id="Familiar_del_Empleado" data-attribute="261268" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Familiar_del_Empleado">
+                                    @Html.CheckBoxFor(m => m.Familiar_del_Empleado, new { @class = "i-checks" })
+                                </div>
+                            </div>
+<div class="form-group" id="divNumero_de_Empleado_Beneficiario">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Numero_de_Empleado_Beneficiario</label>
+                                <div class="col-sm-8" data-field-id="Numero_de_Empleado_Beneficiario" data-attribute="261269" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Numero_de_Empleado_Beneficiario">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosNumero_de_Empleado_Beneficiario" name="Detalle_Laboratorios_ClinicosNumero_de_Empleado_Beneficiario" type="text" value="@Model.Numero_de_Empleado_Beneficiario">
+                                </div>
+                            </div>
+<div class="form-group" id="divIndicador">
+	<label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Indicador</label>
+	<div class="col-sm-8" data-field-id="Indicador" data-attribute="261270" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Indicador">
+		<select class="form-control" data-val="true" data-val-number="The field Indicador must be a number." data-val-required="The Indicador field is required." id="Detalle_Laboratorios_ClinicosIndicador" name="Detalle_Laboratorios_ClinicosIndicador">
+			<option value=""></option>
+			@if (varIndicadores_Laboratorio_Indicador != null){ 
+				foreach (var itemIndicador in varIndicadores_Laboratorio_Indicador)
+				{
+					if (itemIndicador.Value == Convert.ToString(Model.Indicador))
+					{
+						<option value="@itemIndicador.Value" selected>@itemIndicador.Text</option>
+					}
+					else
+					{
+						<option value="@itemIndicador.Value">@itemIndicador.Text</option>
+					}
+				}
+			}
+		</select>
+	</div>
+</div>
+<div class="form-group" id="divResultado">
+	<label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Resultado</label>
+	<div class="col-sm-8" data-field-id="Resultado" data-attribute="261271" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Resultado">
+		<input class="form-control inputNumber" id="Detalle_Laboratorios_ClinicosResultado" name="Detalle_Laboratorios_ClinicosResultado" type="text" value="@Model.Resultado">
+	</div>
+</div>
+<div class="form-group" id="divUnidad">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Unidad</label>
+                                <div class="col-sm-8" data-field-id="Unidad" data-attribute="261272" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Unidad">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosUnidad" name="Detalle_Laboratorios_ClinicosUnidad" type="text" value="@Model.Unidad">
+                                </div>
+                            </div>
+<div class="form-group" id="divIntervalo_de_referencia">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Intervalo_de_referencia</label>
+                                <div class="col-sm-8" data-field-id="Intervalo_de_referencia" data-attribute="261273" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Intervalo_de_referencia">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosIntervalo_de_referencia" name="Detalle_Laboratorios_ClinicosIntervalo_de_referencia" type="text" value="@Model.Intervalo_de_referencia">
+                                </div>
+                            </div>
+<div class="form-group" id="divFecha_de_Resultado">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Fecha_de_Resultado</label>
+                                <div class="col-sm-8" data-field-id="Fecha_de_Resultado" data-attribute="261274" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Fecha_de_Resultado">
+                                    <div class='input-group date' id='datetimepicker1'>
+                                        <input class="form-control col-md-12" id="Detalle_Laboratorios_ClinicosFecha_de_Resultado" readonly="readonly" name="Detalle_Laboratorios_ClinicosFecha_de_Resultado" type="text" value="@Model.Fecha_de_Resultado">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+<div class="form-group" id="divEstatus_Indicador">
+                                <label class="col-sm-2 control-label">@Resources.Detalle_Laboratorios_ClinicosResources.Estatus_Indicador</label>
+                                <div class="col-sm-8" data-field-id="Estatus_Indicador" data-attribute="261275" data-field-name="@Resources.Detalle_Laboratorios_ClinicosResources.Estatus_Indicador">
+                                    <input class="form-control" id="Detalle_Laboratorios_ClinicosEstatus_Indicador" name="Detalle_Laboratorios_ClinicosEstatus_Indicador" type="text" value="@Model.Estatus_Indicador">
+                                </div>
+                            </div>
+
+								</div>	
+							</div>
+									<br />
+											<div class="form-actions fluid">
+												<input type="hidden" value="@Model.Folio" id="ReferenceFolio" />
+												<input type="hidden" value="@Model.Folio" name="Folio" id="FolioId" />
+												@if (!ViewBag.Consult)
+												{
+													<div id="dvSaveJob" style="display:inline-block"></div>
+
+													<button type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton">
+														<i class="fa fa-cogs fa-spin"></i>
+													</button>
+													<a title="@Resources.Resources.Configure" id="Detalle_Laboratorios_ClinicosConfigureSave" name="Detalle_Laboratorios_ClinicosConfigureSave" onclick="SaveElementAttributes()" class="btn btn-success">@Resources.Resources.Configure</a>
+												}
+
+												<input type="hidden" id="hdnDetalle_Laboratorios_ClinicosConfigureType" />
+												<input type="hidden" id="hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId" />
+												<input type="hidden" id="hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName" />
+												<input type="hidden" id="hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute" />
+
+												<input data-dismiss="modal" type="button" value="@Resources.Resources.Cancelar" class="btn btn-danger noConsult" data-bind="click: cancel" tabindex="16" />
+
+												<button onclick="Detalle_Laboratorios_ClinicosGetBusinessRule('', 'Al Cancelar', '3')" type="button" class="btn btn-info btn-lg displayBusinessProperyButton displayRuleButton" data-toggle="modal" data-target="#Detalle_Laboratorios_ClinicosBusinessRule-form">
+													<a class="top" title="" data-placement="right" data-toggle="tooltip" href="#" data-original-title="@Resources.Resources.BusinessRuleToBegin">
+														<i class="fa fa-cogs fa-spin"></i>
+													</a>
+												</button>
+											</div>
+										</div>
+								}
+
+							</div>
+						</div>
+					</div>
+				</div>
+					<input id="hdnApplicationDirectory" type="hidden" value="@Url.Content("~/")" />
+				</div>
+			</div>
+		</div>
+</div>
+@section Styles {
+<link href="@Url.Content("~/Content/BootstrapDatePicker/bootstrap-datetimepicker.min.css")" rel="stylesheet" />
+    @Styles.Render("~/Content/plugins/dataTables/dataTablesStyles")
+    @Styles.Render("~/plugins/dateRangeStyles")
+    @Styles.Render("~/plugins/dataPickerStyles")
+    @Styles.Render("~/plugins/clockpickerStyles")
+    @Styles.Render("~/plugins/awesomeCheckboxStyles")
+    @Styles.Render("~/plugins/select2Styles")
+    @Styles.Render("~/Content/plugins/chosen/chosenStyles")
+<style>
+    .dataTables_filter {
+        display: none;
+    }
+    .select2-results{background-color:#fff;}
+    .select2-container .select2-dropdown{height:auto !important;}
+
+    div.dataTables_info {
+        display: inline-block;
+        float: right;
+    }
+        i {
+        font-size: 25px !important;
+        display: block;
+        color: #676a6c;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+
+    .fullWidth {
+        width: 100%;
+    }
+</style>
+}
+
+<script type="text/javascript" src="~/Uploads/Scripts/Detalle_Laboratorios_Clinicos.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Scripts/Custom/Detalle_Laboratorios_ClinicosGeneral.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Detalle_Laboratorios_ClinicosCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script type="text/javascript" src="~/Uploads/Scripts/Rules/Actividades_del_EventoCreateRules.js?v=@DateTime.Now.ToString("ddMMyyyyhhmmss")"></script>
+<script src="~/Scripts/plugins/chosen/chosen.jquery.js"></script>
+
+    <script type="text/javascript">
+        
+
+
+
+        $(document).ready(function () {
+			var currentIndex = @ViewBag.currentRowIndex
+
+            var Detalle_Laboratorios_ClinicosRowElement = "Detalle_Laboratorios_ClinicosPop_" + currentIndex.toString();
+            var abc = "if(dynamicFieldValidation('" + Detalle_Laboratorios_ClinicosRowElement + "')){ Detalle_Laboratorios_ClinicosInsertRowFromPopup(" + currentIndex + "); }";
+            var insertRowHTML = '<a class="btn btn-primary m-b" onclick="' + abc + '">Save</a>';
+            $('#dvSaveJob').html(insertRowHTML);
+			
+            $('#Detalle_Laboratorios_ClinicosFecha_de_Resultado').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+
+
+            initiateUIControls();
+            EjecutarValidacionesAlComienzo();
+			$('a').tooltip();
+        });
+
+
+
+        function initiateUIControls() {
+            $('.gridDatePicker').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "@ConfigurationProperty.DateFormatDatePicker"
+            });
+            //Time Picker
+            $('.gridTimePicker').clockpicker();
+
+        }
+		
+		function SendDetalle_Laboratorios_ClinicosData(callBack) {
+			
+					
+		 var arr = []; 
+		 $("form#CreateDetalle_Laboratorios_Clinicos").find(':input').each(function( index ) {		 
+			if ($(this).prop('disabled')==true|| $(this).prop('disabled')=="disabled")
+			{		
+				arr.push($(this).attr('id')); 
+				$(this).prop('disabled', false);  	
+			}
+	    });
+		
+             var formData = new FormData($("form#CreateDetalle_Laboratorios_Clinicos")[0]);
+			$.each( arr, function( key, value ) {
+			  $('#' +value).prop('disabled', true);
+			});
+
+            var isNew = $('#hdnIsNew').val();
+           
+            if (checkClientValidate('Detalle_Laboratorios_ClinicosCreateForm')) {
+                $.ajax({
+                    url: '@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/Post?IsNew=")' + isNew,
+                    type: 'POST',
+                    data: formData,
+                    async: true,
+                    success: function (result) {
+                        if (result < 0) {
+                            showNotification("@Resources.Resources.ErrorSave", "error");
+                        } else {
+
+                            showNotification("@Resources.Resources.SaveSuccess", "success");
+                            callBack(result);
+                        }
+                    },
+                    error: function (result) {
+                        showNotification("@Resources.Resources.ErrorContactingServer", "error");
+                    },
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                });
+            }
+            return false;
+        };
+		
+        function GetPropertyBag() {
+            $.get('@Url.Action("Detalle_Laboratorios_ClinicosPropertyBag", "Detalle_Laboratorios_Clinicos")', function (data) {
+                $(".PropertyModal").html(data);
+            });
+        }
+        function Detalle_Laboratorios_ClinicosGetBusinessRule(FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null)
+			{
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(FieldId);
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(FieldName);
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("BusinessRule", "BussinessRule")', { FieldId: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(), ObjectId: '44787', Attribute: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(), Screen: 'Detalle_Laboratorios_Clinicos' }, function (data) {
+                $(".Detalle_Laboratorios_ClinicosBusinessRuleModal").html(data);
+            });
+        }
+        function Detalle_Laboratorios_ClinicosGetAddBusinessRule(RuleId, FieldId, FieldName, Attribute) {
+			if (FieldId != null && FieldName != null) {
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(FieldId);
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(FieldName);
+				$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(Attribute);
+			}
+            $.get('@Url.Action("AddBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(), ObjectId: '44787', Attribute: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(), Screen: 'Detalle_Laboratorios_Clinicos' }, function (data) {
+                $(".Detalle_Laboratorios_ClinicosAddBusinessRuleModal").html(data);
+                $(".datatable").DataTable();
+            });
+        }
+		function RemoveBusinessRule(RuleId) {
+			$.get('@Url.Action("RemoveBusinessRule", "BussinessRule")', { BusinessRuleId: RuleId, FieldId: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(), FieldName: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(), ObjectId: '44787', Attribute: $('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(), Screen: 'Detalle_Laboratorios_Clinicos' }, function (data) {
+				$(".Detalle_Laboratorios_ClinicosBusinessRuleModal").html(data);
+			});
+		}
+
+    var permission = {
+        Consult: '@permission.Consult' == 'True',
+        New: '@permission.New' == 'True',
+        Edit: '@permission.Edit' == 'True',
+        Delete: '@permission.Delete' == 'True',
+        Export: '@permission.Export' == 'True',
+        Print: '@permission.Print' == 'True',
+        Configure: '@permission.Configure' == 'True',
+    };
+
+    
+    //MR-var statusItems;
+    //MR-var stateItems;
+    //MR-var cityItems = [];
+    var isConsultMode = "@ViewBag.Consult" == "True";
+    Consult(isConsultMode);
+        function Consult(val) {
+            if (val) {
+                $(':input').attr('readonly', 'readonly');
+                $(':input').attr('disabled', 'true');
+                $('.noConsult').removeAttr('readonly');
+                $('.noConsult').removeAttr('disabled');
+            }
+        }
+
+    function BackToGrid() {
+        location.href = "@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/")";
+    }
+	
+	function ReadScriptSettings(callback)
+    {
+        $.post("@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/ReadScriptSettings")", function (data) {
+            mainElementObject = JSON.parse(data.MainElement);
+			if (data.ChildElement != null) {
+                childElementObject = JSON.parse(data.ChildElement);
+            }
+            callback();
+        });
+    }
+
+    function SaveSettingsWithoutReload() {
+        $.post("@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+            //$('#hdnDetalle_Laboratorios_ClinicosConfigureType').val("0");
+        }, "json");
+    }
+	
+        function SaveElementAttributes() {
+            if ($('#hdnDetalle_Laboratorios_ClinicosConfigureType').val() == "1") {
+                $.post("@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/WriteScriptSettings")", { CustomModuleAttributeList: mainElementObject, ChildModuleAttributeList: childElementObject }, function (data) {
+                    $('#hdnDetalle_Laboratorios_ClinicosConfigureType').val("0");
+                    location.reload(true);
+                }, "json");
+            } else {
+                $.post("@Url.Content("~/Frontal/Detalle_Laboratorios_Clinicos/ReadScriptSettings")", function (data) {
+                    mainElementObject = JSON.parse(data.MainElement);
+                    childElementObject = JSON.parse(data.ChildElement);
+
+                    for (var i = 0; i < mainElementObject.length; i++) {
+                        var mainElementAttributes = '<div class="col-sm-2">';
+                        mainElementAttributes += '<div class="displayAttributes requiredAttribute"><a class="requiredClick" title="' + (mainElementObject[i].IsRequired == true ? "Required" : "Not Required") + '" onclick="setRequired(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsRequired == true ? "@Url.Content("~/Images/Required.png")" : "@Url.Content("~/Images/Not-Required.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes visibleAttribute"><a class="visibleClick" title="' + (mainElementObject[i].IsVisible == true ? "Visible" : "In Visible") + '" onclick="setVisible(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsVisible == true ? "@Url.Content("~/Images/Visible.png")" : "@Url.Content("~/Images/InVisible.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes readOnlyAttribute"><a class="readOnlyClick" title="' + (mainElementObject[i].IsReadOnly == true ? "Disabled" : "Enabled") + '" onclick="setReadOnly(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].IsReadOnly == true ? "@Url.Content("~/Images/Disabled.png")" : "@Url.Content("~/Images/Enabled.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes defaultValueAttribute"><a id="hlDefaultValue_' + i.toString() + '" class="defaultValueClick" title="' + (mainElementObject[i].DefaultValue) + '" onclick="setDefaultValue(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].DefaultValue != '' && mainElementObject[i].DefaultValue != null ? "@Url.Content("~/Images/default-value.png")" : "@Url.Content("~/Images/Not-Default-Value.png")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '<div class="displayAttributes helpTextAttribute"><a id="hlHelpText_' + i.toString() + '" class="helpTextClick" title="' + (mainElementObject[i].HelpText) + '" onclick="setHelpText(' + i.toString() + ', this, 1)"><img src="' + (mainElementObject[i].HelpText != '' && mainElementObject[i].HelpText != null ? "@Url.Content("~/Images/green-help.png")" : "@Url.Content("~/Images/red-help.jpg")") + '" alt="" /></a></div>';
+                        mainElementAttributes += '</div>';
+                        $('#Detalle_Laboratorios_Clinicos' + mainElementObject[i].inputId).parent().closest('.form-group').show();
+
+                        $('#Detalle_Laboratorios_Clinicos' + mainElementObject[i].inputId).closest('.col-sm-8').after(mainElementAttributes);
+                    }
+					if (childElementObject != null) {
+						for (var i = 0; i < childElementObject.length; i++) {
+							$('.' + childElementObject[i].inputId + 'Header').show();
+							$('.' + childElementObject[i].inputId).parent().show();
+							$('.' + childElementObject[i].inputId + 'Header').append(returnAttributeHTML(i));
+						}
+					}
+                    $('#Detalle_Laboratorios_ClinicosConfigureSave').text('Save Settings');
+                    $('#hdnDetalle_Laboratorios_ClinicosConfigureType').val("1");
+                });
+            }
+        }
+		$('#CreateDetalle_Laboratorios_Clinicos').on('click', '.btnPopupBusinessRules', function () {
+			var fieldId = $(this).data('field-id');
+			var fieldName = $(this).data('field-name');
+			var attribute = $(this).data('attribute');
+			$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldId').val(fieldId);
+			$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleFieldName').val(fieldName);
+			$('#hdnDetalle_Laboratorios_ClinicosBusinessRuleAttribute').val(attribute);
+		});
+		//Initialize HTML Editors
+		
+    </script>
